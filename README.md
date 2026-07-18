@@ -46,6 +46,7 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
+| 2026-02 | [World-VLA-Loop](https://arxiv.org/abs/2602.06508) | Video world model jointly predicts imagined future frames and binary reward; the reward drives VLA RL and policy failures are fed back to refine the world model | [project/repo; source code in preparation](https://github.com/showlab/World-VLA-Loop) | 2026-07-18 |
 | 2026-01 | [RoboReward](https://arxiv.org/abs/2601.00675) | General-purpose vision-language reward models; outcome/progress scoring with counterfactual negatives and near-misses | [W](https://huggingface.co/teetone/RoboReward-4B) | 2026-07-18 |
 | 2024-07 | [Adapt2Reward](https://arxiv.org/abs/2407.14872) | Failure-prompt adaptation for generalizable robotic rewards | — | 2026-07-18 |
 
@@ -62,6 +63,7 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 | 2026-03 | [ProgAgent](https://arxiv.org/abs/2603.07784) | Initial/current/goal progress potential for continual robot RL with OOD regularization | — | 2026-07-18 |
 | 2026-03 | [Rewarding DINO](https://arxiv.org/abs/2603.16978) | Language-conditioned dense visual reward distilled from analytical simulator rewards | — | 2026-07-18 |
 | 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Continuous within-subtask progress jointly decoded with actions to stabilize transitions in long-horizon manipulation | [C](https://github.com/PLAN-Lab/PALM) · [W](https://github.com/PLAN-Lab/PALM#-checkpoints); license ? | 2026-07-18 |
+| 2025-09 | [World-Env](https://arxiv.org/abs/2509.24948) | LLaVA-based instant reflector with a trained scalar head estimates task-completion probability over imagined video for VLA reward and early termination | [C, Apache-2.0](https://github.com/amap-cvlab/world-env) · [W](https://www.modelscope.cn/models/junjxiao/world-env) | 2026-07-18 |
 | 2025-09 | [TimeRewarder](https://arxiv.org/abs/2509.26627) | Frame-wise temporal distance from passive human and robot video as dense reward | [C](https://github.com/CowAndSheep/TimeRewarder) | 2026-07-18 |
 | 2025-05 | [ReWiND](https://arxiv.org/abs/2505.10911) | Language-conditioned progress reward learned from human/robot video for reward relabeling and policy learning | [C](https://github.com/rewind-reward/ReWiND) | 2026-07-18 |
 | earlier | [PROGRESSOR](https://github.com/ripl/progressor) | Perceptually guided progress estimator with online refinement | C | 2026-07-18 |
@@ -97,6 +99,7 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
 | 2026-07 | [DenseReward](https://arxiv.org/abs/2607.13033) | Dense frame-level reward trained with phase-aware success, failure, and recovery synthesis | [project](https://dense-reward.github.io/); code/data/weights links not yet verified | 2026-07-18 |
+| 2026-05 | [RoboAlign-R1](https://arxiv.org/abs/2605.03821) | Qwen3-VL-8B-Thinking teacher judge is distilled into a 98M six-dimensional reward model for GRPO post-training of robot video world models | [project](https://roboalign-r1.netlify.app/); public repo is currently a placeholder | 2026-07-18 |
 | 2026-03 | [Large Reward Models](https://arxiv.org/abs/2603.16065) | Multi-source VLM process, completion, and temporal-contrast reward generation for online refinement | [C](https://github.com/physical-superintelligence-lab/Large-Reward-Models) | 2026-07-18 |
 | 2026-03 | [PRIMO R1](https://arxiv.org/abs/2603.15600) | RL-induced process reasoning for progress estimation and zero-shot failure detection | — | 2026-07-18 |
 | 2026-03 | [PRM-as-a-Judge](https://arxiv.org/abs/2603.21669) | Dense robotic auditing with outcome/process/diagnosis metrics and progress-potential judges | [project](https://prm-as-a-judge.github.io/); artifact audit pending | 2026-07-18 |
@@ -130,12 +133,15 @@ This is a **cross-cutting integration axis**, not a sixth reward-semantics famil
 | 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint world–action–value generator | Task completion/progress; misalignment detection and rollback | — | 2026-07-18 |
 | 2026-06 | [NavWAM](https://arxiv.org/abs/2606.13494) | Joint world–action–value generator | Goal-progress value; closed-loop navigation and optional best-of-N selection | [project](https://dachii-azm.github.io/navwam/) | 2026-07-18 |
 | 2026-06 | [Robot Self-Improvement via Human-Video Dynamics Models](https://arxiv.org/abs/2606.21406) | Compositional policy + dynamics + value | Progress-aligned value; ranks corrective actions after failures | [project; code coming soon](https://ethz-mrl.github.io/robot-self-improvement-website/) | 2026-07-18 |
+| 2026-05 | [RoboAlign-R1](https://arxiv.org/abs/2605.03821) | Standalone teacher→student evaluator inside a world-model loop | Six-dimensional semantic/physical reward; GRPO post-training of the robot video world model, not the VLA policy | [project](https://roboalign-r1.netlify.app/); releases claimed | 2026-07-18 |
 | 2026-05 | [ProgVLA](https://arxiv.org/abs/2605.28231) | Policy-internal auxiliary critics | Remaining-horizon V/Q and near-completion success; reweights imitation training | — | 2026-07-18 |
 | 2026-04 | [ViVa](https://arxiv.org/abs/2604.08168) | Value coupled to generative foresight | Scalar future-conditioned task value; robot RL | [C](https://github.com/GigaAI-research/ViVa) | 2026-07-18 |
 | 2026-02 | [RISE](https://arxiv.org/abs/2602.11075) | Compositional dynamics + progress value | Imagined-outcome value; advantage estimation for policy improvement | [C](https://github.com/OpenDriveLab/RISE) · [W: dynamics only](https://github.com/OpenDriveLab/RISE) | 2026-07-18 |
+| 2026-02 | [World-VLA-Loop](https://arxiv.org/abs/2602.06508) | Reward head integrated into the video world model | Binary imagined outcome reward; iterative VLA RL plus policy-failure feedback to the world model | [project/repo; code in preparation](https://github.com/showlab/World-VLA-Loop) | 2026-07-18 |
 | 2026-01 | [Cosmos Policy](https://arxiv.org/abs/2601.16163) | Joint world–action–value generator | Expected cumulative reward at predicted future state; planning and rollout refinement | [C](https://github.com/NVlabs/cosmos-policy) · [W/D](https://huggingface.co/collections/nvidia/cosmos-policy) | 2026-07-18 |
 | 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Joint action–progress decoder | Continuous within-subtask progress; transition timing and long-horizon control | [C/W](https://github.com/PLAN-Lab/PALM) | 2026-07-18 |
 | 2025-09 | [VLAC](https://arxiv.org/abs/2509.15937) | Unified action/critic token model | Transition advancement critic; action generation and real-world RL | [C](https://github.com/InternRobotics/VLAC) | 2026-07-18 |
+| 2025-09 | [World-Env](https://arxiv.org/abs/2509.24948) | Compositional world simulator + VLM reward model | Continuous task-completion probability; imagined VLA RL and early termination | [C, Apache-2.0](https://github.com/amap-cvlab/world-env) · [W](https://www.modelscope.cn/models/junjxiao/world-env) | 2026-07-18 |
 
 The coupling patterns are deliberately separate from output meaning:
 
@@ -143,6 +149,8 @@ The coupling patterns are deliberately separate from output meaning:
 - `joint_world_action_value`: one generative model predicts future state, action, and value.
 - `compositional_world_value`: dynamics and value remain distinct modules but jointly drive planning or policy improvement.
 - `shared_backbone_multi_interface`: one foundation backbone exposes separate action and monitoring interfaces.
+- `value_world_model`: reward/value is predicted by the generative world model, while actions come from a separate policy.
+- `standalone_evaluator`: a separate evaluator supplies reward to a policy- or world-model training loop.
 
 For benchmark design, record whether the value is externally queryable at inference, used only as an auxiliary training target, calibrated across tasks, and evaluable independently from policy success.
 
