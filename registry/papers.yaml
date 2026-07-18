@@ -667,6 +667,75 @@ entries:
     evidence_note: "Official project page describes a 27k-episode failure-synthesis dataset, but usable artifact links were not verified."
     sources: ["https://arxiv.org/abs/2607.13033", "https://dense-reward.github.io/"]
 
+  - id: "wu_2026_roboalign_r1"
+    kind: "world_model_reward_alignment"
+    title: "RoboAlign-R1: Distilled Multimodal Reward Alignment for Robot Video World Models"
+    released: "2026-05-05"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["qwen3_vl_teacher", "reward_distillation", "world_model_post_training", "online_iterative_distillation"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["robotworldbench_annotated_videos", "teacher_scored_world_model_rollouts"]
+    inference_inputs: ["instruction", "initial_frame", "rollout_video"]
+    downstream_roles: ["world_model_evaluation", "reward_distillation", "world_model_rl_post_training"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2605.03821"}
+      code: {status: "claimed", url: "https://github.com/Alexander-wu/RoboAlign_R1"}
+      weights: {status: "claimed", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "not_found", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-18"
+    evidence_note: "A fine-tuned Qwen3-VL-8B-Thinking teacher scores six robot-video dimensions and is distilled into a 98M online reward model for GRPO post-training of the video world model; downstream VLA-policy improvement is not evaluated."
+    sources: ["https://arxiv.org/abs/2605.03821", "https://roboalign-r1.netlify.app/", "https://github.com/Alexander-wu/RoboAlign_R1"]
+
+  - id: "liu_2026_world_vla_loop"
+    kind: "world_model_with_value"
+    title: "World-VLA-Loop: Closed-Loop Learning of Video World Model and VLA Policy"
+    released: "2026-02-06"
+    venue_or_preprint: "preprint"
+    primary_semantics: "outcome"
+    secondary_tags: ["binary_reward", "diffusion_latent_reward_head", "near_success", "world_policy_coevolution"]
+    model_coupling: "value_world_model"
+    value_availability: "inference_queryable"
+    training_data: ["successful_robot_trajectories", "near_success_robot_trajectories", "policy_failure_rollouts"]
+    inference_inputs: ["observation_history", "robot_state", "candidate_action", "instruction"]
+    downstream_roles: ["imagined_vla_rl", "world_model_simulation", "world_policy_coevolution"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2602.06508"}
+      code: {status: "coming_soon", url: "https://github.com/showlab/World-VLA-Loop"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-18"
+    evidence_note: "The action/state-conditioned video diffusion world model jointly predicts future frames and binary reward from diffusion latents; its reward trains the VLA with imagined RL, while later policy failures are fed back to update the world model."
+    sources: ["https://arxiv.org/abs/2602.06508", "https://showlab.github.io/World-VLA-Loop/", "https://github.com/showlab/World-VLA-Loop"]
+
+  - id: "xiao_2025_world_env"
+    kind: "world_model_reward_system"
+    title: "World-Env: Leveraging World Model as a Virtual Environment for VLA Post-Training"
+    released: "2025-09-29"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["task_completion_probability", "termination", "imagined_rollouts", "vlm_reward_head"]
+    model_coupling: "compositional_world_value"
+    value_availability: "inference_queryable"
+    training_data: ["libero_expert_trajectories", "policy_generated_simulator_trajectories", "per_frame_success_labels"]
+    inference_inputs: ["imagined_video", "instruction"]
+    downstream_roles: ["vla_rl_post_training", "task_completion_detection", "early_termination"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2509.24948"}
+      code: {status: "available", url: "https://github.com/amap-cvlab/world-env"}
+      weights: {status: "available", url: "https://www.modelscope.cn/models/junjxiao/world-env"}
+      data: {status: "unknown", url: null}
+    license: {code: "Apache-2.0", weights: "unverified", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "A frozen LLaVA backbone plus a trained scalar reward head estimates per-frame task-completion probability over imagined video; the score supplies VLA policy reward and an early-termination signal."
+    sources: ["https://arxiv.org/abs/2509.24948", "https://github.com/amap-cvlab/world-env", "https://www.modelscope.cn/models/junjxiao/world-env"]
+
   - id: "kim_2026_cosmos_policy"
     kind: "policy_with_value"
     title: "Cosmos Policy: Fine-Tuning Video Models for Visuomotor Control and Planning"
