@@ -1,0 +1,52 @@
+name: Add a paper or dataset
+description: Propose a robot reward-model, verifier, or failure/recovery data entry.
+title: "[Add] "
+labels: [literature]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Work title
+    validations:
+      required: true
+  - type: input
+    id: paper
+    attributes:
+      label: Original paper or official proceedings URL
+    validations:
+      required: true
+  - type: dropdown
+    id: semantics
+    attributes:
+      label: Primary semantics
+      options:
+        - outcome
+        - absolute_progress
+        - relative_preference
+        - temporal_value
+        - hybrid_verifier
+        - data_resource
+        - adjacent_interface
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence note
+      description: Explain inputs, output semantics, supervision/data, downstream role, and why it is in scope.
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Official artifacts
+      description: List code, weights, data, benchmark, and license URLs separately. Write unknown when not verified.
+    validations:
+      required: true
+  - type: input
+    id: checked
+    attributes:
+      label: Verification date
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true

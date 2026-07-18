@@ -1,0 +1,824 @@
+schema_version: "0.1"
+registry_name: "Awesome Robot Reward Models"
+last_updated: "2026-07-18"
+baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
+scope_note: >-
+  Primary narrative categories follow reward semantics. Failure/recovery work is
+  included only as evaluator supervision, benchmark data, or explicitly tagged
+  adjacent context. Artifact availability and licenses are recorded separately.
+
+entries:
+  - id: "wang_2024_rl_vlm_f"
+    kind: "reward_model"
+    title: "RL-VLM-F: Reinforcement Learning from Vision Language Foundation Model Feedback"
+    released: "2024-02"
+    venue_or_preprint: "ICML 2024"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["vlm_feedback", "hybrid_reward"]
+    training_data: ["vlm_preferences", "robot_rollouts"]
+    inference_inputs: ["image_pair", "instruction"]
+    downstream_roles: ["rl", "dense_shaping"]
+    artifacts:
+      paper: {status: "available", url: "https://proceedings.mlr.press/v235/wang24bn.html"}
+      code: {status: "unknown", url: null}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "VLM pairwise feedback is converted into a learned reward for robot RL."
+    sources: ["https://proceedings.mlr.press/v235/wang24bn.html", "https://arxiv.org/abs/2402.03681"]
+
+  - id: "ma_2024_adapt2reward"
+    kind: "reward_model"
+    title: "Adapt2Reward: Adapting Video-Language Models to Generalizable Robotic Rewards via Failure Prompts"
+    released: "2024-07"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["failure_prompt", "vlm_reward"]
+    training_data: ["robot_success", "failure_prompts"]
+    inference_inputs: ["video", "instruction"]
+    downstream_roles: ["rl", "dense_shaping"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2407.14872"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Failure prompts explicitly enter video-language reward adaptation."
+    sources: ["https://arxiv.org/abs/2407.14872"]
+
+  - id: "zhang_2025_rewind"
+    kind: "reward_model"
+    title: "ReWiND: Language-Guided Rewards Teach Robot Policies without New Demonstrations"
+    released: "2025-05"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["language_conditioned", "rewind_augmentation"]
+    training_data: ["human_video", "robot_video"]
+    inference_inputs: ["frame", "instruction"]
+    downstream_roles: ["reward_relabeling", "offline_rl", "online_adaptation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2505.10911"}
+      code: {status: "available", url: "https://github.com/rewind-reward/ReWiND"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Language-conditioned progress reward used for reward relabeling and policy learning."
+    sources: ["https://arxiv.org/abs/2505.10911", "https://github.com/rewind-reward/ReWiND"]
+
+  - id: "progressor"
+    kind: "reward_model"
+    title: "PROGRESSOR"
+    released: "unknown"
+    venue_or_preprint: "metadata pending"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["online_refinement"]
+    training_data: ["unknown"]
+    inference_inputs: ["image"]
+    downstream_roles: ["progress_estimation"]
+    artifacts:
+      paper: {status: "unknown", url: null}
+      code: {status: "available", url: "https://github.com/ripl/progressor"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Code discovery entry; paper identity and release metadata require a dedicated audit."
+    sources: ["https://github.com/ripl/progressor"]
+
+  - id: "chen_2025_sarm"
+    kind: "reward_model"
+    title: "SARM: Stage-Aware Reward Modeling for Long Horizon Robot Manipulation"
+    released: "2025-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["absolute_progress", "stage_aware"]
+    training_data: ["real_robot_demonstrations"]
+    inference_inputs: ["video", "multi_view"]
+    downstream_roles: ["data_reweighting", "behavior_cloning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2509.25358"}
+      code: {status: "available", url: "https://github.com/xdofai/opensarm"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unverified", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Stage estimator plus within-stage progress value for long-horizon manipulation."
+    sources: ["https://arxiv.org/abs/2509.25358", "https://github.com/xdofai/opensarm"]
+
+  - id: "timerewarder_2025"
+    kind: "reward_model"
+    title: "TimeRewarder: Learning Dense Reward from Passive Videos via Frame-wise Temporal Distance"
+    released: "2025-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["temporal_distance", "human_video"]
+    training_data: ["human_video", "robot_video"]
+    inference_inputs: ["frame_pair", "instruction"]
+    downstream_roles: ["dense_shaping", "rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2509.26627"}
+      code: {status: "available", url: "https://github.com/CowAndSheep/TimeRewarder"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Frame-wise temporal distance is used as a dense reward signal."
+    sources: ["https://arxiv.org/abs/2509.26627", "https://github.com/CowAndSheep/TimeRewarder"]
+
+  - id: "vlac_2025"
+    kind: "reward_model"
+    title: "A Vision-Language-Action-Critic Model for Robotic Real-World Reinforcement Learning"
+    released: "2025-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["critic", "action_conditioned"]
+    training_data: ["robot_video", "human_video", "forward_reverse_pairs"]
+    inference_inputs: ["before_after", "instruction", "action"]
+    downstream_roles: ["rl", "dense_shaping"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2509.15937"}
+      code: {status: "available", url: "https://github.com/InternRobotics/VLAC"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Pairwise transition critic with task and action conditioning."
+    sources: ["https://arxiv.org/abs/2509.15937", "https://github.com/InternRobotics/VLAC"]
+
+  - id: "topreward_2026"
+    kind: "reward_model"
+    title: "TOPReward"
+    released: "2026-02"
+    venue_or_preprint: "paper metadata pending"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["zero_shot", "token_probability"]
+    training_data: ["pretrained_vlm"]
+    inference_inputs: ["image", "instruction"]
+    downstream_roles: ["dense_shaping", "evaluation"]
+    artifacts:
+      paper: {status: "unknown", url: null}
+      code: {status: "available", url: "https://github.com/TOPReward/TOPReward"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Zero-shot completion/reward signal from VLM token probabilities; paper metadata needs audit."
+    sources: ["https://github.com/TOPReward/TOPReward"]
+
+  - id: "robodopamine_2025"
+    kind: "reward_model"
+    title: "Robo-Dopamine: General Process Reward Modeling for High-Precision Robotic Manipulation"
+    released: "2025-12"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["signed_progress", "multi_view"]
+    training_data: ["robot_demonstrations", "forward_reverse_pairs"]
+    inference_inputs: ["before_after", "multi_view", "instruction"]
+    downstream_roles: ["dense_shaping", "process_evaluation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2512.23703"}
+      code: {status: "available", url: "https://github.com/FlagOpen/Robo-Dopamine"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Predicts local progress/regress magnitude from multi-view before/after observations."
+    sources: ["https://arxiv.org/abs/2512.23703", "https://github.com/FlagOpen/Robo-Dopamine"]
+
+  - id: "pacaud_2025_failcot_guardian"
+    kind: "hybrid_model_and_data"
+    title: "Scaling Cross-Environment Failure Reasoning Data for Vision-Language Robotic Manipulation"
+    released: "2025-12-01"
+    venue_or_preprint: "preprint; CoRL 2025 workshop precursor"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["failure_detection", "planning_verification", "execution_verification", "data_resource"]
+    training_data: ["rlbench_synthetic_failures", "bridgedatav2_synthetic_failures", "reasoning_traces"]
+    inference_inputs: ["instruction", "before_after", "multi_view", "plan"]
+    downstream_roles: ["verification", "failure_detection", "replanning_trigger"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2512.01946"}
+      code: {status: "available", url: "https://github.com/paulpacaud/Guardian-FailCot"}
+      weights: {status: "available", url: "https://huggingface.co/paulpacaud/guardian-thinking"}
+      data: {status: "available", url: "https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian"}
+    license: {code: "MIT", weights: "Apache-2.0", data: "item_specific_unverified"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "Guardian is a multi-view planning/execution verifier trained on FailCoT; code and two model variants are released."
+    sources: ["https://arxiv.org/abs/2512.01946", "https://www.di.ens.fr/willow/research/guardian/", "https://github.com/paulpacaud/Guardian-FailCot", "https://huggingface.co/paulpacaud/guardian-thinking"]
+
+  - id: "roboreward_2026"
+    kind: "reward_model"
+    title: "RoboReward: General-Purpose Vision-Language Reward Models for Robotics"
+    released: "2026-01"
+    venue_or_preprint: "preprint"
+    primary_semantics: "outcome"
+    secondary_tags: ["absolute_progress", "counterfactual_negative", "near_miss"]
+    training_data: ["robot_success", "counterfactual_failures", "partial_progress"]
+    inference_inputs: ["episode_video", "instruction"]
+    downstream_roles: ["evaluation", "rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2601.00675"}
+      code: {status: "unknown", url: null}
+      weights: {status: "available", url: "https://huggingface.co/teetone/RoboReward-4B"}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unverified", data: "unverified"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "General-purpose VLM reward model with real-robot evaluation and failure-like negatives."
+    sources: ["https://arxiv.org/abs/2601.00675", "https://huggingface.co/teetone/RoboReward-4B"]
+
+  - id: "robometer_2026"
+    kind: "reward_model"
+    title: "Robometer: Scaling General-Purpose Robotic Reward Models via Trajectory Comparisons"
+    released: "2026-03"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["absolute_progress", "outcome", "trajectory_comparison"]
+    training_data: ["expert_robot_trajectories", "suboptimal_robot_trajectories", "trajectory_preferences"]
+    inference_inputs: ["trajectory", "instruction"]
+    downstream_roles: ["reward_estimation", "data_curation", "evaluation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.02115"}
+      code: {status: "available", url: "https://github.com/robometer/robometer"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Combines trajectory comparison with intra-trajectory progress and outcome-related supervision."
+    sources: ["https://arxiv.org/abs/2603.02115", "https://github.com/robometer/robometer"]
+
+  - id: "tan_2026_progagent"
+    kind: "reward_model"
+    title: "ProgAgent: A Continual RL Agent with Progress-Aware Rewards"
+    released: "2026-03-08"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["continual_rl", "state_potential", "ood_regularization"]
+    training_data: ["unlabeled_expert_video", "online_rollouts"]
+    inference_inputs: ["initial_image", "current_image", "goal_image"]
+    downstream_roles: ["continual_rl", "dense_shaping"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.07784"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Directly learns progress-aware state-potential rewards for continual robot RL."
+    sources: ["https://arxiv.org/abs/2603.07784"]
+
+  - id: "li_2026_dream2fix"
+    kind: "data_resource"
+    title: "Learning Actionable Manipulation Recovery via Counterfactual Failure Synthesis"
+    released: "2026-03-13"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["failure_synthesis", "recovery", "correction_trajectory"]
+    training_data: ["successful_real_robot_demonstrations", "world_model_counterfactual_failures"]
+    inference_inputs: ["failure_video"]
+    downstream_roles: ["failure_diagnosis", "recovery_action_generation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.13528"}
+      code: {status: "coming_soon", url: "https://dream2fix.github.io/"}
+      weights: {status: "coming_soon", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Paired synthesized failure/correction supervision; adjacent data resource rather than a core reward model."
+    sources: ["https://arxiv.org/abs/2603.13528", "https://dream2fix.github.io/"]
+
+  - id: "liu_2026_primo_r1"
+    kind: "reward_model"
+    title: "From Passive Observer to Active Critic: Reinforcement Learning Elicits Process Reasoning for Robotic Manipulation"
+    released: "2026-03-16"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["progress_estimation", "failure_detection", "chain_of_thought"]
+    training_data: ["robot_video", "outcome_reward", "reasoning_supervision"]
+    inference_inputs: ["initial_image", "video", "current_image", "instruction"]
+    downstream_roles: ["monitoring", "failure_detection", "progress_estimation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.15600"}
+      code: {status: "unknown", url: null}
+      weights: {status: "unknown", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Process critic combines progress estimation and failure detection with explicit temporal anchoring."
+    sources: ["https://arxiv.org/abs/2603.15600"]
+
+  - id: "krack_2026_rewarding_dino"
+    kind: "reward_model"
+    title: "Rewarding DINO: Predicting Dense Rewards with Vision Foundation Models"
+    released: "2026-03-17"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["relative_supervision", "analytical_reward_distillation", "sim_to_real"]
+    training_data: ["simulation", "analytical_dense_rewards", "mixed_quality_rollouts"]
+    inference_inputs: ["image", "instruction", "multi_view"]
+    downstream_roles: ["dense_shaping", "rl", "reward_prediction"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.16978"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Outputs dense language-conditioned visual reward; rank-based supervision is a secondary tag."
+    sources: ["https://arxiv.org/abs/2603.16978"]
+
+  - id: "wu_2026_large_reward_models"
+    kind: "reward_model"
+    title: "Large Reward Models: Generalizable Online Robot Reward Generation with Vision-Language Models"
+    released: "2026-03-17"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["absolute_progress", "outcome", "temporal_contrast"]
+    training_data: ["real_robot", "human_object_interaction", "simulation"]
+    inference_inputs: ["current_observation", "instruction", "temporal_context"]
+    downstream_roles: ["online_rl", "policy_refinement"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.16065"}
+      code: {status: "available", url: "https://github.com/physical-superintelligence-lab/Large-Reward-Models"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Explicitly combines process, completion, and temporal-contrast reward components."
+    sources: ["https://arxiv.org/abs/2603.16065", "https://github.com/physical-superintelligence-lab/Large-Reward-Models"]
+
+  - id: "ji_2026_prm_as_judge"
+    kind: "evaluator"
+    title: "PRM-as-a-Judge: A Dense Evaluation Paradigm for Fine-Grained Robotic Auditing"
+    released: "2026-03-23"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["process_reward_model", "auditing", "failure_diagnosis"]
+    training_data: ["robot_trajectory_video"]
+    inference_inputs: ["trajectory_video", "instruction"]
+    downstream_roles: ["policy_evaluation", "auditing", "failure_analysis"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.21669"}
+      code: {status: "unknown", url: null}
+      weights: {status: "unknown", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Uses PRM judges and an outcome-process-diagnosis metric system for dense robot-policy auditing."
+    sources: ["https://arxiv.org/abs/2603.21669", "https://prm-as-a-judge.github.io/"]
+
+  - id: "schroeder_2026_sole_r1"
+    kind: "reward_model"
+    title: "SOLE-R1: Video-Language Reasoning as the Sole Reward for On-Robot Reinforcement Learning"
+    released: "2026-03-30"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["reasoning_reward", "reward_hacking_robustness", "online_rl"]
+    training_data: ["synthesized_video_reasoning", "robot_video", "rlvr"]
+    inference_inputs: ["video", "instruction"]
+    downstream_roles: ["online_rl", "dense_shaping"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.28730"}
+      code: {status: "available", url: "https://github.com/rai-opensource/sole-r1"}
+      weights: {status: "available", url: "https://huggingface.co/collections/theaiinstitute/sole-r1"}
+      data: {status: "available", url: "https://huggingface.co/collections/theaiinstitute/sole-r1"}
+    license: {code: "not_found", weights: "item_specific_unverified", data: "CC-BY-4.0_for_main_dataset"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "Per-timestep video-language progress output is directly used as the sole RL reward."
+    sources: ["https://arxiv.org/abs/2603.28730", "https://github.com/rai-opensource/sole-r1", "https://huggingface.co/collections/theaiinstitute/sole-r1"]
+
+  - id: "yong_2026_vllr"
+    kind: "reward_system"
+    title: "Generalizable Dense Reward for Long-Horizon Robotic Tasks"
+    released: "2026-03-31"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["absolute_progress", "intrinsic_reward", "policy_certainty"]
+    training_data: ["llm_subtasks", "vlm_progress", "policy_rollouts"]
+    inference_inputs: ["observation", "instruction", "policy_confidence"]
+    downstream_roles: ["ppo_finetuning", "dense_shaping"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2604.00055"}
+      code: {status: "unknown", url: null}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "not_applicable", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Hybrid reward framework; VLM progress initializes value while policy self-certainty supplies intrinsic reward."
+    sources: ["https://arxiv.org/abs/2604.00055", "https://silongyong.github.io/vllr_project_page/"]
+
+  - id: "mao_2026_arm"
+    kind: "reward_model"
+    title: "ARM: Advantage Reward Modeling for Long-Horizon Manipulation"
+    released: "2026-04-03"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["temporal_value", "tri_state_advantage", "recovery"]
+    training_data: ["robot_demonstrations", "dagger_fragments", "human_segment_labels"]
+    inference_inputs: ["temporal_segment"]
+    downstream_roles: ["reward_reconstruction", "data_reweighting", "offline_rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2604.03037"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Primary learned object is tri-state progressive/regressive/stagnant advantage over short segments."
+    sources: ["https://arxiv.org/abs/2604.03037", "https://aiming1998.github.io/ARM/"]
+
+  - id: "lv_2026_viva"
+    kind: "reward_model"
+    title: "ViVa: A Video-Generative Value Model for Robot Reinforcement Learning"
+    released: "2026-04-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["future_proprioception", "video_generator", "foresight"]
+    training_data: ["video_pretraining", "robot_rollouts"]
+    inference_inputs: ["multi_view_observation", "proprioception"]
+    downstream_roles: ["value_estimation", "rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2604.08168"}
+      code: {status: "available", url: "https://github.com/GigaAI-research/ViVa"}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "not_found", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Jointly predicts future proprioception and a scalar task value from temporal visual context."
+    sources: ["https://arxiv.org/abs/2604.08168", "https://github.com/GigaAI-research/ViVa"]
+
+  - id: "feng_2026_procvlm"
+    kind: "reward_model"
+    title: "ProcVLM: Learning Procedure-Grounded Progress Rewards for Robotic Manipulation"
+    released: "2026-05-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["temporal_value", "procedure_reasoning", "stage_aware"]
+    training_data: ["30_embodied_datasets", "synthetic_procedure_annotations"]
+    inference_inputs: ["recent_frame_window", "instruction"]
+    downstream_roles: ["dense_shaping", "reward_guided_policy_optimization"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2605.08774"}
+      code: {status: "available", url: "https://github.com/ProcVLM/ProcVLM"}
+      weights: {status: "available", url: "https://huggingface.co/ce-amtic/ProcVLM-2B"}
+      data: {status: "available_gated", url: "https://huggingface.co/datasets/ce-amtic/ProcCorpus-60M"}
+    license: {code: "not_found", weights: "CC-BY-4.0_plus_base_model_terms", data: "CC-BY-4.0_annotations_upstream_media_terms_apply"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "Outputs reasoning plus progress percentage over a recent frame window; runnable model and inference code are public."
+    sources: ["https://arxiv.org/abs/2605.08774", "https://procvlm.github.io/", "https://github.com/ProcVLM/ProcVLM", "https://huggingface.co/ce-amtic/ProcVLM-2B"]
+
+  - id: "chen_2026_sarm2"
+    kind: "reward_model"
+    title: "SARM2: Multi-Task Stage Aware Reward Modeling for Self Improving Robotic Manipulation"
+    released: "2026-06-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["absolute_progress", "action_primitive_stage", "multi_task"]
+    training_data: ["real_robot_demonstrations", "autonomous_rollouts"]
+    inference_inputs: ["multi_view", "proprioception"]
+    downstream_roles: ["data_reweighting", "online_rl", "self_improvement"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.10305"}
+      code: {status: "available", url: "https://github.com/xdofai/opensarm"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unverified", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Action-primitive stage estimator and MoE value decoder provide dense multi-task progress."
+    sources: ["https://arxiv.org/abs/2606.10305", "https://qianzhong-chen.github.io/sarm2.github.io/", "https://github.com/xdofai/opensarm"]
+
+  - id: "chen_2026_human_video_self_improvement"
+    kind: "adjacent_method"
+    title: "Robot Self-Improvement via Human-Video Dynamics Models"
+    released: "2026-06-19"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["human_video", "dynamics_model", "failure_recovery"]
+    training_data: ["human_video", "robot_success", "robot_failure"]
+    inference_inputs: ["observation", "candidate_action", "predicted_future"]
+    downstream_roles: ["corrective_action_ranking", "policy_self_improvement"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.21406"}
+      code: {status: "coming_soon", url: "https://ethz-mrl.github.io/robot-self-improvement-website/"}
+      weights: {status: "coming_soon", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Contains an embodiment-agnostic progress value and ranks corrective actions, but the central contribution is a full self-improvement system."
+    sources: ["https://arxiv.org/abs/2606.21406", "https://ethz-mrl.github.io/robot-self-improvement-website/"]
+
+  - id: "yang_2026_rarm"
+    kind: "reward_model"
+    title: "RARM: Confidence-Gated Progress Reward Modeling for RL in Manipulation"
+    released: "2026-06-20"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["reference_anchored", "confidence_gating", "one_demonstration"]
+    training_data: ["general_purpose_video", "self_supervised_temporal_contrast"]
+    inference_inputs: ["rollout_clip", "reference_clip"]
+    downstream_roles: ["dense_shaping", "rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.22027"}
+      code: {status: "coming_soon", url: "https://rarm-robotics.github.io/"}
+      weights: {status: "coming_soon", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Reference demonstration anchors progress localization; uncertain matches are suppressed rather than rewarded."
+    sources: ["https://arxiv.org/abs/2606.22027", "https://rarm-robotics.github.io/"]
+
+  - id: "qin_2026_retvl"
+    kind: "reward_model"
+    title: "Beyond Monotonic Progress: Retry-Supervised Value Learning for Robot Imitation"
+    released: "2026-06-23"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["retry_supervision", "relative_preference", "recovery"]
+    training_data: ["mixed_quality_robot_demonstrations", "retry_keypoints"]
+    inference_inputs: ["trajectory_context"]
+    downstream_roles: ["data_reweighting", "behavior_cloning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.24633"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Retry keypoints supervise local degradation and recovery around non-monotonic demonstrations."
+    sources: ["https://arxiv.org/abs/2606.24633"]
+
+  - id: "wvm_2026"
+    kind: "reward_model"
+    title: "WVM"
+    released: "2026-06"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["suboptimal_trajectory", "retry_benchmark"]
+    training_data: ["robot_trajectory", "human_annotations"]
+    inference_inputs: ["trajectory_video", "instruction"]
+    downstream_roles: ["value_estimation", "evaluation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.24742"}
+      code: {status: "claimed", url: "https://github.com/255isWhite/WVM"}
+      weights: {status: "unknown", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Temporally grounded value with suboptimal/retry benchmark; runnable status needs re-audit."
+    sources: ["https://arxiv.org/abs/2606.24742", "https://github.com/255isWhite/WVM"]
+
+  - id: "yu_2026_warp_rm"
+    kind: "reward_model"
+    title: "WARP-RM: A Warp-Augmented Relative Progress Reward Model for Data Curation"
+    released: "2026-06-26"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["signed_progress_velocity", "self_supervised", "recovery"]
+    training_data: ["successful_teleoperated_demonstrations", "time_warp_augmentation"]
+    inference_inputs: ["video_window"]
+    downstream_roles: ["data_curation", "behavior_cloning_reweighting"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.28320"}
+      code: {status: "available", url: "https://github.com/uynitsuj/WARP-RM"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "MIT", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Outputs dense signed progress velocity; public repo contains training and scoring code but no verified paper checkpoint."
+    sources: ["https://arxiv.org/abs/2606.28320", "https://uynitsuj.github.io/warp-rm/", "https://github.com/uynitsuj/WARP-RM"]
+
+  - id: "torne_2026_fpl"
+    kind: "reward_model"
+    title: "Freeform Preference Learning for Robotic Manipulation"
+    released: "2026-06-30"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["hybrid_verifier", "language_conditioned_axis", "multi_objective"]
+    training_data: ["human_pairwise_preferences", "robot_rollouts"]
+    inference_inputs: ["trajectory", "natural_language_preference_axis"]
+    downstream_roles: ["reward_conditioned_policy_learning", "policy_steering"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.32027"}
+      code: {status: "available", url: "https://github.com/freeform-pl/fpl"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "not_found", weights: "unknown", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "Language-conditioned scalar reward is learned separately for user-defined preference axes."
+    sources: ["https://arxiv.org/abs/2606.32027", "https://freeform-pl.github.io/fpl.website/", "https://github.com/freeform-pl/fpl", "https://github.com/freeform-pl/fpl_real"]
+
+  - id: "fang_2026_dense_reward"
+    kind: "reward_model"
+    title: "DenseReward: Dense Reward Learning via Failure Synthesis for Robotic Manipulation"
+    released: "2026-07-14"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["absolute_progress", "failure_synthesis", "recovery"]
+    training_data: ["simulation_success", "simulation_failure", "recovery", "phase_aware_labels"]
+    inference_inputs: ["current_frame", "history_frames", "instruction"]
+    downstream_roles: ["dense_shaping", "mpc", "online_rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.13033"}
+      code: {status: "claimed", url: null}
+      weights: {status: "claimed", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-18"
+    evidence_note: "Official project page describes a 27k-episode failure-synthesis dataset, but usable artifact links were not verified."
+    sources: ["https://arxiv.org/abs/2607.13033", "https://dense-reward.github.io/"]
+
+  - id: "robo_fac_2025"
+    kind: "data_resource"
+    title: "RoboFAC: A Comprehensive Framework for Robotic Failure Analysis and Correction"
+    released: "2025-05"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["failure_analysis", "failure_correction", "vqa"]
+    training_data: ["simulated_robot_failures", "real_robot_failures", "qa_pairs"]
+    inference_inputs: ["robot_video", "question"]
+    downstream_roles: ["failure_diagnosis", "correction_reasoning", "benchmark"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2505.12224"}
+      code: {status: "available", url: "https://github.com/MINT-SJTU/RoboFAC"}
+      weights: {status: "unknown", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "data_adapter_candidate"
+    verification_date: "2026-07-18"
+    evidence_note: "Failure QA/correction data is useful for verifier and taxonomy work but QA accuracy is not a reward metric."
+    sources: ["https://arxiv.org/abs/2505.12224", "https://github.com/MINT-SJTU/RoboFAC"]
+
+  - id: "robomind_2024"
+    kind: "data_resource"
+    title: "RoboMIND"
+    released: "2024-12"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["multi_embodiment", "failure_data"]
+    training_data: ["real_robot_trajectories"]
+    inference_inputs: []
+    downstream_roles: ["pretraining", "benchmark_candidate"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2412.13877"}
+      code: {status: "unknown", url: null}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "project_page", url: "https://x-humanoid-robomind.github.io/"}
+    license: {code: "unknown", weights: "not_applicable", data: "unverified"}
+    adapter_status: "data_adapter_candidate"
+    verification_date: "2026-07-18"
+    evidence_note: "Broad multi-embodiment robot data candidate; failure splits and redistribution terms need audit."
+    sources: ["https://arxiv.org/abs/2412.13877", "https://x-humanoid-robomind.github.io/"]
+
+  - id: "aha_2024"
+    kind: "data_resource"
+    title: "AHA"
+    released: "2024-10"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["failure_reasoning", "synthetic_perturbation"]
+    training_data: ["robot_video", "synthetic_failures"]
+    inference_inputs: ["robot_video", "instruction"]
+    downstream_roles: ["failure_detection", "taxonomy_baseline"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2410.00371"}
+      code: {status: "available", url: "https://github.com/NVlabs/AHA"}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "data_adapter_candidate"
+    verification_date: "2026-07-18"
+    evidence_note: "Failure reasoning/detection baseline; not classified as a core reward model."
+    sources: ["https://arxiv.org/abs/2410.00371", "https://github.com/NVlabs/AHA"]
+
+  - id: "vifailback_2025"
+    kind: "data_resource"
+    title: "ViFailback"
+    released: "2025-12"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["real_robot_failure", "correction_supervision"]
+    training_data: ["real_robot_failures", "vqa_corrections"]
+    inference_inputs: ["robot_video", "question"]
+    downstream_roles: ["failure_detection", "recovery_supervision"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2512.02787"}
+      code: {status: "available", url: "https://github.com/x1nyuzhou/ViFailback"}
+      weights: {status: "unknown", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unverified"}
+    adapter_status: "data_adapter_candidate"
+    verification_date: "2026-07-18"
+    evidence_note: "Candidate for failure onset/type and recovery-facing evaluation after license review."
+    sources: ["https://arxiv.org/abs/2512.02787", "https://github.com/x1nyuzhou/ViFailback"]
+
+  - id: "failsafe_2025"
+    kind: "data_resource"
+    title: "FailSafe: Reasoning and Recovery from Failures in Vision-Language-Action Models"
+    released: "2025-10"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["failure_reasoning", "recovery_action"]
+    training_data: ["robot_failure", "recovery"]
+    inference_inputs: ["robot_observation", "instruction"]
+    downstream_roles: ["failure_recovery"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2510.01642"}
+      code: {status: "unknown", url: null}
+      weights: {status: "unknown", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unverified"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Failure/recovery-oriented action data; release conditions require audit."
+    sources: ["https://arxiv.org/abs/2510.01642"]
+
+  - id: "so101_failure_recovery_2026"
+    kind: "data_resource"
+    title: "SO-101 failure/recovery benchmark"
+    released: "2026-06"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["real_robot", "failure_recovery", "low_cost_robot"]
+    training_data: ["real_robot_failure", "recovery"]
+    inference_inputs: []
+    downstream_roles: ["benchmark_candidate"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.08881"}
+      code: {status: "unknown", url: null}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "claimed", url: null}
+    license: {code: "unknown", weights: "not_applicable", data: "unverified"}
+    adapter_status: "data_adapter_candidate"
+    verification_date: "2026-07-18"
+    evidence_note: "Low-cost real-robot failure/recovery benchmark candidate; data license not verified."
+    sources: ["https://arxiv.org/abs/2606.08881"]
+
+  - id: "reflect_2023"
+    kind: "adjacent_method"
+    title: "REFLECT"
+    released: "2023-06"
+    venue_or_preprint: "preprint"
+    primary_semantics: "adjacent_interface"
+    secondary_tags: ["failure_explanation", "replanning"]
+    training_data: ["robot_failure"]
+    inference_inputs: ["robot_trajectory", "instruction"]
+    downstream_roles: ["failure_explanation", "replanning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2306.15724"}
+      code: {status: "unknown", url: null}
+      weights: {status: "unknown", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Historical failure explanation/replanning context, not a direct reward model."
+    sources: ["https://arxiv.org/abs/2306.15724"]
+
+screened_out:
+  - title: "RFM-HRI: A Multimodal Dataset of Medical Robot Failure, User Reaction and Recovery Preferences for Item Retrieval Tasks"
+    source: "https://arxiv.org/abs/2603.05641"
+    decision: "exclude_core"
+    reason: "HRI user-reaction data rather than a task-conditioned manipulation evaluator."
+    verification_date: "2026-07-18"
+  - title: "Failure-Aware RL: Reliable Offline-to-Online Reinforcement Learning"
+    source: "https://arxiv.org/abs/2601.07821"
+    decision: "exclude_core"
+    reason: "Failure-aware RL paradigm without a separately characterized reward/evaluator model."
+    verification_date: "2026-07-18"
+  - title: "Recover, Discover, Plan: Learning Skills and Concepts from Robot Failures"
+    source: "https://arxiv.org/abs/2606.18328"
+    decision: "adjacent_only"
+    reason: "Central contribution is failure-driven skill/concept learning and planning, not reward-model evaluation."
+    verification_date: "2026-07-18"
