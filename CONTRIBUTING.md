@@ -13,6 +13,7 @@ Every entry must include:
 - original paper or official proceedings URL;
 - release/submission date and venue or `preprint` status;
 - primary reward semantics plus secondary tags;
+- for policy/world-model-coupled value prediction, the coupling pattern and whether the value is queryable at inference or only used during training/control;
 - inputs, supervision/data provenance, outputs, and downstream role;
 - code, weights, data, benchmark, and license status as separate fields;
 - source URL and the date each status was checked;
@@ -29,6 +30,10 @@ Prefer official proceedings, arXiv, author project pages, official repositories,
 - `unknown`: not yet audited.
 
 Never infer weights from code, data from a paper, or a usable license from public visibility.
+
+## Coupled value predictors
+
+Do not propose a VLA or world model solely because it predicts actions or future observations. A coupled-value entry must expose an explicit task-conditioned value, progress, reward, advantage, or critic target. Keep its reward meaning in `primary_semantics`; use `model_coupling` only for the architecture (`policy_internal`, `joint_world_action_value`, `compositional_world_value`, `shared_backbone_multi_interface`, or `value_world_model`).
 
 ## Pull requests
 

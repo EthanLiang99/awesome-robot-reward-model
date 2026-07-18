@@ -36,6 +36,28 @@ body:
       description: Explain inputs, output semantics, supervision/data, downstream role, and why it is in scope.
     validations:
       required: true
+  - type: dropdown
+    id: coupling
+    attributes:
+      label: Model coupling (if applicable)
+      description: Choose not_applicable unless value/progress is explicitly coupled to a policy or world model.
+      options:
+        - not_applicable
+        - policy_internal
+        - joint_world_action_value
+        - compositional_world_value
+        - shared_backbone_multi_interface
+        - value_world_model
+  - type: dropdown
+    id: value_availability
+    attributes:
+      label: Value availability (if applicable)
+      options:
+        - not_applicable
+        - inference_queryable
+        - training_only
+        - internal_control_only
+        - unknown
   - type: textarea
     id: artifacts
     attributes:

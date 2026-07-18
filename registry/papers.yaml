@@ -1,11 +1,13 @@
-schema_version: "0.1"
+schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
 last_updated: "2026-07-18"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
   included only as evaluator supervision, benchmark data, or explicitly tagged
-  adjacent context. Artifact availability and licenses are recorded separately.
+  adjacent context. Policy/world-model coupling is an optional cross-cutting
+  architecture axis and never replaces primary reward semantics. Artifact
+  availability and licenses are recorded separately.
 
 entries:
   - id: "wang_2024_rl_vlm_f"
@@ -141,6 +143,8 @@ entries:
     venue_or_preprint: "preprint"
     primary_semantics: "relative_preference"
     secondary_tags: ["critic", "action_conditioned"]
+    model_coupling: "shared_backbone_multi_interface"
+    value_availability: "inference_queryable"
     training_data: ["robot_video", "human_video", "forward_reverse_pairs"]
     inference_inputs: ["before_after", "instruction", "action"]
     downstream_roles: ["rl", "dense_shaping"]
@@ -456,6 +460,8 @@ entries:
     venue_or_preprint: "preprint"
     primary_semantics: "temporal_value"
     secondary_tags: ["future_proprioception", "video_generator", "foresight"]
+    model_coupling: "value_world_model"
+    value_availability: "inference_queryable"
     training_data: ["video_pretraining", "robot_rollouts"]
     inference_inputs: ["multi_view_observation", "proprioception"]
     downstream_roles: ["value_estimation", "rl"]
@@ -519,6 +525,8 @@ entries:
     venue_or_preprint: "preprint"
     primary_semantics: "temporal_value"
     secondary_tags: ["human_video", "dynamics_model", "failure_recovery"]
+    model_coupling: "compositional_world_value"
+    value_availability: "inference_queryable"
     training_data: ["human_video", "robot_success", "robot_failure"]
     inference_inputs: ["observation", "candidate_action", "predicted_future"]
     downstream_roles: ["corrective_action_ranking", "policy_self_improvement"]
@@ -658,6 +666,167 @@ entries:
     verification_date: "2026-07-18"
     evidence_note: "Official project page describes a 27k-episode failure-synthesis dataset, but usable artifact links were not verified."
     sources: ["https://arxiv.org/abs/2607.13033", "https://dense-reward.github.io/"]
+
+  - id: "kim_2026_cosmos_policy"
+    kind: "policy_with_value"
+    title: "Cosmos Policy: Fine-Tuning Video Models for Visuomotor Control and Planning"
+    released: "2026-01-22"
+    venue_or_preprint: "ICLR 2026"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["expected_return", "future_state", "model_based_planning"]
+    model_coupling: "joint_world_action_value"
+    value_availability: "inference_queryable"
+    training_data: ["robot_demonstrations", "policy_rollouts"]
+    inference_inputs: ["multi_view_observation", "proprioception", "instruction"]
+    downstream_roles: ["visuomotor_control", "value_estimation", "best_of_n_planning", "rollout_refinement"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2601.16163"}
+      code: {status: "available", url: "https://github.com/NVlabs/cosmos-policy"}
+      weights: {status: "available", url: "https://huggingface.co/collections/nvidia/cosmos-policy"}
+      data: {status: "available", url: "https://huggingface.co/collections/nvidia/cosmos-policy"}
+    license: {code: "Apache-2.0", weights: "item_specific_unverified", data: "item_specific_unverified"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "One video-diffusion model predicts action chunks, future images/proprioception, and expected rewards-to-go; the value supports planning and can be refined from policy rollouts."
+    sources: ["https://arxiv.org/abs/2601.16163", "https://research.nvidia.com/labs/cosmos-lab/cosmos-policy/", "https://github.com/NVlabs/cosmos-policy", "https://huggingface.co/collections/nvidia/cosmos-policy"]
+
+  - id: "liu_2026_palm"
+    kind: "policy_with_value"
+    title: "PALM: Progress-Aware Policy Learning via Affordance Reasoning for Long-Horizon Robotic Manipulation"
+    released: "2026-01-11"
+    venue_or_preprint: "CVPR 2026"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["within_subtask_progress", "affordance_reasoning", "long_horizon"]
+    model_coupling: "policy_internal"
+    value_availability: "inference_queryable"
+    training_data: ["robot_demonstrations", "subtask_progress_labels"]
+    inference_inputs: ["multi_view_observation", "instruction", "affordance_latents"]
+    downstream_roles: ["action_generation", "subtask_transition", "long_horizon_control"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2601.07060"}
+      code: {status: "available", url: "https://github.com/PLAN-Lab/PALM"}
+      weights: {status: "available", url: "https://github.com/PLAN-Lab/PALM#-checkpoints"}
+      data: {status: "unknown", url: null}
+    license: {code: "not_found", weights: "unverified", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "The diffusion policy jointly predicts actions and continuous within-subtask progress; progress is used to stabilize long-horizon subtask transitions."
+    sources: ["https://arxiv.org/abs/2601.07060", "https://openaccess.thecvf.com/content/CVPR2026/html/Liu_PALM_Progress-Aware_Policy_Learning_via_Affordance_Reasoning_for_Long-Horizon_Robotic_CVPR_2026_paper.html", "https://github.com/PLAN-Lab/PALM"]
+
+  - id: "yang_2026_rise"
+    kind: "world_model_with_value"
+    title: "RISE: Self-Improving Robot Policy with Compositional World Model"
+    released: "2026-02-11"
+    venue_or_preprint: "RSS 2026"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["absolute_progress", "imagined_rollouts", "advantage_estimation", "self_improvement"]
+    model_coupling: "compositional_world_value"
+    value_availability: "inference_queryable"
+    training_data: ["robot_demonstrations", "successful_rollouts", "failed_rollouts", "imagined_rollouts"]
+    inference_inputs: ["observation", "candidate_action", "predicted_future"]
+    downstream_roles: ["advantage_estimation", "imagined_rl", "policy_self_improvement"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2602.11075"}
+      code: {status: "available", url: "https://github.com/OpenDriveLab/RISE"}
+      weights: {status: "available", url: "https://github.com/OpenDriveLab/RISE"}
+      data: {status: "claimed", url: "https://github.com/OpenDriveLab/RISE"}
+    license: {code: "Apache-2.0", weights: "CC-BY-NC-SA-4.0", data: "CC-BY-NC-SA-4.0"}
+    adapter_status: "planned"
+    verification_date: "2026-07-18"
+    evidence_note: "A separate progress value model evaluates action-conditioned imagined futures and produces advantages for policy improvement; the verified released checkpoint is the pretrained dynamics model, not a complete value/policy bundle."
+    sources: ["https://arxiv.org/abs/2602.11075", "https://opendrivelab.com/RISE/", "https://github.com/OpenDriveLab/RISE"]
+
+  - id: "kim_2026_progvla"
+    kind: "policy_with_value"
+    title: "ProgVLA: Progress-Aware Robot Manipulation Skill Learning"
+    released: "2026-05-27"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["absolute_progress", "remaining_horizon", "offline_rl_critic", "success_head"]
+    model_coupling: "policy_internal"
+    value_availability: "training_only"
+    training_data: ["robot_demonstrations", "normalized_remaining_horizon_targets"]
+    inference_inputs: ["multi_view_observation", "proprioception", "instruction"]
+    downstream_roles: ["advantage_weighted_imitation", "success_weighted_imitation", "internal_progress_estimation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2605.28231"}
+      code: {status: "coming_soon", url: null}
+      weights: {status: "coming_soon", url: null}
+      data: {status: "coming_soon", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-18"
+    evidence_note: "Auxiliary V/Q-style heads estimate normalized remaining horizon and near-completion success from policy context; detached estimates reweight imitation training."
+    sources: ["https://arxiv.org/abs/2605.28231", "https://europe.naverlabs.com/research/publications/progvla-progress-aware-robot-manipulation-skill-learning/"]
+
+  - id: "azuma_2026_navwam"
+    kind: "world_action_value_model"
+    title: "NavWAM: A Navigation World Action Model for Goal-Conditioned Visual Navigation"
+    released: "2026-06-11"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["navigation", "future_view", "goal_conditioned", "best_of_n_planning"]
+    model_coupling: "joint_world_action_value"
+    value_availability: "inference_queryable"
+    training_data: ["simulated_navigation_trajectories", "real_robot_navigation_data"]
+    inference_inputs: ["current_egocentric_view", "goal_image", "robot_state"]
+    downstream_roles: ["closed_loop_navigation", "goal_progress_estimation", "optional_best_of_n_planning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.13494"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "A shared diffusion latent canvas predicts future egocentric views, action chunks, and a scalar goal-progress value; the project page did not expose usable code or checkpoint links during audit."
+    sources: ["https://arxiv.org/abs/2606.13494", "https://dachii-azm.github.io/navwam/"]
+
+  - id: "chen_2026_mv_wam"
+    kind: "world_action_value_model"
+    title: "MV-WAM: Manifold-Aware World Action Model with Value Augmentation"
+    released: "2026-06-19"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["future_video", "deviation_detection", "value_guided_rollback", "recovery"]
+    model_coupling: "joint_world_action_value"
+    value_availability: "internal_control_only"
+    training_data: ["robot_demonstrations", "robot_trajectories"]
+    inference_inputs: ["observation", "instruction", "predicted_video", "action_tokens"]
+    downstream_roles: ["action_generation", "progress_estimation", "deviation_detection", "rollback_recovery"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.21088"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-18"
+    evidence_note: "Joint visual/action/value generation includes a progress-value regulation mechanism for task completion, action–frame misalignment detection, and value-guided rollback."
+    sources: ["https://arxiv.org/abs/2606.21088"]
+
+  - id: "gong_2026_ace_brain_05"
+    kind: "hybrid_policy_evaluator"
+    title: "ACE-Brain-0.5: A Unified Embodied Foundational Model for Physical Agentic AI"
+    released: "2026-07-05"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["execution_monitoring", "verification", "recovery", "unified_embodied_model"]
+    model_coupling: "shared_backbone_multi_interface"
+    value_availability: "inference_queryable"
+    training_data: ["multi_task_embodied_data", "progress_estimation_data", "robot_rollouts"]
+    inference_inputs: ["visual_observation", "instruction", "execution_context"]
+    downstream_roles: ["progress_estimation", "self_monitoring", "verification", "recovery"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.04426"}
+      code: {status: "not_found", url: null}
+      weights: {status: "available", url: "https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B"}
+      data: {status: "unknown", url: null}
+    license: {code: "not_found", weights: "not_found", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-18"
+    evidence_note: "One embodied backbone exposes planning, action, and progress-estimation interfaces; progress is evaluated for execution assessment and recovery, but runnable task code and reusable license terms were not verified."
+    sources: ["https://arxiv.org/abs/2607.04426", "https://github.com/DAXIAORobotics/ACE-Brain-0.5", "https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B"]
 
   - id: "robo_fac_2025"
     kind: "data_resource"

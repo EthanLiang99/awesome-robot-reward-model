@@ -36,10 +36,11 @@ Artifact availability and licensing are tracked separately. A GitHub repository 
 4. [Temporal and stage-aware value](#4-temporal-and-stage-aware-value)
 5. [Hybrid evaluators and verifiers](#5-hybrid-evaluators-and-verifiers)
 6. [Failure, retry, and recovery data](#6-failure-retry-and-recovery-data)
-7. [Adjacent system interfaces](#7-adjacent-system-interfaces)
-8. [Community discovery resources](#8-community-discovery-resources)
+7. [Policy- and world-model-coupled value prediction](#7-policy--and-world-model-coupled-value-prediction)
+8. [Adjacent system interfaces](#8-adjacent-system-interfaces)
+9. [Community discovery resources](#9-community-discovery-resources)
 
-Methods may span multiple families. The table placement is the primary narrative category; the registry preserves secondary tags and evidence notes.
+Methods may span multiple families. Sections 1–5 use reward semantics as the primary narrative taxonomy. Section 7 is a cross-cutting architecture/integration index: it records where the value signal lives without treating architectural coupling as a new reward meaning. The registry preserves both dimensions through primary semantics and `model_coupling` metadata.
 
 ## 1. Outcome and success reward
 
@@ -52,11 +53,15 @@ Methods may span multiple families. The table placement is the primary narrative
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
+| 2026-07 | [ACE-Brain-0.5](https://arxiv.org/abs/2607.04426) | Shared embodied backbone estimates execution progress for self-monitoring, verification, and recovery alongside planning and action generation | [W](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) · [project repo; runnable task code not verified](https://github.com/DAXIAORobotics/ACE-Brain-0.5) | 2026-07-18 |
+| 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint visual/action/value generation with task-completion estimation, action–frame misalignment detection, and value-guided rollback | — | 2026-07-18 |
+| 2026-06 | [NavWAM](https://arxiv.org/abs/2606.13494) | Joint future-view, action-chunk, and goal-progress prediction for closed-loop visual navigation | [project](https://dachii-azm.github.io/navwam/); code/weights links not verified | 2026-07-18 |
 | 2026-06 | [RARM](https://arxiv.org/abs/2606.22027) | Reference-anchored, confidence-gated dense progress reward from one successful demonstration | [project; code coming soon](https://rarm-robotics.github.io/) | 2026-07-18 |
 | 2026-05 | [ProcVLM](https://arxiv.org/abs/2605.08774) | Procedure-grounded progress with remaining-action reasoning over a recent frame window | [C](https://github.com/ProcVLM/ProcVLM) · [W](https://huggingface.co/ce-amtic/ProcVLM-2B) · [D](https://huggingface.co/datasets/ce-amtic/ProcCorpus-60M) | 2026-07-18 |
 | 2026-03 | [SOLE-R1](https://arxiv.org/abs/2603.28730) | Per-timestep video-language reasoning and dense progress used as the sole online-RL reward | [C](https://github.com/rai-opensource/sole-r1) · [W/D collection](https://huggingface.co/collections/theaiinstitute/sole-r1) | 2026-07-18 |
 | 2026-03 | [ProgAgent](https://arxiv.org/abs/2603.07784) | Initial/current/goal progress potential for continual robot RL with OOD regularization | — | 2026-07-18 |
 | 2026-03 | [Rewarding DINO](https://arxiv.org/abs/2603.16978) | Language-conditioned dense visual reward distilled from analytical simulator rewards | — | 2026-07-18 |
+| 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Continuous within-subtask progress jointly decoded with actions to stabilize transitions in long-horizon manipulation | [C](https://github.com/PLAN-Lab/PALM) · [W](https://github.com/PLAN-Lab/PALM#-checkpoints); license ? | 2026-07-18 |
 | 2025-09 | [TimeRewarder](https://arxiv.org/abs/2509.26627) | Frame-wise temporal distance from passive human and robot video as dense reward | [C](https://github.com/CowAndSheep/TimeRewarder) | 2026-07-18 |
 | 2025-05 | [ReWiND](https://arxiv.org/abs/2505.10911) | Language-conditioned progress reward learned from human/robot video for reward relabeling and policy learning | [C](https://github.com/rewind-reward/ReWiND) | 2026-07-18 |
 | earlier | [PROGRESSOR](https://github.com/ripl/progressor) | Perceptually guided progress estimator with online refinement | C | 2026-07-18 |
@@ -81,7 +86,10 @@ Methods may span multiple families. The table placement is the primary narrative
 | 2026-06 | [SARM2](https://arxiv.org/abs/2606.10305) | Multi-task action-primitive stage estimator plus MoE value head for dense progress | [C](https://github.com/xdofai/opensarm) · [SPIRAL](https://github.com/Qianzhong-Chen/openspiral); weights — | 2026-07-18 |
 | 2026-06 | [WVM](https://arxiv.org/abs/2606.24742) | Temporally grounded value estimation with a human-labelled suboptimal/retry benchmark | [repo](https://github.com/255isWhite/WVM); release status ? | 2026-07-18 |
 | 2026-06 | [ReTVL](https://arxiv.org/abs/2606.24633) | Retry-supervised value learning around local degradation and recovery events | — | 2026-07-18 |
+| 2026-05 | [ProgVLA](https://arxiv.org/abs/2605.28231) | Policy-internal V/Q-style progress critics over normalized remaining horizon, used for advantage- and success-weighted imitation | code/checkpoints/data promised upon publication | 2026-07-18 |
 | 2026-04 | [ViVa](https://arxiv.org/abs/2604.08168) | Video-generative scalar value coupled to predicted future proprioception | [C](https://github.com/GigaAI-research/ViVa); license/weights ? | 2026-07-18 |
+| 2026-02 | [RISE](https://arxiv.org/abs/2602.11075) | Progress value evaluates action-conditioned imagined futures and supplies advantages for policy improvement | [C](https://github.com/OpenDriveLab/RISE) · [W: dynamics only](https://github.com/OpenDriveLab/RISE); code Apache-2.0, released data/checkpoints CC BY-NC-SA 4.0 | 2026-07-18 |
+| 2026-01 | [Cosmos Policy](https://arxiv.org/abs/2601.16163) | Joint action, future-state, and expected rewards-to-go prediction for direct control and best-of-N planning | [C, Apache-2.0](https://github.com/NVlabs/cosmos-policy) · [W/D](https://huggingface.co/collections/nvidia/cosmos-policy); item licenses require review | 2026-07-18 |
 | 2025-09 | [SARM](https://arxiv.org/abs/2509.25358) | Stage-aware video reward for long-horizon manipulation | [C](https://github.com/xdofai/opensarm) | 2026-07-18 |
 
 ## 5. Hybrid evaluators and verifiers
@@ -112,7 +120,33 @@ These works are not automatically reward models. They are catalogued as supervis
 | 2024-10 | [AHA](https://arxiv.org/abs/2410.00371) | Failure reasoning/detection with synthetic perturbations; taxonomy baseline | [C](https://github.com/NVlabs/AHA) | 2026-07-18 |
 | 2023-06 | [REFLECT](https://arxiv.org/abs/2306.15724) | Historical failure explanation and replanning context; not itself a reward model | — | 2026-07-18 |
 
-## 7. Adjacent system interfaces
+## 7. Policy- and world-model-coupled value prediction
+
+This is a **cross-cutting integration axis**, not a sixth reward-semantics family. It includes a system only when a task-conditioned value/progress/critic signal is explicitly predicted and consumed by the policy, planner, recovery mechanism, or policy-learning objective. A VLA or world model that predicts only actions or future observations is out of scope.
+
+| Date | Work | Coupling pattern | Predicted value and how it is used | Artifacts | Verified |
+|---|---|---|---|---|---|
+| 2026-07 | [ACE-Brain-0.5](https://arxiv.org/abs/2607.04426) | Shared embodied backbone | Execution progress; self-monitoring, verification, and recovery | [W](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) · [repo](https://github.com/DAXIAORobotics/ACE-Brain-0.5) | 2026-07-18 |
+| 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint world–action–value generator | Task completion/progress; misalignment detection and rollback | — | 2026-07-18 |
+| 2026-06 | [NavWAM](https://arxiv.org/abs/2606.13494) | Joint world–action–value generator | Goal-progress value; closed-loop navigation and optional best-of-N selection | [project](https://dachii-azm.github.io/navwam/) | 2026-07-18 |
+| 2026-06 | [Robot Self-Improvement via Human-Video Dynamics Models](https://arxiv.org/abs/2606.21406) | Compositional policy + dynamics + value | Progress-aligned value; ranks corrective actions after failures | [project; code coming soon](https://ethz-mrl.github.io/robot-self-improvement-website/) | 2026-07-18 |
+| 2026-05 | [ProgVLA](https://arxiv.org/abs/2605.28231) | Policy-internal auxiliary critics | Remaining-horizon V/Q and near-completion success; reweights imitation training | — | 2026-07-18 |
+| 2026-04 | [ViVa](https://arxiv.org/abs/2604.08168) | Value coupled to generative foresight | Scalar future-conditioned task value; robot RL | [C](https://github.com/GigaAI-research/ViVa) | 2026-07-18 |
+| 2026-02 | [RISE](https://arxiv.org/abs/2602.11075) | Compositional dynamics + progress value | Imagined-outcome value; advantage estimation for policy improvement | [C](https://github.com/OpenDriveLab/RISE) · [W: dynamics only](https://github.com/OpenDriveLab/RISE) | 2026-07-18 |
+| 2026-01 | [Cosmos Policy](https://arxiv.org/abs/2601.16163) | Joint world–action–value generator | Expected cumulative reward at predicted future state; planning and rollout refinement | [C](https://github.com/NVlabs/cosmos-policy) · [W/D](https://huggingface.co/collections/nvidia/cosmos-policy) | 2026-07-18 |
+| 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Joint action–progress decoder | Continuous within-subtask progress; transition timing and long-horizon control | [C/W](https://github.com/PLAN-Lab/PALM) | 2026-07-18 |
+| 2025-09 | [VLAC](https://arxiv.org/abs/2509.15937) | Unified action/critic token model | Transition advancement critic; action generation and real-world RL | [C](https://github.com/InternRobotics/VLAC) | 2026-07-18 |
+
+The coupling patterns are deliberately separate from output meaning:
+
+- `policy_internal`: auxiliary value/progress heads share the policy representation.
+- `joint_world_action_value`: one generative model predicts future state, action, and value.
+- `compositional_world_value`: dynamics and value remain distinct modules but jointly drive planning or policy improvement.
+- `shared_backbone_multi_interface`: one foundation backbone exposes separate action and monitoring interfaces.
+
+For benchmark design, record whether the value is externally queryable at inference, used only as an auxiliary training target, calibrated across tasks, and evaluable independently from policy success.
+
+## 8. Adjacent system interfaces
 
 These are useful boundary papers when the evaluator is consumed for policy selection, termination, recovery, or world-model policy evaluation. They should not displace the core reward-model taxonomy.
 
@@ -122,7 +156,7 @@ These are useful boundary papers when the evaluator is consumed for policy selec
 | 2025-05 | [WorldEval](https://arxiv.org/abs/2505.19017) | World-model policy ranking and safety checking; evaluator-system boundary |
 | 2026-06 | [Recover, Discover, Plan](https://arxiv.org/abs/2606.18328) | Failure-driven skill/concept learning and planning, without a separately benchmarked reward model |
 
-## 8. Community discovery resources
+## 9. Community discovery resources
 
 - [Awesome Progress Reward Model](https://github.com/VanceChu/Awesome-Progress-Reward-Model)
 - [Awesome Robot Failure Management](https://robot-failures.github.io/awesome-robot-failure-management/datasets.html)

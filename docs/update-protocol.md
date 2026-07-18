@@ -10,7 +10,8 @@ Record an explicit search date and query window. Use arXiv, OpenReview, official
 2. Full-paper or official-page screen for output semantics, supervision, inputs, and downstream role.
 3. Artifact audit for code, weights, data, benchmark, and licenses separately.
 4. Assign a primary semantics family and secondary tags with an evidence note.
-5. Log exclusions when a plausible candidate is outside scope.
+5. For policy/world-model-coupled systems, record the coupling pattern and whether the value is independently queryable at inference.
+6. Log exclusions when a plausible candidate is outside scope.
 
 ## Primary semantics
 
@@ -21,6 +22,19 @@ Record an explicit search date and query window. Use arXiv, OpenReview, official
 - `hybrid_verifier`: multiple reward heads or explicit process/outcome/verifier decomposition.
 - `data_resource`: failure/recovery supervision or benchmark without a central reward model.
 - `adjacent_interface`: system use of evaluator-like signals, retained as boundary context.
+
+## Model coupling (cross-cutting)
+
+Architecture does not replace reward semantics. Use `model_coupling` only when a task-conditioned value, progress, advantage, reward, or critic signal is explicitly predicted.
+
+- `standalone_evaluator`: evaluator is separable from the policy/world model.
+- `policy_internal`: auxiliary value/progress heads share the policy representation.
+- `joint_world_action_value`: one generative model predicts future state, action, and value.
+- `compositional_world_value`: separate dynamics and value modules jointly drive planning or policy improvement.
+- `shared_backbone_multi_interface`: one backbone exposes distinct action and execution-monitoring interfaces.
+- `value_world_model`: value is coupled to generative foresight but the model does not itself generate actions.
+
+Also record `value_availability` as `inference_queryable`, `training_only`, `internal_control_only`, or `unknown`. Do not include a VLA/world model merely because it predicts actions or future observations.
 
 ## Version policy
 
@@ -33,4 +47,6 @@ The README is a living overview. `registry/papers.yaml` is the authoritative met
 - Preprints are labelled as preprints.
 - Author-reported results remain author-reported until independently reproduced.
 - No model is normalized to a different output semantics merely to fit a common table.
+- Policy success does not substitute for direct value calibration, ranking, or error evaluation.
+- The record distinguishes inference-queryable value outputs from training-only auxiliary critics.
 - Unsupported benchmark capabilities remain `N/A`, not coerced scores.
