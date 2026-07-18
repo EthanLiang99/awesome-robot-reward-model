@@ -184,22 +184,34 @@ entries:
     kind: "reward_model"
     title: "Robo-Dopamine: General Process Reward Modeling for High-Precision Robotic Manipulation"
     released: "2025-12"
-    venue_or_preprint: "preprint"
+    venue_or_preprint: "CVPR 2026"
     primary_semantics: "relative_preference"
-    secondary_tags: ["signed_progress", "multi_view"]
-    training_data: ["robot_demonstrations", "forward_reverse_pairs"]
+    secondary_tags: ["signed_progress", "multi_view", "expert_trajectory_pairing", "synthetic_regress"]
+    training_data: ["agibot_world", "droid", "robobrain_x", "self_collected_real_robot", "libero", "robotwin", "robocasa", "egodex", "self_collected_human", "forward_reverse_pairs"]
+    corpus_scale: {constructed_samples: 35000000, video_hours_approx: 3400, trajectories_over: 100000, tasks_over: 350}
+    raw_source_sample_counts:
+      agibot_world: 3400000
+      droid: 8983000
+      robobrain_x: 3025000
+      self_collected_real_robot: 1107000
+      libero: 1330000
+      robotwin: 1678000
+      robocasa: 523000
+      egodex: 6610000
+      self_collected_human: 574000
+    supervision_provenance: ["expert_keyframes", "linear_within_step_progress", "temporal_order_reversal", "zero_hop_pairs"]
     inference_inputs: ["before_after", "multi_view", "instruction"]
     downstream_roles: ["dense_shaping", "process_evaluation"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2512.23703"}
       code: {status: "available", url: "https://github.com/FlagOpen/Robo-Dopamine"}
-      weights: {status: "unknown", url: null}
-      data: {status: "unknown", url: null}
-    license: {code: "unknown", weights: "unknown", data: "unknown"}
+      weights: {status: "available", url: "https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-8B"}
+      data: {status: "available_gated", url: "https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset"}
+    license: {code: "Apache-2.0", weights: "unverified", data: "Apache-2.0-card"}
     adapter_status: "planned"
     verification_date: "2026-07-18"
-    evidence_note: "Predicts local progress/regress magnitude from multi-view before/after observations."
-    sources: ["https://arxiv.org/abs/2512.23703", "https://github.com/FlagOpen/Robo-Dopamine"]
+    evidence_note: "The 35M-sample corpus is constructed from about 3,400 hours, over 100K trajectories, and more than 350 tasks. Regress labels are primarily reversed temporal pairs within expert trajectories, so they should not be counted as natural execution failures."
+    sources: ["https://arxiv.org/abs/2512.23703", "https://github.com/FlagOpen/Robo-Dopamine", "https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset", "https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-8B"]
 
   - id: "pacaud_2025_failcot_guardian"
     kind: "hybrid_model_and_data"
@@ -247,22 +259,45 @@ entries:
     kind: "reward_model"
     title: "Robometer: Scaling General-Purpose Robotic Reward Models via Trajectory Comparisons"
     released: "2026-03"
-    venue_or_preprint: "preprint"
+    venue_or_preprint: "RSS 2026"
     primary_semantics: "relative_preference"
-    secondary_tags: ["absolute_progress", "outcome", "trajectory_comparison"]
-    training_data: ["expert_robot_trajectories", "suboptimal_robot_trajectories", "trajectory_preferences"]
+    secondary_tags: ["absolute_progress", "outcome", "trajectory_comparison", "mixed_expertise", "failure_data"]
+    training_data: ["oxe_mix", "agibot_world", "galaxea_open_world", "roboreward", "molmoact", "humanoid_everyday", "libero", "metaworld", "motif", "rh20t", "ph2d", "h2r", "roboarena", "soar", "failsafe", "racer", "autoeval", "libero_noise_failures", "fino_net", "epic_kitchens"]
+    corpus_scale: {trajectories: 1059370, robot_embodiments: 21, processed_size_tb_approx: 5.87}
+    source_trajectory_counts:
+      oxe_mix: 449475
+      agibot_world_subset: 216911
+      galaxea_open_world: 108118
+      roboreward_oxe_mix: 45072
+      molmoact: 15546
+      humanoid_everyday: 9208
+      libero_expert: 1709
+      metaworld_rewind: 100
+      motif: 83
+      rh20t: 29969
+      ph2d: 3596
+      h2r: 2254
+      roboarena_pairwise: 12379
+      soar_success_failure: 16812
+      failsafe: 71614
+      racer: 29115
+      autoeval_failures: 8677
+      libero_noise_failures: 1473
+      fino_net_paired_failure: 229
+      epic_kitchens: 37030
+    supervision_provenance: ["expert_frame_progress", "expert_frame_success", "different_expertise_preferences", "different_task_preferences", "rewind_augmentation", "real_and_generated_failures"]
     inference_inputs: ["trajectory", "instruction"]
     downstream_roles: ["reward_estimation", "data_curation", "evaluation"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2603.02115"}
       code: {status: "available", url: "https://github.com/robometer/robometer"}
-      weights: {status: "unknown", url: null}
-      data: {status: "unknown", url: null}
-    license: {code: "unknown", weights: "unknown", data: "unknown"}
+      weights: {status: "available", url: "https://huggingface.co/robometer/Robometer-4B"}
+      data: {status: "partial_release", url: "https://huggingface.co/datasets/robometer/processed_datasets"}
+    license: {code: "MIT", weights: "Apache-2.0", data: "upstream_item_specific_unverified"}
     adapter_status: "planned"
     verification_date: "2026-07-18"
-    evidence_note: "Combines trajectory comparison with intra-trajectory progress and outcome-related supervision."
-    sources: ["https://arxiv.org/abs/2603.02115", "https://github.com/robometer/robometer"]
+    evidence_note: "RBM-1M contains 1,059,370 trajectories across 21 embodiments. Dense progress/success is anchored on expert data, while mixed-expertise and failed trajectories mainly supply trajectory preferences; the processed 5.87-TB HF repository exists, but the project page still labels the canonical RBM-1M release as coming soon."
+    sources: ["https://arxiv.org/abs/2603.02115", "https://robometer.github.io/", "https://github.com/robometer/robometer", "https://huggingface.co/robometer/Robometer-4B", "https://huggingface.co/datasets/robometer/processed_datasets"]
 
   - id: "tan_2026_progagent"
     kind: "reward_model"
@@ -1022,6 +1057,144 @@ entries:
     verification_date: "2026-07-18"
     evidence_note: "Low-cost real-robot failure/recovery benchmark candidate; data license not verified."
     sources: ["https://arxiv.org/abs/2606.08881"]
+
+  - id: "lim_2026_hrdexdb"
+    kind: "data_resource"
+    title: "HRDexDB: A Paired Human-Robot Dataset for Cross-Embodiment Dexterous Grasping"
+    released: "2026-04"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["paired_human_robot", "real_robot_failure", "dexterous_grasp", "tactile", "egocentric", "multi_view"]
+    training_data: ["paired_human_grasps", "robot_grasp_successes", "robot_grasp_failures", "tactile", "object_6d_pose"]
+    failure_provenance: ["real_robot_outcome"]
+    reward_supervision: ["binary_success", "contact_aware_value", "cross_embodiment_outcome_alignment"]
+    inference_inputs: ["egocentric_video", "multi_view_video", "robot_state", "object_pose", "tactile"]
+    downstream_roles: ["outcome_reward", "value_learning", "cross_embodiment_alignment", "grasp_benchmark"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2604.14944"}
+      code: {status: "available", url: "https://github.com/snuvclab/HRDexDB"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available", url: "https://huggingface.co/datasets/HRDexDB/HRDexDB"}
+    license: {code: "unverified", weights: "not_applicable", data: "CC-BY-NC-4.0"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "The paper reports 1.4K paired human/robot grasping trials across 100 objects and four embodiments, including actual robot success/failure annotations plus visual, kinematic, object-pose, and tactile signals. The live dataset card reports a newer/larger release, so adapters should pin a revision."
+    sources: ["https://arxiv.org/abs/2604.14944", "https://snuvclab.github.io/HRDexDB/", "https://github.com/snuvclab/HRDexDB", "https://huggingface.co/datasets/HRDexDB/HRDexDB"]
+
+  - id: "chavan_2025_indego"
+    kind: "data_resource"
+    title: "IndEgo: A Dataset of Industrial Scenarios and Collaborative Work for Egocentric Assistants"
+    released: "2025-11"
+    venue_or_preprint: "NeurIPS 2025 Datasets and Benchmarks"
+    primary_semantics: "data_resource"
+    secondary_tags: ["egocentric", "exocentric", "industrial", "mistake_detection", "keysteps", "multimodal"]
+    training_data: ["industrial_ego_video", "industrial_exo_video", "mistake_labels", "mistake_summaries", "keysteps", "gaze", "hand_pose"]
+    failure_provenance: ["human_procedural_deviation", "natural_and_scripted_unverified"]
+    reward_supervision: ["error_onset", "stage_conditioned_value", "correct_deviation_preference", "process_verification"]
+    inference_inputs: ["egocentric_video", "exocentric_video", "instruction", "keystep_context"]
+    downstream_roles: ["semantic_reward_auxiliary", "failure_detection", "process_verifier", "cross_view_pretraining"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2511.19684"}
+      code: {status: "available", url: "https://github.com/IndEgo-Dataset/IndEgo"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available_evolving", url: "https://huggingface.co/datasets/FraunhoferIPK/IndEgo"}
+    license: {code: "unverified", weights: "not_applicable", data: "CC-BY-4.0"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "IndEgo reports 3,460 ego videos (~197h) and 1,092 exo videos (~97h). The public Mistake Detection tree covers 25 tasks with recording, keystep, action, and hand-object annotations, but it is still actively receiving files and annotations."
+    sources: ["https://arxiv.org/abs/2511.19684", "https://indego-dataset.github.io/", "https://github.com/IndEgo-Dataset/IndEgo", "https://huggingface.co/datasets/FraunhoferIPK/IndEgo"]
+
+  - id: "lee_2024_egoper"
+    kind: "data_resource"
+    title: "EgoPER: Egocentric Procedural Error Dataset"
+    released: "2024-03"
+    venue_or_preprint: "CVPR 2024"
+    primary_semantics: "data_resource"
+    secondary_tags: ["egocentric", "frame_level_error", "procedural_error", "correction", "multimodal"]
+    training_data: ["normal_human_procedures", "erroneous_human_procedures", "framewise_steps", "error_types", "active_objects"]
+    failure_provenance: ["human_procedural_error", "normal_vs_erroneous_recordings"]
+    reward_supervision: ["frame_error_probability", "signed_slip_correction_reward", "recovery_reentry", "step_value"]
+    inference_inputs: ["egocentric_video", "instruction", "step_context", "active_object"]
+    downstream_roles: ["semantic_reward_auxiliary", "failure_detection", "recovery_supervision"]
+    artifacts:
+      paper: {status: "available", url: "https://openaccess.thecvf.com/content/CVPR2024/html/Lee_Error_Detection_in_Egocentric_Procedural_Task_Videos_CVPR_2024_paper.html"}
+      code: {status: "available", url: "https://github.com/robert80203/EgoPER_official"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available", url: "https://github.com/robert80203/EgoPER_official"}
+    license: {code: "not_found", weights: "not_applicable", data: "not_found"}
+    adapter_status: "high_priority_after_license"
+    verification_date: "2026-07-18"
+    evidence_note: "EgoPER contains 386 videos (28h), including 213 normal and 173 erroneous executions, with frame-wise step/error annotations. Slip and correction labels are especially useful for signed local reward, but no reusable dataset license was verified."
+    sources: ["https://openaccess.thecvf.com/content/CVPR2024/html/Lee_Error_Detection_in_Egocentric_Procedural_Task_Videos_CVPR_2024_paper.html", "https://khoury.northeastern.edu/home/eelhami/egoper.htm", "https://github.com/robert80203/EgoPER_official"]
+
+  - id: "peddi_2023_captaincook4d"
+    kind: "data_resource"
+    title: "CaptainCook4D: A Dataset for Understanding Errors in Procedural Activities"
+    released: "2023-12"
+    venue_or_preprint: "NeurIPS 2024 Datasets and Benchmarks"
+    primary_semantics: "data_resource"
+    secondary_tags: ["egocentric", "induced_error", "procedural_error", "step_annotation", "cooking"]
+    training_data: ["normal_human_procedures", "induced_error_procedures", "step_annotations", "fine_action_annotations", "error_types"]
+    failure_provenance: ["human_induced_error", "human_unintentional_error"]
+    reward_supervision: ["correct_error_preference", "step_value", "typed_error_verification"]
+    inference_inputs: ["egocentric_video", "recipe", "step_context"]
+    downstream_roles: ["semantic_reward_auxiliary", "counterfactual_preference", "error_recognition"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2312.14556"}
+      code: {status: "available", url: "https://github.com/CaptainCook4D/CaptainCook4D"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available", url: "https://captaincook4d.github.io/captain-cook/"}
+    license: {code: "unverified", weights: "not_applicable", data: "Apache-2.0"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "CaptainCook4D provides 384 recordings (94.5h) with normal and induced-error executions, 5.3K step annotations, and 10K fine-action annotations. Induced errors are controlled counterfactuals rather than natural robot-failure frequencies."
+    sources: ["https://arxiv.org/abs/2312.14556", "https://captaincook4d.github.io/captain-cook/", "https://github.com/CaptainCook4D/CaptainCook4D"]
+
+  - id: "wang_2023_holoassist"
+    kind: "data_resource"
+    title: "HoloAssist: An Egocentric Human Interaction Dataset for Interactive AI Assistants"
+    released: "2023-09"
+    venue_or_preprint: "ICCV 2023"
+    primary_semantics: "data_resource"
+    secondary_tags: ["egocentric", "mistake_detection", "intervention", "instructor_performer", "multimodal"]
+    training_data: ["performer_ego_video", "fine_action_correctness", "mistake_annotations", "intervention_type", "dialogue", "gaze", "hand_pose"]
+    failure_provenance: ["human_procedural_mistake", "instructor_intervention"]
+    reward_supervision: ["mistake_onset", "intervention_need", "pre_post_correction_value", "recovery_intent"]
+    inference_inputs: ["egocentric_video", "instruction", "dialogue_context"]
+    downstream_roles: ["semantic_reward_auxiliary", "failure_detection", "intervention_prediction", "recovery_supervision"]
+    artifacts:
+      paper: {status: "available", url: "https://openaccess.thecvf.com/content/ICCV2023/html/Wang_HoloAssist_an_Egocentric_Human_Interaction_Dataset_for_Interactive_AI_Assistants_ICCV_2023_paper.html"}
+      code: {status: "available", url: "https://github.com/Ember-HoloAssist/holoassist-release"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available", url: "https://holoassist.github.io/data_links/README.html"}
+    license: {code: "unverified", weights: "not_applicable", data: "CDLA-2.0"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-18"
+    evidence_note: "HoloAssist spans 166 hours and 350 instructor-performer pairs. Fine actions carry correct/mistake attributes and utterances carry intervention purpose, enabling supervision around when assistance or recovery becomes necessary."
+    sources: ["https://arxiv.org/abs/2309.17024", "https://holoassist.github.io/", "https://holoassist.github.io/data_links/README.html", "https://github.com/Ember-HoloAssist/holoassist-release"]
+
+  - id: "sener_2022_assembly101"
+    kind: "data_resource"
+    title: "Assembly101: A Large-Scale Multi-View Dataset for Understanding Procedural Activities"
+    released: "2022-03"
+    venue_or_preprint: "CVPR 2022"
+    primary_semantics: "data_resource"
+    secondary_tags: ["egocentric", "exocentric", "natural_mistake", "correction", "action_order", "multi_view"]
+    training_data: ["natural_human_procedures", "mistakes", "corrections", "coarse_actions", "fine_actions", "hand_pose"]
+    failure_provenance: ["natural_human_procedural_mistake", "propagated_mistake", "correction"]
+    reward_supervision: ["order_aware_value", "mistake_chain_penalty", "correction_reward", "cross_view_consistency"]
+    inference_inputs: ["egocentric_video", "exocentric_video", "assembly_step_context"]
+    downstream_roles: ["semantic_reward_auxiliary", "failure_detection", "recovery_supervision", "cross_view_pretraining"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2203.14712"}
+      code: {status: "available", url: "https://github.com/assembly-101/assembly101-mistake-detection"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available_gated", url: "https://huggingface.co/datasets/cvml-nus/assembly101"}
+    license: {code: "CC-BY-NC-4.0", weights: "not_applicable", data: "CC-BY-NC-4.0"}
+    adapter_status: "high_priority_noncommercial"
+    verification_date: "2026-07-18"
+    evidence_note: "Assembly101 has 4,321 videos captured with four ego and eight synchronized exo views, natural action-order variation, mistakes, and corrections, plus more than 100K coarse and 1M fine action segments."
+    sources: ["https://arxiv.org/abs/2203.14712", "https://assembly-101.github.io/", "https://github.com/assembly-101/assembly101-mistake-detection", "https://huggingface.co/datasets/cvml-nus/assembly101"]
 
   - id: "reflect_2023"
     kind: "adjacent_method"
