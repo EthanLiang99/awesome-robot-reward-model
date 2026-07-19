@@ -124,7 +124,7 @@ datasets:
         sensors: [AIDIN_AFT200_force_torque, three_microphones, robot_state]
     tasks:
       high_actions: [pick, insert, remove, place]
-      low_skills: [grasp, lift, approach, align, release, twist]
+      low_skill_examples: [grasp, lift, approach, align, release, twist]
     supervision: [high_action_success_boolean, low_skill_success_boolean, language, multimodal_time_series]
     failure:
       provenance: [real_executed]
