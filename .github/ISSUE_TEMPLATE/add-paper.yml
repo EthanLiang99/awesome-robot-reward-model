@@ -58,6 +58,22 @@ body:
         - training_only
         - internal_control_only
         - unknown
+  - type: dropdown
+    id: benchmark_type
+    attributes:
+      label: Benchmark type (if applicable)
+      description: Choose not_applicable unless the work contributes an evaluation dataset, suite, or policy-evaluation source.
+      options:
+        - not_applicable
+        - direct_reward
+        - diagnostic
+        - model_native
+        - downstream_source
+  - type: textarea
+    id: benchmark_protocol
+    attributes:
+      label: Benchmark protocol (if applicable)
+      description: Give the evaluation unit, scale, embodiments, labels, metrics, split/leakage policy, failure/recovery coverage, and main limitation.
   - type: textarea
     id: artifacts
     attributes:

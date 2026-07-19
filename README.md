@@ -7,6 +7,7 @@ This repository supports the research project *Robotic Reward Models: A Taxonomy
 - **Last literature check:** 2026-07-19
 - **Living registry:** [`registry/papers.yaml`](registry/papers.yaml)
 - **Robot/data registry:** [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml) · [human-readable matrix](docs/robot-data-matrix.md)
+- **Benchmark registry:** [`registry/benchmarks.yaml`](registry/benchmarks.yaml) · [landscape and RRM-Bench blueprint](docs/reward-model-benchmarks.md)
 - **Latest audit:** [`docs/updates/2026-07-19.md`](docs/updates/2026-07-19.md)
 
 ## Scope
@@ -39,10 +40,11 @@ Artifact availability and licensing are tracked separately. A GitHub repository 
 6. [Failure, retry, and recovery data](#6-failure-retry-and-recovery-data)
 7. [Training data and supervision resources](#7-training-data-and-supervision-resources)
 8. [Policy- and world-model-coupled value prediction](#8-policy--and-world-model-coupled-value-prediction)
-9. [Adjacent system interfaces](#9-adjacent-system-interfaces)
-10. [Community discovery resources](#10-community-discovery-resources)
+9. [Robot reward-model benchmarks](#9-robot-reward-model-benchmarks)
+10. [Adjacent system interfaces](#10-adjacent-system-interfaces)
+11. [Community discovery resources](#11-community-discovery-resources)
 
-Methods may span multiple families. Sections 1–5 use reward semantics as the primary narrative taxonomy. Section 7 is a cross-cutting data index, while Section 8 records where a value signal lives without treating architectural coupling as a new reward meaning. The registry preserves these dimensions through primary semantics, supervision provenance, and `model_coupling` metadata.
+Methods may span multiple families. Sections 1–5 use reward semantics as the primary narrative taxonomy. Section 7 is a cross-cutting data index, Section 8 records where a value signal lives without treating architectural coupling as a new reward meaning, and Section 9 evaluates the evaluator itself. The registries preserve these dimensions through primary semantics, supervision provenance, `model_coupling`, and benchmark-capability metadata.
 
 ## 1. Outcome and success reward
 
@@ -116,7 +118,7 @@ These works are not automatically reward models. They are catalogued as supervis
 |---|---|---|---|---|
 | 2026-06 | [Robot Self-Improvement via Human-Video Dynamics Models](https://arxiv.org/abs/2606.21406) | Human-video value/dynamics priors adapted with robot failures; corrective-action ranking around recoverable states | [project; code coming soon](https://ethz-mrl.github.io/robot-self-improvement-website/) | 2026-07-18 |
 | 2026-06 | [SO-101 failure/recovery benchmark](https://arxiv.org/abs/2606.08881) | Low-cost real-robot failure/recovery evaluation candidate; data license pending | — | 2026-07-18 |
-| 2026-03 | [Dream2Fix](https://arxiv.org/abs/2603.13528) | Counterfactual failure/correction rollouts with structured diagnosis and trajectory-level correction targets | [project; code coming soon](https://dream2fix.github.io/) | 2026-07-18 |
+| 2026-03 | [Dream2Fix](https://arxiv.org/abs/2603.13528) | Ctrl-World action perturbations turn successful real demonstrations into >120K paired failure videos with type/stage labels and deterministic trajectory corrections | [project; code coming soon](https://dream2fix.github.io/); dataset/weights not verified | 2026-07-19 |
 | 2025-12 | [FailCoT / Guardian](https://arxiv.org/abs/2512.01946) | Planning/execution failures, reasoning traces, and multi-view real-robot OOD evaluation | [C/W/D](https://github.com/paulpacaud/Guardian-FailCot) | 2026-07-18 |
 | 2025-12 | [ViFailback](https://arxiv.org/abs/2512.02787) | Real manipulation failures and correction supervision; onset/type/recovery-facing evaluation candidate | [C](https://github.com/x1nyuzhou/ViFailback); data license ? | 2026-07-18 |
 | 2025-10 | [FailSafe](https://arxiv.org/abs/2510.01642) | Failure/recovery action data and reasoning; release conditions pending | — | 2026-07-18 |
@@ -124,6 +126,19 @@ These works are not automatically reward models. They are catalogued as supervis
 | 2024-12 | [RoboMIND](https://arxiv.org/abs/2412.13877) | Multi-embodiment robot data with reported failure coverage | [project](https://x-humanoid-robomind.github.io/); split/license audit required | 2026-07-18 |
 | 2024-10 | [AHA](https://arxiv.org/abs/2410.00371) | Failure reasoning/detection with synthetic perturbations; taxonomy baseline | [C](https://github.com/NVlabs/AHA) | 2026-07-18 |
 | 2023-06 | [REFLECT](https://arxiv.org/abs/2306.15724) | Historical failure explanation and replanning context; not itself a reward model | — | 2026-07-18 |
+
+### Counterfactual and generative failure synthesis
+
+This is an emerging data axis rather than a new reward semantics. See the [failure-synthesis pipeline audit](docs/failure-synthesis-pipelines.md) for the full comparison and safeguards.
+
+| Synthesis level | Representative pipeline | Negative signal | Reward/recovery use | Reality caveat |
+|---|---|---|---|---|
+| Temporal/semantic pseudo-negative | Robo-Dopamine; RoboReward; Guardian BridgeDataV2-Fail | Reverse order, task mismatch, relabel, or image substitution | Progress contrast and verifier training | No failed physical dynamics are produced |
+| Simulator intervention | DenseReward; FAILSafe; RACER | Perturb grasp, motion, action, or state and execute in simulation | Dense reward, failure onset/type, simulated recovery | Physical rollout exists only in simulation |
+| World-model counterfactual video | Dream2Fix | Perturb real-demo actions around a keyframe and generate the resulting video | Outcome/type/stage plus deterministic executable correction | Real source context, but generated failure is not real execution |
+| Real failure | RoboArena; REASSEMBLE; ViFailback | Natural policy, operator, object, or environment deviation | Ground-truth outcome/preference/recovery anchor | Highest fidelity, highest collection cost/risk |
+
+The likely scalable recipe is a **hybrid**: use generative pipelines for coverage, simulator interventions for dense physical labels, and a smaller set of real failures for calibration and held-out evaluation. `world_model_synth` must remain distinct from `real_executed`.
 
 ## 7. Training data and supervision resources
 
@@ -207,7 +222,23 @@ The coupling patterns are deliberately separate from output meaning:
 
 For benchmark design, record whether the value is externally queryable at inference, used only as an auxiliary training target, calibrated across tasks, and evaluable independently from policy success.
 
-## 9. Adjacent system interfaces
+## 9. Robot reward-model benchmarks
+
+Benchmarking is a first-class category because a reward model can fit one output format while failing at a different requirement: calibration, fine progress, non-monotonic behavior, failure onset, or recovery. The [detailed benchmark landscape and proposed RRM-Bench blueprint](docs/reward-model-benchmarks.md) separates direct reward tests, diagnostic prerequisites, model-native suites, and downstream policy sources; [`registry/benchmarks.yaml`](registry/benchmarks.yaml) is the machine-readable inventory.
+
+| Released | Benchmark | Primary target | Scale and metric | Main missing axis |
+|---|---|---|---|---|
+| 2026-07 | [DenseReward evaluation suite](https://arxiv.org/html/2607.13033v1) | Dense failure-aware reward plus MPC/RL use | 26,579 episodes / 7.56M frames; reward MAE | Model-native rather than independent gold test |
+| 2026-06 | [Suboptimal-Value-Bench](https://zh1hao.wang/wvm/) | Hesitation and retry value | 800 trajectories, 15 tasks; Retry VOC / Hesitation RMSE | Data repository still empty on 2026-07-19; only two suboptimal modes |
+| 2026-06 | [RoboProcessBench](https://arxiv.org/html/2606.13040) | Process-aware VLM capability | ~58K QA, 260 tasks, 12 families; accuracy | Diagnostic QA, not direct reward calibration |
+| 2026-05 v2 | [RBM-EVAL-ID / OOD](https://arxiv.org/html/2603.02115v2) | Reward order and trajectory quality | ID 25,726; OOD 976; VOC / Kendall / preference accuracy | Limited typed onset, causal, and recovery annotations |
+| 2026-03 | [RoboPulse](https://huggingface.co/datasets/yuheng2000/RoboPulse) | Micro-scale relative progress | 1,800 pairs; Small/Medium/Large-hop accuracy | No natural failure onset or recovery re-entry |
+| 2026-03 | [FailCoT / UR5-Fail](https://arxiv.org/html/2512.01946v3) | Planning/execution failure verification | Real and generated held-out sets; classification accuracy | No dense value, PONR, or recovery metric |
+| 2026-01 | [RoboRewardBench](https://arxiv.org/abs/2601.00675) | Human-verified episode progress | 2,831 episodes, 14 embodiment types; 1–5 reward MAE | Episode-level, not dense temporal recovery evaluation |
+
+Our proposed benchmark has two tracks: an open reproducible adapter track and a private multi-institution real-robot gold test. It reports a **profile**, not one overall score, across outcome calibration, ordering, process consistency, onset, recoverability, re-entry, robustness, operational cost, and separately downstream policy usefulness. Hard shortcut tests include task mismatch, terminal-frame bias, time reversal, looping, camera removal, success-looking failures, and synthetic-generator artifacts.
+
+## 10. Adjacent system interfaces
 
 These are useful boundary papers when the evaluator is consumed for policy selection, termination, recovery, or world-model policy evaluation. They should not displace the core reward-model taxonomy.
 
@@ -217,7 +248,7 @@ These are useful boundary papers when the evaluator is consumed for policy selec
 | 2025-05 | [WorldEval](https://arxiv.org/abs/2505.19017) | World-model policy ranking and safety checking; evaluator-system boundary |
 | 2026-06 | [Recover, Discover, Plan](https://arxiv.org/abs/2606.18328) | Failure-driven skill/concept learning and planning, without a separately benchmarked reward model |
 
-## 10. Community discovery resources
+## 11. Community discovery resources
 
 - [Awesome Progress Reward Model](https://github.com/VanceChu/Awesome-Progress-Reward-Model)
 - [Awesome Robot Failure Management](https://robot-failures.github.io/awesome-robot-failure-management/datasets.html)
@@ -228,6 +259,7 @@ These lists are used for discovery. Claims in this repository must be rechecked 
 ## Contribution and update policy
 
 - Add papers through the [paper issue template](.github/ISSUE_TEMPLATE/add-paper.yml) or a pull request.
+- Add benchmark metadata to [`registry/benchmarks.yaml`](registry/benchmarks.yaml), including evaluation unit, provenance, split, metrics, release state, and limitations.
 - Supply an original-paper URL and a verification date.
 - Report paper, code, weights, data, benchmark, and license status separately.
 - Use a primary semantics category plus secondary tags; do not force false exclusivity.

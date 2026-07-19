@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-07-18"
+last_updated: "2026-07-19"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -242,18 +242,19 @@ entries:
     primary_semantics: "outcome"
     secondary_tags: ["absolute_progress", "counterfactual_negative", "near_miss"]
     training_data: ["robot_success", "counterfactual_failures", "partial_progress"]
+    corpus_scale: {train: 45072, validation: 6232, test: 2831, test_embodiment_types: 14}
     inference_inputs: ["episode_video", "instruction"]
     downstream_roles: ["evaluation", "rl"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2601.00675"}
       code: {status: "unknown", url: null}
       weights: {status: "available", url: "https://huggingface.co/teetone/RoboReward-4B"}
-      data: {status: "claimed", url: null}
-    license: {code: "unknown", weights: "unverified", data: "unverified"}
+      data: {status: "available", url: "https://huggingface.co/datasets/teetone/RoboReward"}
+    license: {code: "unknown", weights: "unverified", data: "CC-BY-4.0"}
     adapter_status: "high_priority"
-    verification_date: "2026-07-18"
-    evidence_note: "General-purpose VLM reward model with real-robot evaluation and failure-like negatives."
-    sources: ["https://arxiv.org/abs/2601.00675", "https://huggingface.co/teetone/RoboReward-4B"]
+    verification_date: "2026-07-19"
+    evidence_note: "RoboRewardBench contains 2,831 human-verified 1-5 reward examples across 14 embodiment types; the released 54.1k-row corpus includes train, validation, and test splits under CC BY 4.0."
+    sources: ["https://arxiv.org/abs/2601.00675", "https://huggingface.co/teetone/RoboReward-4B", "https://huggingface.co/datasets/teetone/RoboReward", "https://crfm.stanford.edu/helm/robo-reward-bench/latest/"]
 
   - id: "robometer_2026"
     kind: "reward_model"
@@ -299,6 +300,31 @@ entries:
     evidence_note: "RBM-1M contains 1,059,370 trajectories across 21 embodiments. Dense progress/success is anchored on expert data, while mixed-expertise and failed trajectories mainly supply trajectory preferences; the processed 5.87-TB HF repository exists, but the project page still labels the canonical RBM-1M release as coming soon."
     sources: ["https://arxiv.org/abs/2603.02115", "https://robometer.github.io/", "https://github.com/robometer/robometer", "https://huggingface.co/robometer/Robometer-4B", "https://huggingface.co/datasets/robometer/processed_datasets"]
 
+  - id: "ji_2026_prm_as_judge"
+    kind: "evaluator"
+    title: "PRM-as-a-Judge: A Dense Evaluation Paradigm for Fine-Grained Robotic Auditing"
+    released: "2026-03-23"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["benchmark", "process_audit", "micro_progress", "outcome_process_diagnosis"]
+    training_data: ["none_for_framework", "RoboPulse_for_evaluation"]
+    inference_inputs: ["trajectory_video", "task_instruction", "progress_reward_model"]
+    downstream_roles: ["policy_evaluation", "failure_diagnosis", "benchmark"]
+    benchmark:
+      name: "RoboPulse"
+      scale: {pairs: 1800, source_datasets: 7, embodiment_groups: 6}
+      metrics: ["pairwise_accuracy_small_medium_large_hops", "MC", "MP", "PPL", "CRA", "STR"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.21669"}
+      code: {status: "available", url: "https://github.com/Yuheng2000/PRM-as-a-Judge"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "available", url: "https://huggingface.co/datasets/yuheng2000/RoboPulse"}
+    license: {code: "Apache-2.0", weights: "not_applicable", data: "unverified"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-19"
+    evidence_note: "RoboPulse probes micro-scale progress ordering; OPD converts an absolute progress potential into outcome, process-efficiency, regression, and stagnation diagnostics. It is not a failure-onset or recovery-reentry benchmark."
+    sources: ["https://arxiv.org/html/2603.21669", "https://github.com/Yuheng2000/PRM-as-a-Judge", "https://huggingface.co/datasets/yuheng2000/RoboPulse", "https://prm-as-a-judge.github.io/"]
+
   - id: "tan_2026_progagent"
     kind: "reward_model"
     title: "ProgAgent: A Continual RL Agent with Progress-Aware Rewards"
@@ -328,18 +354,19 @@ entries:
     primary_semantics: "data_resource"
     secondary_tags: ["failure_synthesis", "recovery", "correction_trajectory"]
     training_data: ["successful_real_robot_demonstrations", "world_model_counterfactual_failures"]
+    corpus_scale: {paired_failure_correction_samples: ">120000", real_failure_test_trajectories: 100, real_failure_test_tasks: 10}
     inference_inputs: ["failure_video"]
     downstream_roles: ["failure_diagnosis", "recovery_action_generation"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2603.13528"}
       code: {status: "coming_soon", url: "https://dream2fix.github.io/"}
-      weights: {status: "coming_soon", url: null}
-      data: {status: "claimed", url: null}
+      weights: {status: "not_verified", url: null}
+      data: {status: "not_verified", url: null}
     license: {code: "unknown", weights: "unknown", data: "unknown"}
     adapter_status: "catalog_only"
-    verification_date: "2026-07-18"
-    evidence_note: "Paired synthesized failure/correction supervision; adjacent data resource rather than a core reward model."
-    sources: ["https://arxiv.org/abs/2603.13528", "https://dream2fix.github.io/"]
+    verification_date: "2026-07-19"
+    evidence_note: "Ctrl-World generates action-conditioned failure videos around gripper keyframes for four perturbation types; deterministic inverse perturbations provide corrections. The generated failures are not physical executions and reusable data/weights were not verified."
+    sources: ["https://arxiv.org/html/2603.13528v1", "https://dream2fix.github.io/"]
 
   - id: "liu_2026_primo_r1"
     kind: "reward_model"
@@ -403,27 +430,6 @@ entries:
     verification_date: "2026-07-18"
     evidence_note: "Explicitly combines process, completion, and temporal-contrast reward components."
     sources: ["https://arxiv.org/abs/2603.16065", "https://github.com/physical-superintelligence-lab/Large-Reward-Models"]
-
-  - id: "ji_2026_prm_as_judge"
-    kind: "evaluator"
-    title: "PRM-as-a-Judge: A Dense Evaluation Paradigm for Fine-Grained Robotic Auditing"
-    released: "2026-03-23"
-    venue_or_preprint: "preprint"
-    primary_semantics: "hybrid_verifier"
-    secondary_tags: ["process_reward_model", "auditing", "failure_diagnosis"]
-    training_data: ["robot_trajectory_video"]
-    inference_inputs: ["trajectory_video", "instruction"]
-    downstream_roles: ["policy_evaluation", "auditing", "failure_analysis"]
-    artifacts:
-      paper: {status: "available", url: "https://arxiv.org/abs/2603.21669"}
-      code: {status: "unknown", url: null}
-      weights: {status: "unknown", url: null}
-      data: {status: "claimed", url: null}
-    license: {code: "unknown", weights: "unknown", data: "unknown"}
-    adapter_status: "catalog_only"
-    verification_date: "2026-07-18"
-    evidence_note: "Uses PRM judges and an outcome-process-diagnosis metric system for dense robot-policy auditing."
-    sources: ["https://arxiv.org/abs/2603.21669", "https://prm-as-a-judge.github.io/"]
 
   - id: "schroeder_2026_sole_r1"
     kind: "reward_model"
@@ -630,14 +636,39 @@ entries:
     downstream_roles: ["value_estimation", "evaluation"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2606.24742"}
-      code: {status: "claimed", url: "https://github.com/255isWhite/WVM"}
+      code: {status: "placeholder", url: "https://github.com/255isWhite/WVM"}
       weights: {status: "unknown", url: null}
-      data: {status: "claimed", url: null}
-    license: {code: "unknown", weights: "unknown", data: "unknown"}
+      data: {status: "placeholder_empty", url: "https://huggingface.co/datasets/255isWhite/suboptimal-value-bench"}
+    license: {code: "Apache-2.0", weights: "unknown", data: "Apache-2.0-card"}
     adapter_status: "catalog_only"
-    verification_date: "2026-07-18"
-    evidence_note: "Temporally grounded value with suboptimal/retry benchmark; runnable status needs re-audit."
-    sources: ["https://arxiv.org/abs/2606.24742", "https://github.com/255isWhite/WVM"]
+    verification_date: "2026-07-19"
+    evidence_note: "Suboptimal-Value-Bench reports 800 human-verified trajectories across 15 real/sim tasks with hesitation and retry labels; the code repo still says coming soon and the linked HF dataset is empty."
+    sources: ["https://arxiv.org/abs/2606.24742", "https://zh1hao.wang/wvm/", "https://github.com/255isWhite/WVM", "https://huggingface.co/datasets/255isWhite/suboptimal-value-bench"]
+
+  - id: "xia_2026_roboprocessbench"
+    kind: "data_resource"
+    title: "RoboProcessBench: Benchmarking Process-Aware Understanding in Vision-Language Robotic Manipulation"
+    released: "2026-06-11"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["benchmark", "process_understanding", "static_monitoring", "dynamic_reasoning"]
+    training_data: ["GM-100", "RH20T", "REASSEMBLE", "AIST-Bimanual"]
+    inference_inputs: ["single_frame", "ordered_clip", "shuffled_frames", "frame_pair", "task_context"]
+    downstream_roles: ["benchmark", "process_evaluator_post_training"]
+    benchmark:
+      scale: {qa_items: 57892, sft_items: 48841, eval_items: 9051, manipulation_tasks: 260, question_families: 12}
+      metric: "task_level_accuracy"
+      split: "strict_episode_and_recording_isolation"
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.13040"}
+      code: {status: "available", url: "https://github.com/ProcessBench-2026/RoboProcessBench"}
+      weights: {status: "not_found", url: null}
+      data: {status: "available", url: "https://huggingface.co/datasets/ProcessBench-2026/RoboProcessBench"}
+    license: {code: "MIT", weights: "unknown", data: "unverified"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-19"
+    evidence_note: "Twelve process QA families test phase, contact, motion, coordination, local progress, temporal ordering, outcome, and primitive transitions. This is a reward-model capability diagnostic, not direct scalar reward calibration."
+    sources: ["https://arxiv.org/html/2606.13040", "https://processbench-2026.github.io/RoboProcessBench-Web/", "https://github.com/ProcessBench-2026/RoboProcessBench", "https://huggingface.co/datasets/ProcessBench-2026/RoboProcessBench"]
 
   - id: "yu_2026_warp_rm"
     kind: "reward_model"
@@ -689,6 +720,7 @@ entries:
     primary_semantics: "hybrid_verifier"
     secondary_tags: ["absolute_progress", "failure_synthesis", "recovery"]
     training_data: ["simulation_success", "simulation_failure", "recovery", "phase_aware_labels"]
+    corpus_scale: {episodes: 26579, frame_samples: 7560942, objects: ">60"}
     inference_inputs: ["current_frame", "history_frames", "instruction"]
     downstream_roles: ["dense_shaping", "mpc", "online_rl"]
     artifacts:
@@ -698,9 +730,9 @@ entries:
       data: {status: "claimed", url: null}
     license: {code: "unknown", weights: "unknown", data: "unknown"}
     adapter_status: "blocked"
-    verification_date: "2026-07-18"
-    evidence_note: "Official project page describes a 27k-episode failure-synthesis dataset, but usable artifact links were not verified."
-    sources: ["https://arxiv.org/abs/2607.13033", "https://dense-reward.github.io/"]
+    verification_date: "2026-07-19"
+    evidence_note: "The paper evaluates dense reward MAE on DROID, Isaac Sim, RoboSuite, and LIBERO and reports MPC/RL use; dataset, model, and suite releases are claimed, but usable artifact links were not verified."
+    sources: ["https://arxiv.org/html/2607.13033v1", "https://dense-reward.github.io/"]
 
   - id: "wu_2026_roboalign_r1"
     kind: "world_model_reward_alignment"

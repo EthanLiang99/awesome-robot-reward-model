@@ -8,12 +8,67 @@ provenance_labels:
   real_executed: real robot behavior with an observed outcome
   sim_executed: simulator behavior, including deliberately injected errors
   counterfactual: negative made by changing text, order, or image pairing
+  world_model_synth: action-conditioned counterfactual video generated from a reference trajectory
   weak_auto: automatic classifier or VLM label that may be noisy
   expert_only: mainly successful demonstrations without direct failure labels
   arena_scored: real evaluation rollout judged by a human-defined stage, preference, or progress protocol
   evaluation_only: scores exist, but reusable typed failure labels are not released
 
 datasets:
+  - id: dream2fix-counterfactual-failures
+    title: Dream2Fix Counterfactual Failure-Correction Data
+    environment: world_model_generated_from_real_success
+    scale:
+      value: ">120000"
+      unit: paired_failure_correction_sample
+    generator:
+      model: Ctrl-World
+      conditioning: recorded_robot_actions
+      intervention_window: local_window_around_gripper_keyframe
+    robots:
+      - role: real_world_evaluation
+        arm: Franka Research 3
+        gripper: Franka Hand
+        cameras: [fixed_Intel_RealSense_D435i_RGBD]
+      - role: synthesis_source
+        arm: not_explicitly_reported_in_current_paper
+        gripper: not_explicitly_reported_in_current_paper
+    failure:
+      provenance: [world_model_synth, counterfactual]
+      types: [delay_close, weak_close, force_open, translation]
+      physically_executed: false
+      source_context_real: true
+    supervision:
+      - success_failure_result
+      - failure_type
+      - failure_stage
+      - structured_trajectory_correction
+      - optional_natural_language_summary
+    correction:
+      generation: deterministic_inverse_of_injected_perturbation
+      gripper_fields: [command, temporal_anchor]
+      translation_fields: [axis_direction, discrete_step_count]
+    verification:
+      - intended_failure_validity
+      - visual_and_temporal_coherence
+      - inverse_dynamics_consistency
+      - point_tracking_consistency
+      - joint_limit_velocity_acceleration_safety
+    learned_model: Qwen3-VL-8B-Instruct
+    real_failure_test:
+      trajectories: 100
+      tasks: 10
+      robot: Franka Research 3
+    release:
+      paper: public
+      project_page: public
+      code: coming_soon_as_of_2026-07-19
+      dataset: not_verified
+      weights: not_verified
+      license: not_verified
+    source: https://arxiv.org/html/2603.13528v1
+    project: https://dream2fix.github.io/
+
   - id: rbm-1m
     title: RBM-1M
     reward_model: Robometer

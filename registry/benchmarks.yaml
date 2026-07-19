@@ -1,0 +1,236 @@
+schema_version: "0.1"
+registry_name: "Robot Reward-Model Benchmarks"
+last_updated: "2026-07-19"
+scope_note: >-
+  Direct reward/value benchmarks, diagnostic capability benchmarks, and
+  downstream policy-evaluation sources are tagged separately. Model-native
+  evaluation sets are not treated as independent gold benchmarks.
+
+benchmark_types:
+  direct_reward: directly scores reward, value, progress, ranking, or calibration
+  diagnostic: tests a prerequisite such as process understanding or failure verification
+  model_native: evaluates a reward model on labels and splits created by the same work
+  downstream_source: policy/challenge rollouts that can support external reward-model validation
+
+capability_tags:
+  - outcome
+  - calibration
+  - progress_ordering
+  - trajectory_ranking
+  - micro_progress
+  - suboptimal_process
+  - failure_detection
+  - failure_type
+  - failure_onset
+  - recoverability
+  - recovery_reentry
+  - robustness
+  - process_reasoning
+  - policy_usefulness
+
+benchmarks:
+  - id: roborewardbench
+    title: RoboRewardBench
+    released: "2026-01-02"
+    benchmark_type: direct_reward
+    reality: real_robot_with_counterfactual_and_temporal_negatives
+    evaluation_unit: full_episode_reward_example
+    scale: {test_episodes: 2831, embodiment_types: 14}
+    labels: {reward: "ordinal_1_to_5", verification: human_verified_test}
+    capabilities: [outcome, progress_ordering]
+    metrics: [mean_absolute_error]
+    artifacts:
+      paper: https://arxiv.org/abs/2601.00675
+      data: https://huggingface.co/datasets/teetone/RoboReward
+      leaderboard: https://crfm.stanford.edu/helm/robo-reward-bench/latest/
+      data_license: CC-BY-4.0
+    limitations:
+      - episode_level_not_dense_temporal_evaluation
+      - no_failure_onset_or_recovery_reentry_labels
+      - counterfactual_and_temporal_negatives_are_not_all_real_executed_failures
+    verification_date: "2026-07-19"
+
+  - id: rbm-eval
+    title: RBM-EVAL-ID and RBM-EVAL-OOD
+    released: "2026-05-13"
+    benchmark_type: direct_reward
+    reality: mixed_real_and_sim
+    evaluation_unit: trajectory_and_frame_reward
+    scale:
+      id: {trajectories: 25726, embodiments: 5}
+      ood: {trajectories: 976, embodiment_groups: 6, scenes: 6, institutions: 3}
+    embodiments_ood: [Franka_Panda, bimanual_Koch_v1_1, Trossen, xArm, SO-101, human_hands]
+    labels: [normalized_timestep_progress, trajectory_quality, task_instruction]
+    capabilities: [progress_ordering, trajectory_ranking, outcome]
+    metrics: [VOC_Pearson, Kendall_tau, preference_accuracy, success_failure_final_reward_gap]
+    artifacts:
+      paper: https://arxiv.org/html/2603.02115v2
+      code: https://github.com/robometer/robometer
+      processed_data: https://huggingface.co/datasets/robometer/processed_datasets
+    limitations:
+      - normalized_timestep_is_not_always_semantic_progress
+      - failure_type_onset_and_recovery_labels_are_not_the_primary_protocol
+      - id_and_ood_are_paper_associated_not_an_independent_hidden_test_server
+    verification_date: "2026-07-19"
+
+  - id: robopulse
+    title: RoboPulse
+    released: "2026-03-30"
+    benchmark_type: direct_reward
+    reality: mixed_real_sim_umi_human
+    evaluation_unit: anchored_before_after_pair
+    scale: {pairs: 1800, source_datasets: 7, embodiment_groups: 6}
+    embodiments:
+      Franka_Emika_Panda: 600
+      AGIBot_A2D: 200
+      Agilex_Piper: 400
+      Galaxea_R1Lite: 200
+      Pika: 200
+      human_EgoDex: 200
+    labels: [relative_progress_direction, hop_scale]
+    hop_scales: [small, medium, large]
+    capabilities: [micro_progress, progress_ordering]
+    metrics: [pairwise_accuracy_by_hop_scale_and_collection_setting]
+    artifacts:
+      paper: https://arxiv.org/html/2603.21669
+      code: https://github.com/Yuheng2000/PRM-as-a-Judge
+      data: https://huggingface.co/datasets/yuheng2000/RoboPulse
+      code_license: Apache-2.0
+    limitations:
+      - constructed_from_retained_monotonic_phases
+      - does_not_test_natural_failure_onset_recoverability_or_reentry
+      - dataset_card_metadata_warning_and_viewer_instability_observed
+    verification_date: "2026-07-19"
+
+  - id: suboptimal-value-bench
+    title: Suboptimal-Value-Bench
+    released: "2026-06-23"
+    benchmark_type: direct_reward
+    reality: real_and_sim
+    evaluation_unit: frame_annotated_suboptimal_trajectory
+    scale: {trajectories: 800, tasks: 15}
+    embodiments: [AgileX, ARX, RoboSuite_simulation]
+    labels: [human_verified_frame_value, hesitation_segment, retry_segment]
+    capabilities: [suboptimal_process, progress_ordering]
+    metrics: [Retry_VOC, Hesitation_RMSE]
+    artifacts:
+      paper: https://arxiv.org/abs/2606.24742
+      project: https://zh1hao.wang/wvm/
+      code_placeholder: https://github.com/255isWhite/WVM
+      data_placeholder: https://huggingface.co/datasets/255isWhite/suboptimal-value-bench
+    release_status: data_repository_empty_and_code_coming_soon_as_of_2026-07-19
+    limitations:
+      - focuses_on_hesitation_and_retry_not_full_failure_taxonomy
+      - reusable_data_not_available_at_verification_time
+    verification_date: "2026-07-19"
+
+  - id: densereward-eval
+    title: DenseReward evaluation suite
+    released: "2026-07-14"
+    benchmark_type: model_native
+    reality: mixed_real_and_sim_with_simulated_failure_synthesis
+    evaluation_unit: frame_reward_and_downstream_episode
+    scale: {episodes: 26579, frame_samples: 7560942, objects: ">60"}
+    sources: [DROID, Isaac_Sim, RoboSuite, LIBERO]
+    trajectory_modes: [success, collision, miss, fall, smooth, recover]
+    capabilities: [progress_ordering, failure_type, suboptimal_process, policy_usefulness]
+    metrics: [dense_reward_MAE, MPC_minimum_distance, downstream_RL_success]
+    artifacts:
+      paper: https://arxiv.org/html/2607.13033v1
+      project: https://dense-reward.github.io/
+      dataset: claimed_not_verified
+      weights: claimed_not_verified
+      code: claimed_not_verified
+    limitations:
+      - model_native_labels_and_splits
+      - synthetic_reward_curves_inherit_generation_rules
+      - external_real_failure_gold_test_not_reported_as_a_standalone_release
+    verification_date: "2026-07-19"
+
+  - id: roboprocessbench
+    title: RoboProcessBench / ProcessData
+    released: "2026-06-11"
+    benchmark_type: diagnostic
+    reality: physically_grounded_mixed_sources
+    evaluation_unit: multiple_choice_process_QA
+    scale: {qa_items: 57892, sft_items: 48841, eval_items: 9051, tasks: 260, diagnostic_families: 12, choices: "2_to_6"}
+    sources: [GM-100, RH20T, REASSEMBLE, AIST-Bimanual]
+    families:
+      static: [phase, contact, bimanual_coordination, current_primitive]
+      dynamic: [motion_direction, primitive_local_progress, motion_state, outcome, temporal_order, temporal_priority, next_primitive, primitive_chain]
+    capabilities: [process_reasoning, progress_ordering, outcome]
+    metrics: [task_level_accuracy, source_level_accuracy, overall_accuracy, invalid_output_rate]
+    split_policy: "85_15_target_with_strict_episode_recording_or_scene_isolation"
+    artifacts:
+      paper: https://arxiv.org/html/2606.13040
+      code: https://github.com/ProcessBench-2026/RoboProcessBench
+      data: https://huggingface.co/datasets/ProcessBench-2026/RoboProcessBench
+      code_license: MIT
+    limitations:
+      - capability_diagnostic_not_direct_scalar_reward_benchmark
+      - valid_only_accuracy_excludes_invalid_and_missing_frame_cases_by_default
+    verification_date: "2026-07-19"
+
+  - id: failcot-real-failure-eval
+    title: FailCoT and real-world Guardian evaluation benchmarks
+    released: "2026-03-30"
+    benchmark_type: diagnostic
+    reality: mixed_sim_counterfactual_and_real_execution
+    evaluation_unit: planning_or_execution_verification_case
+    scale:
+      rlbench_fail_test: {execution: 1000, planning: 500}
+      bridgedatav2_fail_test: {execution: 1000, planning: 500}
+      ur5_fail_test: {execution: 140, planning: 140}
+      robofail_test: {execution: 153, planning: 30}
+      robovqa_test: {execution: 357}
+    labels: [binary_success_failure, planning_failure, execution_failure, reasoning_trace]
+    capabilities: [failure_detection, failure_type, process_reasoning]
+    metrics: [average_classification_accuracy]
+    artifacts:
+      paper: https://arxiv.org/html/2512.01946v3
+      code: https://github.com/paulpacaud/Guardian-FailCot
+      data: https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian
+    limitations:
+      - no_calibrated_dense_value_or_recovery_reentry_metric
+      - bridge_execution_negatives_are_counterfactual_not_real_executed
+      - ur5_planning_failures_are_generated_while_execution_failures_are_real
+    verification_date: "2026-07-19"
+
+  - id: robochallenge-table30
+    title: RoboChallenge Table30 / Table30 V2
+    released: "2026"
+    benchmark_type: downstream_source
+    reality: real_robot
+    evaluation_unit: scored_policy_rollout
+    scale: {tasks: 30, robot_types: 4}
+    embodiments: [ARX5, UR5, ALOHA, DOS-W1]
+    labels: [stage_points, critical_stage, retry_penalty, progress_score, success]
+    capabilities: [outcome, progress_ordering, policy_usefulness]
+    metrics: [task_score, progress, success, OPD_optional]
+    artifacts:
+      platform: https://robochallenge.ai/
+      demonstrations: https://huggingface.co/datasets/RoboChallenge/Table30v2
+      opd_leaderboard: https://prm-as-a-judge.github.io/leaderboard.html
+    limitations:
+      - stage_rubric_is_not_automatically_a_frame_level_annotation
+      - evaluated_run_reuse_terms_and_bulk_access_need_audit
+    verification_date: "2026-07-19"
+
+  - id: roboarena
+    title: RoboArena distributed policy evaluation
+    released: "2025-06"
+    benchmark_type: downstream_source
+    reality: real_robot
+    evaluation_unit: human_judged_policy_episode_or_pair
+    scale: {audited_snapshot_sessions: 3284, audited_snapshot_policy_episodes: 9589}
+    embodiment: Franka_Panda_with_Robotiq_2F85
+    labels: [pairwise_preference_with_ties, maximum_progress_0_to_100, binary_success, partial_success, free_text_rationale]
+    capabilities: [outcome, trajectory_ranking, progress_ordering, policy_usefulness]
+    metrics: [pairwise_win_rate, progress, success]
+    artifacts:
+      paper: https://arxiv.org/abs/2506.18123
+      snapshot: https://huggingface.co/datasets/RoboArena/DataDump_02-03-2026/tree/main
+    limitations:
+      - one_principal_embodiment_in_audited_snapshot
+      - no_fixed_failure_cause_onset_or_recovery_taxonomy
+    verification_date: "2026-07-19"

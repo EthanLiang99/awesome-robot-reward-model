@@ -12,6 +12,7 @@ This page answers a deceptively important question: when a paper says it trained
 | `real_executed` | A real robot executed the behavior and a failure, partial success, or low-quality outcome was observed. |
 | `sim_executed` | A simulator executed the behavior; errors may be policy-generated or deliberately injected. |
 | `counterfactual` | Images may be real, but the negative example was made by changing text, order, or image pairing rather than executing that failure. |
+| `world_model_synth` | Actions from a real or simulated reference are perturbed and a generative world model synthesizes the counterfactual video rollout. |
 | `weak_auto` | Outcome labels were supplied or filtered by a classifier/VLM and may be noisy. |
 | `expert_only` | Demonstrations are mainly successful; useful for progress/goal modeling but not a direct failure corpus. |
 | `arena_scored` | A real evaluation rollout is judged under a human-defined rubric, preference protocol, or partial-progress scale. |
@@ -97,12 +98,13 @@ Keep a mandatory `failure_provenance` field and sample the strata separately:
 
 1. **Real executed outcome/value:** RoboArena, scored RoboChallenge evaluation rollouts, REASSEMBLE, RH20T, SOAR, AutoEval, Fino-Net, and UR5-Fail execution.
 2. **Simulated executed/injected:** FAILSafe, RACER, LIBERO failures, and RLBench-Fail execution.
-3. **Counterfactual verifier data:** BridgeDataV2-Fail, Guardian planning failures, RoboReward pseudo-failures, and task-mismatch pairs.
-4. **Expert temporal/process data:** Robo-Dopamine, RoboChallenge Table30 V2 demonstrations, and the expert portions of RBM-1M.
-5. **Arena/challenge judgements:** Table30 stage rubrics/scores and RoboArena preferences/progress; retain evaluator, task rubric version, robot instance, policy, and run ID.
-6. **Weak labels:** retain the upstream confidence/filtering decision; do not turn a VLM label into ground truth.
+3. **World-model synthesized failures:** Dream2Fix-style action-conditioned counterfactual videos; retain generator, intervention parameters, keyframe, seed, verifier scores, and source episode.
+4. **Semantic/temporal counterfactual data:** BridgeDataV2-Fail, Guardian planning failures, RoboReward pseudo-failures, Robo-Dopamine regress pairs, and task-mismatch pairs.
+5. **Expert temporal/process data:** Robo-Dopamine, RoboChallenge Table30 V2 demonstrations, and the expert portions of RBM-1M.
+6. **Arena/challenge judgements:** Table30 stage rubrics/scores and RoboArena preferences/progress; retain evaluator, task rubric version, robot instance, policy, and run ID.
+7. **Weak labels:** retain the upstream confidence/filtering decision; do not turn a VLM label into ground truth.
 
-For a general reward model, train outcome and pairwise preference heads on strata 1–2 and 5, typed diagnosis on 1–3, and calibrated progress on strata 4–5. Report results by provenance rather than only as one pooled accuracy.
+For a general reward model, train outcome and pairwise preference heads on strata 1–3 and 6, typed diagnosis on 1–4, and calibrated progress on strata 5–6. Evaluate every synthetic-data model on held-out real failures and report results by provenance rather than only as one pooled accuracy.
 
 ## Leakage and count controls
 
@@ -123,3 +125,4 @@ For a general reward model, train outcome and pairwise preference heads on strat
 - [RoboArena paper](https://arxiv.org/abs/2506.18123) and [2026-02-03 snapshot](https://huggingface.co/datasets/RoboArena/DataDump_02-03-2026/tree/main)
 - [RH20T project and data](https://rh20t.github.io/)
 - [SOAR paper](https://arxiv.org/abs/2407.20635), [FAILSafe paper](https://arxiv.org/abs/2510.01642), [RACER data](https://huggingface.co/datasets/sled-umich/RACER-augmented_rlbench), [AutoEval paper](https://arxiv.org/abs/2503.24278), and [Fino-Net paper](https://arxiv.org/abs/2011.05817)
+- [Dream2Fix paper](https://arxiv.org/html/2603.13528v1), [project page](https://dream2fix.github.io/), and [failure-synthesis pipeline audit](failure-synthesis-pipelines.md)
