@@ -10,6 +10,7 @@ provenance_labels:
   counterfactual: negative made by changing text, order, or image pairing
   weak_auto: automatic classifier or VLM label that may be noisy
   expert_only: mainly successful demonstrations without direct failure labels
+  arena_scored: real evaluation rollout judged by a human-defined stage, preference, or progress protocol
   evaluation_only: scores exist, but reusable typed failure labels are not released
 
 datasets:
@@ -99,13 +100,51 @@ datasets:
       - {arm: UR5, arms: 1, gripper: not_reported, cameras: [wrist, global]}
       - {arm: ALOHA, arms: 2, gripper: not_reported, cameras: [left_wrist, right_wrist, global]}
       - {arm: DOS-W1, arms: 2, gripper: not_reported, cameras: [left_wrist, right_wrist, global]}
-    supervision: [demonstration, joint_state, end_effector_pose, gripper_width, timestamp]
+    supervision:
+      training_release:
+        - expert_demonstration
+        - human_authored_task_prompt
+        - human_authored_task_description
+        - human_authored_stage_scoring_rubric
+        - task_tags
+        - joint_state
+        - end_effector_pose
+        - gripper_width
+        - timestamp
+      challenge_evaluation:
+        - per_stage_progress_points
+        - critical_stage_success
+        - retry_penalty
+        - rollout_progress_score
+        - task_success_rate
+        - video_and_robot_log
+    evaluation_protocol:
+      points_per_rollout: 10
+      rollouts_per_task_initial_table30: 10
+      points_per_task_initial_table30: 100
+      success_rule: all_critical_stages_complete
+      partial_credit: true
+      retry_penalty: true
+      retry_termination_condition: successive_failed_retries_exceeds_4
+      rubric_authoring: human
+      rollout_grader: official_evaluation_pipeline_exact_human_automation_split_not_reported
+      v2_timeout_behavior: score_current_progress
     failure:
-      provenance: [expert_only, evaluation_only]
-      taxonomy: not_reported_in_released_training_card
-      caveat: challenge score is not a downloadable typed-failure label
+      provenance: [expert_only, real_executed, arena_scored]
+      taxonomy: no_fixed_failure_cause_vocabulary
+      caveat: >-
+        Evaluation rollouts have genuine partial-progress and failure scores, while
+        the released demonstration documentation does not establish frame-level
+        stage-boundary annotations. Keep task rubric, rollout score, and frame label separate.
+    evaluated_run_access:
+      public_numbers: true
+      public_videos: true
+      public_robot_logs: true
+      bulk_reuse_terms: audit_required
     source: https://huggingface.co/datasets/RoboChallenge/Table30v2
     project: https://robochallenge.ai/
+    paper: https://arxiv.org/abs/2510.17950
+    v2_report: https://robochallenge.ai/robochallenge_techreport_V2.pdf
 
   - id: reassemble
     title: REASSEMBLE
@@ -205,7 +244,7 @@ datasets:
       - {arm: Franka Panda, gripper: Robotiq_2F-85, cameras: [ZED_Mini_wrist, ZED2_external]}
     supervision: [pairwise_preference, tie, free_form_rationale, max_progress_0_100, binary_success, partial_success]
     failure:
-      provenance: [real_executed]
+      provenance: [real_executed, arena_scored]
       observed_examples: [no_progress, oscillation_or_hovering, random_gripper, target_not_found, partial_completion, drop_or_spill]
       taxonomy: free_text_not_fixed
     license: MIT
