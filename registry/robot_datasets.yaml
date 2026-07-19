@@ -1,0 +1,321 @@
+schema_version: "0.1"
+verified_at: "2026-07-19"
+count_policy: >-
+  Keep physical episodes, camera/view annotations, temporal pairs, and VQA items
+  separate. Counts below use the unit reported by each primary source.
+
+provenance_labels:
+  real_executed: real robot behavior with an observed outcome
+  sim_executed: simulator behavior, including deliberately injected errors
+  counterfactual: negative made by changing text, order, or image pairing
+  weak_auto: automatic classifier or VLM label that may be noisy
+  expert_only: mainly successful demonstrations without direct failure labels
+  evaluation_only: scores exist, but reusable typed failure labels are not released
+
+datasets:
+  - id: rbm-1m
+    title: RBM-1M
+    reward_model: Robometer
+    environment: mixed_real_and_sim
+    scale:
+      value: 1059370
+      unit: video_language_annotation
+      embodiments: 21
+    robots:
+      - {arm: AgiBot G1, gripper: not_reported, source: AgiBotWorld-Alpha}
+      - {arm: Galaxea R1 Lite, gripper: not_reported, source: Galaxea Open World}
+      - {arm: Franka Panda, gripper: mixed_or_not_reported, source: "DROID/OXE, MolmoACT, RoboArena, LIBERO, FAILSafe, RACER"}
+      - {arm: Unitree G1 and H1, gripper: dexterous_hands, source: Humanoid Everyday}
+      - {arm: Sawyer, gripper: not_reported, source: MetaWorld/ReWiND}
+      - {arm: Stretch, gripper: not_reported, source: MotIF}
+      - {arm: "Flexiv, UR5, Franka Panda, KUKA LBR iiwa", gripper: mixed, source: RH20T}
+      - {arm: H1, gripper: not_reported, source: PH2D}
+      - {arm: xArm, gripper: not_reported, source: H2R}
+      - {arm: WidowX 250, gripper: not_reported, source: "SOAR, AutoEval"}
+      - {arm: Baxter, gripper: Baxter_parallel_grippers, source: Fino-Net}
+    supervision:
+      - frame_progress
+      - success
+      - pairwise_trajectory_preference
+    failure:
+      provenance: [real_executed, sim_executed, counterfactual, weak_auto]
+      caveat: umbrella corpus; preserve source-specific provenance
+    known_parent_overlap_with_robo_dopamine: [AgiBotWorld-Alpha, DROID, LIBERO]
+    source: https://arxiv.org/html/2603.02115v2
+
+  - id: robo-dopamine-grm-data
+    title: Robo-Dopamine GRM Dataset
+    reward_model: Robo-Dopamine
+    environment: mixed_real_sim_and_human_video
+    scale:
+      value: 35000000
+      unit: constructed_temporal_pair_sample
+      approximate_hours: 3400
+      trajectories: ">100000"
+      tasks: ">350"
+    source_mix_pre_augmentation:
+      total_samples: 27230000
+      datasets:
+        AGIBot-World: 3400000
+        DROID: 8983000
+        RoboBrain-X: 3025000
+        self_collected_real_robot: 1107000
+        LIBERO: 1330000
+        RoboTwin: 1678000
+        RoboCasa: 523000
+        EgoDex: 6610000
+        self_collected_human: 574000
+    robots:
+      - {arm: Franka Panda, gripper: mixed_or_not_reported, source: "DROID, LIBERO, RoboCasa"}
+      - {arm: AGIBot-A2D, gripper: not_reported, source: "AGIBotWorld/RoboBrain-X", metadata_conflict: "AgiBotWorld and Robometer report G1"}
+      - {arm: Agilex Piper, gripper: not_reported, source: self_collected}
+      - {arm: ARX-X5, gripper: not_reported, source: self_collected}
+      - {arm: Galaxea, gripper: not_reported, source: self_collected}
+      - {arm: UR5, gripper: not_reported, source: self_collected}
+    supervision:
+      - step_segment
+      - relative_progress
+      - temporal_regress
+      - zero_hop_static_pair
+    failure:
+      provenance: [counterfactual, expert_only]
+      observed: false
+      mechanism: reversed-order and cross-time pairing within demonstrations
+      caveat: REGRESS is not an executed policy failure
+    license: Apache-2.0_card
+    access: gated
+    source: https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset
+    paper: https://arxiv.org/abs/2512.23703
+
+  - id: robochallenge-table30-v2
+    title: RoboChallenge Table30 V2
+    environment: real
+    scale:
+      size: 1.01_TB
+      tasks: 30
+      unit: demonstration
+    robots:
+      - {arm: ARX5, arms: 1, gripper: not_reported, cameras: [wrist, global, side]}
+      - {arm: UR5, arms: 1, gripper: not_reported, cameras: [wrist, global]}
+      - {arm: ALOHA, arms: 2, gripper: not_reported, cameras: [left_wrist, right_wrist, global]}
+      - {arm: DOS-W1, arms: 2, gripper: not_reported, cameras: [left_wrist, right_wrist, global]}
+    supervision: [demonstration, joint_state, end_effector_pose, gripper_width, timestamp]
+    failure:
+      provenance: [expert_only, evaluation_only]
+      taxonomy: not_reported_in_released_training_card
+      caveat: challenge score is not a downloadable typed-failure label
+    source: https://huggingface.co/datasets/RoboChallenge/Table30v2
+    project: https://robochallenge.ai/
+
+  - id: reassemble
+    title: REASSEMBLE
+    environment: real
+    scale:
+      demonstrations: 4551
+      successful: 4035
+      unsuccessful_derived: 516
+      minutes: 781
+      objects: 17
+    robots:
+      - arm: Franka Emika FR3
+        gripper: parallel_jaw_product_not_reported
+        teleoperation: Force Dimension omega.6
+        cameras: [two_HAMA_external_RGB, Intel_RealSense_D435i_wrist_RGB, DAVIS346_event]
+        sensors: [AIDIN_AFT200_force_torque, three_microphones, robot_state]
+    tasks:
+      high_actions: [pick, insert, remove, place]
+      low_skills: [grasp, lift, approach, align, release, twist]
+    supervision: [high_action_success_boolean, low_skill_success_boolean, language, multimodal_time_series]
+    failure:
+      provenance: [real_executed]
+      taxonomy:
+        pick: [miss, slip_during_closing]
+        insert: [alignment, orientation, rotation, reachability]
+        remove: [jam_due_to_alignment, failed_release]
+        place: [premature_slip, board_obstruction]
+      caveat: sensor-file defects in the record are data-quality issues, not task-failure labels
+    license: CC-BY-4.0
+    source: https://researchdata.tuwien.ac.at/records/0ewrv-8cb44
+    paper: https://arxiv.org/abs/2502.05086
+
+  - id: guardian-rlbench-fail
+    title: RLBench-Fail
+    reward_model: Guardian
+    environment: simulation
+    scale:
+      tasks: 52
+      train: {planning: 5808, execution: 12358}
+      validation: {planning: 500, execution: 1000}
+      test: {planning: 500, execution: 1000}
+      unit: canonical_supervision_example
+    robots:
+      - {arm: Franka Panda, gripper: RLBench_default, cameras: multi_view}
+    supervision: [binary_failure, failure_category, reasoning_trace]
+    failure:
+      provenance: [sim_executed, counterfactual]
+      planning: [wrong_object, wrong_target_or_state, wrong_order, missing_subtask, contradiction]
+      execution: [no_gripper_close, wrong_object_state, wrong_object, imprecise_grasp_or_push]
+    source: https://arxiv.org/html/2512.01946v3
+
+  - id: guardian-bridgedatav2-fail
+    title: BridgeDataV2-Fail
+    reward_model: Guardian
+    environment: real_source_images_counterfactual_failure
+    scale:
+      train: {planning: 4880, execution: 7830}
+      validation: {planning: 500, execution: 1000}
+      test: {planning: 500, execution: 1000}
+      unit: canonical_supervision_example
+    robots:
+      - {arm: WidowX 250, gripper: not_reported, cameras: [over_shoulder, two_randomized_external, wrist]}
+    supervision: [binary_failure, failure_category, reasoning_trace]
+    failure:
+      provenance: [counterfactual]
+      planning: [wrong_object, wrong_target_or_state, wrong_order, missing_subtask, contradiction]
+      execution: [semantic_instruction_image_mismatch, revert_action_or_no_progress]
+      caveat: real imagery does not imply a physically executed failure
+    source: https://arxiv.org/html/2512.01946v3
+
+  - id: guardian-ur5-fail
+    title: UR5-Fail
+    reward_model: Guardian
+    environment: real
+    scale:
+      tasks_current_paper_v3: 16
+      test: {planning: 140, execution: 140}
+      unit: canonical_supervision_example
+    robots:
+      - {arm: UR5, gripper: product_not_reported, cameras: three_Intel_RealSense_D435}
+    supervision: [binary_failure, failure_category, reasoning_trace]
+    failure:
+      provenance_by_split:
+        planning: counterfactual
+        execution: real_executed
+      caveat: an older collection/card reports 34 tasks; current paper v3 reports 16
+    source: https://arxiv.org/html/2512.01946v3
+
+  - id: roboarena-datadump-2026-02-03
+    title: RoboArena DataDump 02-03-2026
+    environment: real
+    snapshot: "2026-02-03"
+    scale:
+      sessions: 3284
+      policy_episodes: 9589
+    robots:
+      - {arm: Franka Panda, gripper: Robotiq_2F-85, cameras: [ZED_Mini_wrist, ZED2_external]}
+    supervision: [pairwise_preference, tie, free_form_rationale, max_progress_0_100, binary_success, partial_success]
+    failure:
+      provenance: [real_executed]
+      observed_examples: [no_progress, oscillation_or_hovering, random_gripper, target_not_found, partial_completion, drop_or_spill]
+      taxonomy: free_text_not_fixed
+    license: MIT
+    used_by: [Robometer]
+    source: https://huggingface.co/datasets/RoboArena/DataDump_02-03-2026/tree/main
+    paper: https://arxiv.org/abs/2506.18123
+
+  - id: rh20t
+    title: RH20T
+    environment: real
+    scale:
+      sequences: ">110000"
+      tasks: 147
+      skills: 42
+      configurations: 7
+    robots:
+      - {config: 1, arm: Flexiv, gripper: Dahuan_AG95, force_torque: OptoForce}
+      - {config: 2, arm: Flexiv, gripper: Dahuan_AG95, force_torque: ATI_Axia80-M20}
+      - {config: 3, arm: UR5, gripper: WSG50, force_torque: ATI_Axia80-M20}
+      - {config: 4, arm: UR5, gripper: Robotiq_2F-85, force_torque: ATI}
+      - {config: 5, arm: Franka_Panda, gripper: Franka_gripper, force_torque: Franka_internal}
+      - {config: 6, arm: KUKA_LBR_iiwa, gripper: Robotiq_2F-85, force_torque: ATI}
+      - {config: 7, arm: KUKA_LBR_iiwa, gripper: Robotiq_2F-85, force_torque: ATI, tactile: uSkin_fingertip}
+    supervision:
+      task_completion_rating:
+        0: robot_failure
+        1: task_failure
+        2_to_9: increasing_completion_quality
+    failure:
+      provenance: [real_executed]
+      taxonomy: no_unified_cause_taxonomy_or_count_breakdown
+    licenses:
+      RH20T-C_scenes_1_to_5: CC-BY-SA-4.0
+      RH20T-NC_scenes_6_to_10: CC-BY-NC-4.0
+    used_by: [Robometer]
+    rbm_use:
+      annotations: 29969
+      processing: selected_one_or_two_views_and_removed_null_or_concatenated_demos
+    source: https://rh20t.github.io/
+
+  - id: robometer-soar
+    title: SOAR failure-bearing subset in RBM-1M
+    environment: real
+    robots:
+      - {arm: WidowX_250, fleet_size: 5, gripper: not_reported}
+    scale: {rbm_annotations: 16812}
+    supervision: [automatic_success_failure, trajectory_preference]
+    failure:
+      provenance: [real_executed, weak_auto]
+      caveat: Robometer filters approximately 45 percent with Qwen3-VL
+    source: https://arxiv.org/abs/2407.20635
+
+  - id: robometer-autoeval
+    title: AutoEval failure-bearing subset in RBM-1M
+    environment: real
+    robots:
+      - {arm: WidowX_250, stations: 2, gripper: not_reported}
+    scale: {rbm_annotations: 8677, tasks: 4}
+    supervision: [automatic_success_failure, trajectory_preference]
+    failure:
+      provenance: [real_executed, weak_auto]
+      caveat: noisy automatic labels; Robometer uses preference-only supervision
+    source: https://arxiv.org/abs/2503.24278
+
+  - id: robometer-failsafe
+    title: FAILSafe failure-bearing subset in RBM-1M
+    environment: simulation
+    robots:
+      - {arm: Franka_Panda, simulator: ManiSkill, gripper: simulator_default}
+    scale: {rbm_annotations: 71614}
+    supervision: [failure_step, recovery_action, subtask_segment]
+    failure:
+      provenance: [sim_executed]
+      injected_types: [translation, rotation, no_op]
+    source: https://arxiv.org/abs/2510.01642
+
+  - id: robometer-racer
+    title: RACER failure-bearing subset in RBM-1M
+    environment: simulation
+    robots:
+      - {arm: Franka_Panda, simulator: RLBench, gripper: simulator_default}
+    scale: {rbm_annotations: 29115}
+    supervision: [paired_success_failure, failure_analysis, corrective_language]
+    failure:
+      provenance: [sim_executed]
+      mechanism: demonstration perturbation followed by unsuccessful-rollout filtering
+    source: https://huggingface.co/datasets/sled-umich/RACER-augmented_rlbench
+
+  - id: robometer-libero-failures
+    title: LIBERO failures in RBM-1M
+    environment: simulation
+    robots:
+      - {arm: Franka_Panda, simulator: LIBERO, gripper: simulator_default}
+    scale: {rbm_annotations: 1473}
+    supervision: [trajectory_preference]
+    failure:
+      provenance: [sim_executed]
+      mechanism: successful demonstrations replayed with Gaussian action noise
+    source: https://arxiv.org/html/2603.02115v2
+
+  - id: robometer-fino-net-failure
+    title: Fino-Net / FAILURE subset in RBM-1M
+    environment: real
+    robots:
+      - {arm: Baxter, gripper: Baxter_parallel_grippers, sensors: [RGB, depth, audio]}
+    scale: {rbm_annotations: 229}
+    tasks: [push, pick_and_place, pour, place_in_container, put_on_top]
+    supervision: [success_failure, failure_type]
+    failure:
+      provenance: [real_executed]
+      observed_types: [miss, collision, fall, spill, overturn, post_manipulation_failure]
+      caveat: a later extension adds 99 recordings, but RBM-1M reports the original 229
+    source: https://arxiv.org/abs/2011.05817
