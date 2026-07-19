@@ -13,7 +13,8 @@ Record an explicit search date and query window. Use arXiv, OpenReview, official
 5. For policy/world-model-coupled systems, record the coupling pattern and whether the value is independently queryable at inference.
 6. Log exclusions when a plausible candidate is outside scope.
 7. For robot datasets, record the arm, gripper, real/sim domain, task family, sensor views, and the unit behind every reported count.
-8. Tag failure supervision as `real_executed`, `sim_executed`, `counterfactual`, `weak_auto`, `expert_only`, or `evaluation_only`; do not infer physical failure from real-source imagery.
+8. Tag failure supervision as `real_executed`, `sim_executed`, `counterfactual`, `weak_auto`, `expert_only`, `arena_scored`, or `evaluation_only`; do not infer physical failure from real-source imagery.
+9. For arenas and challenges, record the task rubric, stage/critical-step definition, partial-credit rule, retry penalty, rollout count, human/automatic grader, public run artifacts, and robot instance separately.
 
 ## Primary semantics
 
@@ -55,3 +56,4 @@ The README is a living overview. `registry/papers.yaml` is the authoritative met
 - Parent-dataset overlap, episode overlap, view overlap, and derived-prompt overlap are reported separately.
 - Raw episodes, video–language annotations, temporal pairs, and VQA items are never compared as though they were the same unit.
 - Robot/gripper names remain `not_reported` when a primary source does not specify them; conflicting metadata is preserved as a conflict.
+- A human-authored stage rubric is not called a frame-level annotation unless temporal boundaries are present in the released episode data.
