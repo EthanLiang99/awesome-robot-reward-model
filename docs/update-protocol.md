@@ -12,6 +12,8 @@ Record an explicit search date and query window. Use arXiv, OpenReview, official
 4. Assign a primary semantics family and secondary tags with an evidence note.
 5. For policy/world-model-coupled systems, record the coupling pattern and whether the value is independently queryable at inference.
 6. Log exclusions when a plausible candidate is outside scope.
+7. For robot datasets, record the arm, gripper, real/sim domain, task family, sensor views, and the unit behind every reported count.
+8. Tag failure supervision as `real_executed`, `sim_executed`, `counterfactual`, `weak_auto`, `expert_only`, or `evaluation_only`; do not infer physical failure from real-source imagery.
 
 ## Primary semantics
 
@@ -50,3 +52,6 @@ The README is a living overview. `registry/papers.yaml` is the authoritative met
 - Policy success does not substitute for direct value calibration, ranking, or error evaluation.
 - The record distinguishes inference-queryable value outputs from training-only auxiliary critics.
 - Unsupported benchmark capabilities remain `N/A`, not coerced scores.
+- Parent-dataset overlap, episode overlap, view overlap, and derived-prompt overlap are reported separately.
+- Raw episodes, video–language annotations, temporal pairs, and VQA items are never compared as though they were the same unit.
+- Robot/gripper names remain `not_reported` when a primary source does not specify them; conflicting metadata is preserved as a conflict.
