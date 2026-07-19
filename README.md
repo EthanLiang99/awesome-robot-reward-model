@@ -148,9 +148,20 @@ The [detailed robot/data matrix](docs/robot-data-matrix.md) records arm, gripper
 | [Guardian: BridgeDataV2-Fail](https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian) | Real-source WidowX 250 imagery | Typed errors plus reasoning | Counterfactual text/image failures; not physically executed failures |
 | [Guardian: UR5-Fail](https://arxiv.org/html/2512.01946v3) | Real UR5, three D435 cameras | Manual subtask success/failure plus reasoning | Real execution failures; generated planning failures |
 | [RH20T](https://rh20t.github.io/) | Flexiv, UR5, Franka Panda, KUKA LBR iiwa | `0=robot failure`, `1=task failure`, `2–9=completion quality` | Real but coarse; no published unified cause taxonomy |
-| [RoboChallenge Table30 V2](https://huggingface.co/datasets/RoboChallenge/Table30v2) | ARX5, UR5, ALOHA, DOS-W1 | 30-task multi-view demonstrations with state/action fields | Expert/evaluation resource; released training card does not document typed failure labels |
+| [RoboChallenge Table30 V2](https://huggingface.co/datasets/RoboChallenge/Table30v2) | ARX5, UR5, ALOHA, DOS-W1 | 30-task multi-view demonstrations; `task_info.json` includes prompt, description, scoring criteria, and task tags; challenge rollouts receive stage progress and success scores | Human-defined process rubric plus real-robot evaluation outcomes; no fixed failure-cause taxonomy or demonstrated frame-level stage-boundary labels |
 
 Known parent-source overlap between Robometer and Robo-Dopamine is limited to **AgiBotWorld, DROID, and LIBERO** at the published metadata level. Exact episode overlap is unknown. Robo-Dopamine's reversed-order `REGRESS` pairs are constructed temporal supervision; Robometer additionally includes real, simulated, automatically labelled, and counterfactual failure sources. Do not pool these as one undifferentiated negative class.
+
+### Arena and challenge supervision
+
+Arena/challenge platforms are a separate cross-cutting data source: they join expert demonstrations, a human-defined evaluation rubric, real policy rollouts, and comparable scores. They are especially useful for learning or testing value models across policies and partial completion—not only final success.
+
+| Platform | Training side | Evaluation side | Reward/value opportunity |
+|---|---|---|---|
+| [RoboChallenge Table30 / V2](https://robochallenge.ai/) | Up to 1,000 demonstrations per task in the original protocol; V2 releases multi-view demonstrations for four embodiments and embeds task-level scoring criteria/tags | A task is divided into scored stages; critical stages determine success, retries reduce progress, and public runs include score, success rate, video, and logs | Absolute stage value, critical-stage verifier, retry penalty, terminal success, multi-task and cross-machine calibration |
+| [RoboArena](https://arxiv.org/abs/2506.18123) | No fixed expert-training requirement; evaluates submitted policies on distributed real DROID setups | Human pairwise preference including ties, maximum progress, binary/partial success, and free-form explanation over autonomous rollouts | Pairwise reward, partial-completion value, explanation-grounded failure mining, policy ranking |
+
+For Table30, the published `scoring` field is a **task/stage rubric**, not evidence of per-frame stage-boundary annotations in every demonstration. Keep `rubric`, `rollout score`, and `frame label` as three separate metadata fields.
 
 ### Egocentric, procedural-error, and cross-embodiment supervision
 
