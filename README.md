@@ -4,9 +4,10 @@ A curated, evidence-tracked list of **robotic reward models (RRMs)**, process/va
 
 This repository supports the research project *Robotic Reward Models: A Taxonomy, Unified Benchmark, and Open Infrastructure*. It is a discovery and collaboration resource—not a claim that every listed method is directly comparable or reproducible.
 
-- **Last literature check:** 2026-07-18
+- **Last literature check:** 2026-07-19
 - **Living registry:** [`registry/papers.yaml`](registry/papers.yaml)
-- **Latest audit:** [`docs/updates/2026-07-18.md`](docs/updates/2026-07-18.md)
+- **Robot/data registry:** [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml) · [human-readable matrix](docs/robot-data-matrix.md)
+- **Latest audit:** [`docs/updates/2026-07-19.md`](docs/updates/2026-07-19.md)
 
 ## Scope
 
@@ -133,7 +134,23 @@ This is a cross-cutting index of data that can instantiate reward targets. It re
 | Corpus | Scale and composition | Reward supervision recipe | Release status | Important caveat |
 |---|---|---|---|---|
 | [Robo-Dopamine GRM data](https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset) | 35M samples from ~3,400h, >100K trajectories, and >350 tasks; real robot, simulation, and human egocentric video | Human-annotated keyframes define step segments; ordered state pairs yield progress hops and reversed-order pairs yield regress hops | Gated dataset; Apache-2.0 card | Most negative supervision is constructed by reversing temporal order inside expert trajectories. It is not equivalent to observing a robot make and recover from a real mistake. |
-| [RBM-1M / Robometer](https://arxiv.org/abs/2603.02115) | 1,059,370 trajectories across 21 robot embodiments; expert, paired human–robot, mixed-expertise/failure, and human-only sources | Frame-level progress/success on expert trajectories plus trajectory preferences over expert, suboptimal, failed, rewound, and task-mismatched pairs | [Processed data repository](https://huggingface.co/datasets/robometer/processed_datasets) exists; official project still labels the canonical RBM-1M release “coming soon” | The aggregate inherits dataset-specific upstream terms; the MIT code license and Apache-2.0 model license do not license every source trajectory. |
+| [RBM-1M / Robometer](https://arxiv.org/abs/2603.02115) | 1,059,370 video–language annotations across 21 robot embodiments; expert, paired human–robot, mixed-expertise/failure, and human-only sources | Frame-level progress/success on expert trajectories plus trajectory preferences over expert, suboptimal, failed, rewound, and task-mismatched pairs | [Processed data repository](https://huggingface.co/datasets/robometer/processed_datasets) exists; official project still labels the canonical RBM-1M release “coming soon” | The aggregate count may include multiple views/annotations from one episode. Source licenses and failure provenance remain dataset-specific. |
+
+### Robot embodiment and failure provenance audit
+
+The [detailed robot/data matrix](docs/robot-data-matrix.md) records arm, gripper, sensing, task, count unit, label granularity, concrete failure modes, and reuse by Robometer/Robo-Dopamine. Its structured counterpart is [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml).
+
+| Resource | Robot(s) | Reward-ready signal | Failure status |
+|---|---|---|---|
+| [RoboArena 2026-02-03 dump](https://huggingface.co/datasets/RoboArena/DataDump_02-03-2026/tree/main) | Real Franka Panda + Robotiq 2F-85 | 9,589 autonomous-policy episodes; preferences/ties, 0–100 progress, binary and partial success, free-form explanations | Real executed failure/partial progress; no fixed cause taxonomy |
+| [REASSEMBLE](https://researchdata.tuwien.ac.at/records/0ewrv-8cb44) | Real Franka Emika FR3 | 4,551 demonstrations; high-action and low-skill Boolean success; 4,035 success / 516 unsuccessful | Real misses, slips, alignment/orientation errors, jams, failed release, and placement obstruction |
+| [Guardian: RLBench-Fail](https://arxiv.org/html/2512.01946v3) | Simulated Franka Panda | Typed planning/execution errors plus reasoning | Simulated/injected and counterfactual |
+| [Guardian: BridgeDataV2-Fail](https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian) | Real-source WidowX 250 imagery | Typed errors plus reasoning | Counterfactual text/image failures; not physically executed failures |
+| [Guardian: UR5-Fail](https://arxiv.org/html/2512.01946v3) | Real UR5, three D435 cameras | Manual subtask success/failure plus reasoning | Real execution failures; generated planning failures |
+| [RH20T](https://rh20t.github.io/) | Flexiv, UR5, Franka Panda, KUKA LBR iiwa | `0=robot failure`, `1=task failure`, `2–9=completion quality` | Real but coarse; no published unified cause taxonomy |
+| [RoboChallenge Table30 V2](https://huggingface.co/datasets/RoboChallenge/Table30v2) | ARX5, UR5, ALOHA, DOS-W1 | 30-task multi-view demonstrations with state/action fields | Expert/evaluation resource; released training card does not document typed failure labels |
+
+Known parent-source overlap between Robometer and Robo-Dopamine is limited to **AgiBotWorld, DROID, and LIBERO** at the published metadata level. Exact episode overlap is unknown. Robo-Dopamine's reversed-order `REGRESS` pairs are constructed temporal supervision; Robometer additionally includes real, simulated, automatically labelled, and counterfactual failure sources. Do not pool these as one undifferentiated negative class.
 
 ### Egocentric, procedural-error, and cross-embodiment supervision
 
