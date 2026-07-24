@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-07-19"
+last_updated: "2026-07-24"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -1249,6 +1249,282 @@ entries:
     evidence_note: "Historical failure explanation/replanning context, not a direct reward model."
     sources: ["https://arxiv.org/abs/2306.15724"]
 
+  - id: "tsao_2026_success_visitation_matching"
+    kind: "reward_model"
+    title: "Learning Process Rewards via Success Visitation Matching for Efficient RL"
+    released: "2026-06-22"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["dense_process_reward", "success_conditioned_visitation", "state_action_support", "outcome_preserving"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["successful_robot_episodes", "unsuccessful_robot_episodes", "offline_policy_rollouts"]
+    inference_inputs: ["state", "action"]
+    downstream_roles: ["online_rl", "dense_shaping", "policy_finetuning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.23640"}
+      code: {status: "coming_soon", url: "https://success-visitation-matching.github.io/"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-24"
+    evidence_note: "A discriminator separates state-action visitations from successful and unsuccessful episodes and supplies a dense process reward for robot RL. The score is successful-support membership, not calibrated percent completion or a monotone time proxy."
+    sources: ["https://arxiv.org/abs/2606.23640", "https://success-visitation-matching.github.io/"]
+
+  - id: "dai_2025_rover"
+    kind: "reward_model"
+    title: "RoVer: Robot Reward Model as Test-Time Verifier for Vision-Language-Action Model"
+    released: "2025-10-13"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["action_conditioned_verifier", "process_reward", "action_refinement_direction", "test_time_scaling"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["expert_robot_actions", "synthetic_local_action_perturbations", "action_distance_preferences"]
+    inference_inputs: ["observation", "instruction", "candidate_action"]
+    downstream_roles: ["candidate_action_ranking", "test_time_action_refinement", "policy_verification"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2510.10975"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-24"
+    evidence_note: "The external PRM scores candidate actions and predicts a 6D refinement direction. Preference labels are derived from distance to expert actions, so high score should not be treated as independently calibrated task success."
+    sources: ["https://arxiv.org/abs/2510.10975", "https://arxiv.org/html/2510.10975"]
+
+  - id: "kwok_2025_robomonkey"
+    kind: "reward_model"
+    title: "RoboMonkey: Scaling Test-Time Sampling and Verification for Vision-Language-Action Models"
+    released: "2025-06-21"
+    venue_or_preprint: "CoRL 2025"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["action_conditioned_verifier", "synthetic_action_preferences", "test_time_sampling", "best_of_n"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["bridge_action_demonstrations", "gaussian_action_perturbations", "expert_action_distance_preferences"]
+    inference_inputs: ["observation", "instruction", "candidate_action"]
+    downstream_roles: ["candidate_action_ranking", "test_time_scaling"]
+    artifacts:
+      paper: {status: "available", url: "https://proceedings.mlr.press/v305/kwok25a.html"}
+      code: {status: "available", url: "https://github.com/robomonkey-vla/RoboMonkey"}
+      weights: {status: "available", url: "https://huggingface.co/robomonkey-vla/monkey-verifier-7b"}
+      data: {status: "available", url: "https://huggingface.co/datasets/robomonkey-vla/action_preference_bridge"}
+    license: {code: "MIT", weights: "MIT", data: "not_found"}
+    adapter_status: "high_priority_after_license"
+    verification_date: "2026-07-24"
+    evidence_note: "A VLM verifier selects among policy samples and perturbations. Training preference follows closeness to the demonstrated action; the 22.5 GB preference dataset is public but had no verified reusable dataset license."
+    sources: ["https://proceedings.mlr.press/v305/kwok25a.html", "https://github.com/robomonkey-vla/RoboMonkey", "https://huggingface.co/robomonkey-vla/monkey-verifier-7b", "https://huggingface.co/datasets/robomonkey-vla/action_preference_bridge"]
+
+  - id: "kwok_2026_cover_vla"
+    kind: "reward_model"
+    title: "Scaling Verification Can Be More Effective than Scaling Policy Learning for Vision-Language-Action Alignment"
+    released: "2026-02-12"
+    venue_or_preprint: "ECCV 2026"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["contrastive_verifier", "instruction_action_alignment", "candidate_action_ranking", "test_time_scaling"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["offline_robot_demonstrations", "in_batch_negative_actions", "rephrased_instructions"]
+    corpus_scale: {offline_alignment_samples: 20000000}
+    inference_inputs: ["observation", "instruction", "candidate_action_chunk"]
+    downstream_roles: ["instruction_selection", "candidate_action_ranking", "test_time_scaling"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2602.12281"}
+      code: {status: "available", url: "https://github.com/cover-vla/cover-vla"}
+      weights: {status: "available", url: "https://huggingface.co/cover-vla"}
+      data: {status: "not_found", url: null}
+    license: {code: "not_found", weights: "unverified", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-07-24"
+    evidence_note: "CoVer is a contrastive vision-language-action alignment verifier trained at 20M-sample scale. It ranks candidate prompts and action chunks but does not directly learn from typed failure or calibrated outcome labels."
+    sources: ["https://arxiv.org/abs/2602.12281", "https://cover-vla.github.io/", "https://github.com/cover-vla/cover-vla", "https://huggingface.co/cover-vla"]
+
+  - id: "song_2025_hume"
+    kind: "policy_with_value"
+    title: "Hume: Introducing System-2 Thinking in Visual-Language-Action Model"
+    released: "2025-05-27"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["state_action_value", "value_query_head", "best_of_n", "dual_system_policy"]
+    model_coupling: "policy_internal"
+    value_availability: "inference_queryable"
+    training_data: ["reward_annotated_robot_trajectories", "robot_demonstrations"]
+    inference_inputs: ["observation", "instruction", "candidate_action_chunk"]
+    downstream_roles: ["state_action_value_estimation", "candidate_action_ranking", "dexterous_control"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2505.21432"}
+      code: {status: "available", url: "https://github.com/hume-vla/hume"}
+      weights: {status: "available", url: "https://huggingface.co/Hume-vla/Hume-System2"}
+      data: {status: "unknown", url: null}
+    license: {code: "MIT", weights: "MIT", data: "unknown"}
+    adapter_status: "high_priority"
+    verification_date: "2026-07-24"
+    evidence_note: "Hume extends the VLA backbone with a value-query head that scores sampled action chunks; the selected System-2 action is then refined by a fast System-1 policy. This is a major policy-internal value interface omitted from the earlier coupling table."
+    sources: ["https://arxiv.org/abs/2505.21432", "https://hume-vla.github.io/", "https://github.com/hume-vla/hume", "https://huggingface.co/Hume-vla/Hume-System2"]
+
+  - id: "yan_2026_progressvla"
+    kind: "policy_with_value"
+    title: "ProgressVLA: Progress-Guided Diffusion Policy for Vision-Language Robotic Manipulation"
+    released: "2026-03-29"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["progress_estimator", "inverse_dynamics_world_model", "differentiable_action_guidance", "termination"]
+    model_coupling: "compositional_world_value"
+    value_availability: "inference_queryable"
+    training_data: ["unsupervised_video_text_robot_data", "robot_demonstrations"]
+    inference_inputs: ["observation", "instruction", "predicted_future_latent", "candidate_action_tokens"]
+    downstream_roles: ["action_token_refinement", "task_termination", "progress_estimation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2603.27670"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-24"
+    evidence_note: "A progress estimator scores future visual latents produced from candidate actions by an inverse-dynamics world model and differentiably guides the diffusion policy. ProgressVLA is distinct from the already listed ProgVLA."
+    sources: ["https://arxiv.org/abs/2603.27670", "https://www.microsoft.com/en-us/research/publication/progressvla-progress-guided-diffusion-policy-for-vision-language-robotic-manipulation/"]
+
+  - id: "bai_2025_evolve_vla"
+    kind: "reward_model_system"
+    title: "EVOLVE-VLA: Test-Time Training from Environment Feedback for Vision-Language-Action Models"
+    released: "2025-12-16"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["learned_progress_estimator", "test_time_training", "accumulative_smoothing", "autonomous_feedback"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["robot_demonstrations", "environment_interactions", "progress_supervision"]
+    inference_inputs: ["visual_observation", "instruction", "execution_history"]
+    downstream_roles: ["dense_test_time_reward", "vla_grpo", "early_termination", "horizon_extension"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2512.14666"}
+      code: {status: "placeholder", url: "https://github.com/showlab/EVOLVE-VLA"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "not_found", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-24"
+    evidence_note: "A learned visual progress estimator supplies smoothed dense feedback for test-time VLA adaptation and stopping. The linked repository remained a project-page shell rather than a verified runnable implementation."
+    sources: ["https://arxiv.org/abs/2512.14666", "https://showlab.github.io/EVOLVE-VLA/", "https://github.com/showlab/EVOLVE-VLA"]
+
+  - id: "zhao_2026_tapsampling"
+    kind: "reward_model"
+    title: "TapSampling: Inference-Time Sampling with a Task-Progress-Understanding Verifier for Robotic Manipulation"
+    released: "2026-05-25"
+    venue_or_preprint: "ICML 2026"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["task_progress_outcome", "action_conditioned_verifier", "action_vae", "test_time_sampling"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["sequential_robot_demonstrations", "candidate_action_chunks", "temporal_progress_outcomes"]
+    inference_inputs: ["observation", "instruction", "candidate_action_chunk"]
+    downstream_roles: ["candidate_action_ranking", "weighted_action_selection", "test_time_scaling"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2605.25547"}
+      code: {status: "available", url: "https://github.com/aipixel/TapSampling"}
+      weights: {status: "available", url: "https://huggingface.co/collections/SizheZhao/tapsampling"}
+      data: {status: "available", url: "https://huggingface.co/datasets/SizheZhao/TapSampling-CALVIN-Part-Data"}
+    license: {code: "not_found", weights: "unverified", data: "not_found"}
+    adapter_status: "high_priority_after_license"
+    verification_date: "2026-07-24"
+    evidence_note: "The verifier predicts task-progress outcomes for candidate action chunks and the Action-VAE supplies scalable proposals. Code, verifier/Action-VAE checkpoints, and a CALVIN subset were newly available during this audit; reusable licenses were not verified."
+    sources: ["https://arxiv.org/abs/2605.25547", "https://aipixel.github.io/TapSampling/", "https://github.com/aipixel/TapSampling", "https://huggingface.co/collections/SizheZhao/tapsampling", "https://huggingface.co/datasets/SizheZhao/TapSampling-CALVIN-Part-Data"]
+
+  - id: "grislain_2025_i_failsense"
+    kind: "reward_model"
+    title: "I-FailSense: Towards General Robotic Failure Detection with Vision-Language Models"
+    released: "2025-09-19"
+    venue_or_preprint: "ICRA 2026"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["failure_detection", "semantic_misalignment", "grounded_arbitration", "internal_classification_heads"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["droid", "calvin", "aha", "synthetic_semantic_misalignment"]
+    inference_inputs: ["robot_video", "instruction"]
+    downstream_roles: ["failure_detection", "execution_monitoring", "recovery_trigger"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2509.16072"}
+      code: {status: "available", url: "https://github.com/clemgris/I-FailSense"}
+      weights: {status: "available", url: "https://huggingface.co/collections/ACIDE/failsense-3b"}
+      data: {status: "available", url: "https://clemgris.github.io/I-FailSense/"}
+    license: {code: "not_found", weights: "unverified", data: "unverified"}
+    adapter_status: "planned"
+    verification_date: "2026-07-24"
+    evidence_note: "LoRA-adapted VLM features feed multiple internal failure-sensing heads, with emphasis on instruction-action semantic misalignment. It is a queryable verifier, but it does not expose a calibrated dense reward curve."
+    sources: ["https://arxiv.org/abs/2509.16072", "https://clemgris.github.io/I-FailSense/", "https://github.com/clemgris/I-FailSense", "https://huggingface.co/collections/ACIDE/failsense-3b"]
+
+  - id: "peng_2026_reworld"
+    kind: "reward_model"
+    title: "ReWorld: Multi-Dimensional Reward Modeling for Embodied World Models"
+    released: "2026-01-18"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["world_model_reward", "physical_realism", "task_completion", "embodiment_plausibility", "visual_quality"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["video_preferences", "robot_world_model_rollouts"]
+    corpus_scale: {video_preferences_approx: 235000}
+    inference_inputs: ["generated_robot_video", "instruction", "embodiment_context"]
+    downstream_roles: ["world_model_alignment", "ppo_style_post_training", "multidimensional_evaluation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2601.12428"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-24"
+    evidence_note: "A hierarchical reward model trained on about 235K video preferences scores physical realism, task completion, embodiment plausibility, and visual quality for robot video-world-model alignment. No official reusable artifact was verified."
+    sources: ["https://arxiv.org/abs/2601.12428", "https://arxiv.org/html/2601.12428"]
+
+  - id: "ge_2026_egorecovery"
+    kind: "data_resource"
+    title: "EgoRecovery: Acquiring Failure Recovery Ability Through Human Recovery Demonstration"
+    released: "2026-07-22"
+    venue_or_preprint: "preprint"
+    primary_semantics: "data_resource"
+    secondary_tags: ["human_egocentric_recovery", "recovery_gate", "recovery_boundary", "corrective_intent", "human_robot_cotraining"]
+    training_data: ["human_recovery_clips", "robot_recovery_demonstrations", "successful_robot_demonstrations", "recovery_state_labels"]
+    failure_provenance: ["human_staged_failure", "real_robot_failure_start"]
+    reward_supervision: ["recovery_needed", "recovery_boundary", "corrective_magnitude", "success_trajectory_reentry"]
+    inference_inputs: ["robot_observation", "instruction", "execution_context"]
+    downstream_roles: ["recovery_gate", "corrective_policy", "reentry_benchmark"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.19745"}
+      code: {status: "claimed_but_unreachable", url: "https://github.com/EgoRecovery/EgoRecovery"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-07-24"
+    evidence_note: "The newest relevant paper in this audit provides explicit recovery-state boundaries and a learned recovery gate from human ego and small robot anchor sets. It is a recovery-data/interface paper rather than a general-purpose reward model; the paper-linked GitHub URL returned 404 during verification."
+    sources: ["https://arxiv.org/abs/2607.19745", "https://arxiv.org/html/2607.19745v1", "https://github.com/EgoRecovery/EgoRecovery"]
+
+  - id: "zhang_2026_veritas"
+    kind: "adjacent_method"
+    title: "Visual Verification Enables Inference-time Steering and Autonomous Policy Improvement"
+    released: "2026-06-16"
+    venue_or_preprint: "RSS 2026"
+    primary_semantics: "adjacent_interface"
+    secondary_tags: ["visual_trace_verifier", "candidate_action_ranking", "inference_time_steering", "self_improvement"]
+    training_data: ["policy_candidates", "verified_robot_rollouts"]
+    inference_inputs: ["observation", "instruction", "candidate_action", "visual_trace"]
+    downstream_roles: ["candidate_action_ranking", "policy_steering", "offline_self_improvement"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.18247"}
+      code: {status: "available", url: "https://github.com/princeton-prism/veritas"}
+      weights: {status: "not_applicable", url: null}
+      data: {status: "unknown", url: null}
+    license: {code: "unverified", weights: "not_applicable", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-07-24"
+    evidence_note: "VERITAS uses a gradient-free visual trace verifier to rank candidate actions and recycle verified rollouts. It is retained as an adjacent evaluator interface because the verifier is not a learned standalone reward model."
+    sources: ["https://arxiv.org/abs/2606.18247", "https://veritas-improvement.github.io/", "https://github.com/princeton-prism/veritas"]
+
 screened_out:
   - title: "RFM-HRI: A Multimodal Dataset of Medical Robot Failure, User Reaction and Recovery Preferences for Item Retrieval Tasks"
     source: "https://arxiv.org/abs/2603.05641"
@@ -1265,3 +1541,18 @@ screened_out:
     decision: "adjacent_only"
     reason: "Central contribution is failure-driven skill/concept learning and planning, not reward-model evaluation."
     verification_date: "2026-07-18"
+  - title: "FAR: Failure-Aware Retry for Test-Time Recovery and Continual Policy Improvement"
+    source: "https://arxiv.org/abs/2607.01111"
+    decision: "adjacent_only"
+    reason: "Uses failure-contrastive policy adaptation and retry, but does not expose a separately characterized robot reward model."
+    verification_date: "2026-07-24"
+  - title: "RoboTracer: Training Robots with Process Rewards from Language Models"
+    source: "https://arxiv.org/abs/2512.13660"
+    decision: "adjacent_only"
+    reason: "Process rewards supervise an internal reasoning/training pipeline rather than a reusable task-conditioned trajectory evaluator."
+    verification_date: "2026-07-24"
+  - title: "LifeLong-RFT: Unlocking the Self-Evolution of Vision-Language-Action Models"
+    source: "https://arxiv.org/abs/2602.10503"
+    decision: "exclude_core"
+    reason: "Uses a multi-term training reward rule for VLA post-training without a separately queryable or independently benchmarked robot reward model."
+    verification_date: "2026-07-24"

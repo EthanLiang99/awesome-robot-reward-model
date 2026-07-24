@@ -1,6 +1,6 @@
 # Robot Reward-Model Benchmarks
 
-**Verified:** 2026-07-19
+**Verified:** 2026-07-24
 **Purpose:** map the existing evaluation landscape and define the requirements for a unified robot reward-model benchmark.
 
 A reward-model benchmark is not the same thing as a policy benchmark or a training corpus. The evaluator itself must be scored against independent human, physical, or simulator ground truth before its downstream policy gains are considered. The current landscape is fragmented: each benchmark tests a useful slice, but none covers outcome, process, failure onset, recoverability, recovery re-entry, robustness, and policy usefulness together.
@@ -25,6 +25,7 @@ The machine-readable version is [`registry/benchmarks.yaml`](../registry/benchma
 |---|---|---|
 | Final outcome / partial completion | RoboRewardBench; Table30 rubrics | Calibration across tasks and robots; hard success-like failures |
 | Fine progress ordering | RBM-EVAL; RoboPulse | Human semantic progress rather than normalized time; non-monotonic execution |
+| Candidate-action verification | RoboMonkey; RoVer; CoVer-VLA; TapSampling | A common candidate set with physical outcome labels; separate expert-action proximity, language alignment, predicted progress, and actual success |
 | Suboptimal process | Suboptimal-Value-Bench; OPD | More than hesitation/retry; safety, force, collision, redundant motion, irreversible regress |
 | Failure type and reasoning | FailCoT / Guardian; DenseReward | Independent real-world taxonomy with onset, severity, causal confidence, and cross-embodiment transfer |
 | Recovery | DenseReward `recover`; failure/recovery datasets | True-vs-false recovery, point of no return, and re-entry into a valid success trajectory |
@@ -58,6 +59,7 @@ Do not collapse the benchmark into a single RRM score. Report a profile and cate
 |---|---|---|
 | Outcome calibration | success, partial completion, ordinal score, annotator distribution | AUROC, AUPRC, Brier score, ECE, ordinal correlation |
 | Relative ordering | better / worse / tie for same task | Pairwise accuracy with ties, Kendall tau, Spearman correlation |
+| Candidate-action verification | fixed candidate action chunks with execution or simulator outcome | Top-1 regret, NDCG, pairwise accuracy, success@selected, oracle-gap closure |
 | Process consistency | dense or stage-conditioned progress | VOC plus monotonicity/consistency only on intervals where monotonic progress is valid |
 | Failure localization | onset interval, type, severity, confidence | Temporal AP, onset-tolerance F1, time-to-detection, false alarms per nominal episode |
 | Recoverability | recoverable flag, point of no return | AUROC/F1, PONR localization tolerance |
@@ -117,6 +119,7 @@ At minimum, include controlled pairs for:
 - partial completion that visually resembles success from one view;
 - generator artifacts versus real failures;
 - high predicted reward that fails to improve a fixed downstream policy.
+- near-identical candidate action sets where expert-action distance, language alignment, short-term progress, and final task outcome disagree.
 
 ## Design principle
 
@@ -131,3 +134,4 @@ Successful trajectories define the support of acceptable behavior, failures defi
 - [DenseReward](https://arxiv.org/html/2607.13033v1)
 - [RoboProcessBench](https://arxiv.org/html/2606.13040), [code](https://github.com/ProcessBench-2026/RoboProcessBench), and [data](https://huggingface.co/datasets/ProcessBench-2026/RoboProcessBench)
 - [Guardian / FailCoT / UR5-Fail](https://arxiv.org/html/2512.01946v3)
+- [RoboMonkey](https://proceedings.mlr.press/v305/kwok25a.html), [RoVer](https://arxiv.org/abs/2510.10975), [CoVer-VLA](https://arxiv.org/abs/2602.12281), and [TapSampling](https://arxiv.org/abs/2605.25547)

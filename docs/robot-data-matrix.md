@@ -1,6 +1,6 @@
 # Robot, Dataset, and Failure-Supervision Matrix
 
-**Verified:** 2026-07-19  
+**Verified:** 2026-07-24
 **Scope:** robot embodiments, grippers/sensors, failure provenance, label granularity, and reward-model reuse.
 
 This page answers a deceptively important question: when a paper says it trained on “failure data,” did the robot actually fail? The answer varies across these resources. We therefore keep physical rollouts, simulated perturbations, counterfactual image–language pairs, weak automatic labels, and temporal reversal as separate supervision types.
@@ -43,6 +43,7 @@ Robometer reports **1,059,370 video–language annotations** across 21 embodimen
 | [Guardian / FailCoT collection](https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian) | Three distinct platforms; see the next table | VQA-style planning/execution examples with binary outcome, fine category, and reasoning trace | Strong verifier supervision; provenance must be kept per subset | RLBench is simulated; Bridge uses real imagery with counterfactual failures; UR5 contains real autonomous rollouts for execution evaluation while planning errors remain generated. | mixed; never pool without a source tag |
 | [RoboArena dump, 2026-02-03](https://huggingface.co/datasets/RoboArena/DataDump_02-03-2026/tree/main) | Real Franka Panda, Robotiq 2F-85; ZED Mini wrist and ZED2 external cameras through the DROID setup | 3,284 sessions and 9,589 policy episodes; each session contains A/B/C policy directories and multi-view video, actions, and proprioception | Pairwise preference including ties, free-form rationale, maximum progress, binary success, and partial success | Actual autonomous-policy behaviors: no progress, oscillation/hovering, wrong or random gripper behavior, failure to locate/interact with the target, partial completion, and irreversible drops/spills. There is no fixed typed-cause vocabulary; causes must be mined from explanations or relabelled. | `real_executed`, `arena_scored` |
 | [RH20T](https://rh20t.github.io/) | Flexiv, UR5, Franka Panda, and KUKA LBR iiwa across seven configurations; exact grippers below | >110K real contact-rich sequences plus paired human demonstrations; 147 tasks and 42 skills | Task-completion rating: `0=robot failure`, `1=task failure`, `2–9=increasing completion quality`; rich multi-view, force, audio, and robot state | Real coarse failure/outcome supervision, but the official paper does not publish a unified failure-cause taxonomy or per-type failure counts. | `real_executed` |
+| [EgoRecovery](https://arxiv.org/abs/2607.19745) | Real human egocentric recovery plus real robot anchor/evaluation data; exact robot arm and gripper were not reported in accessible paper text | Four tabletop tasks; per task: 300 human recovery, 50 robot recovery, and 50 normal robot demonstrations | Framewise recovery-state label, explicit recovery-to-normal boundary, 4D corrective intent, correction timing/magnitude, and final success | Task-level failures are arranged before short human/robot recovery clips. This provides recovery and re-entry evidence, but human motions are not robot action-token labels; no data release was verified. | `real_executed`, `human_staged_failure` |
 
 ## Arena/challenge supervision as its own axis
 
@@ -103,6 +104,7 @@ Keep a mandatory `failure_provenance` field and sample the strata separately:
 5. **Expert temporal/process data:** Robo-Dopamine, RoboChallenge Table30 V2 demonstrations, and the expert portions of RBM-1M.
 6. **Arena/challenge judgements:** Table30 stage rubrics/scores and RoboArena preferences/progress; retain evaluator, task rubric version, robot instance, policy, and run ID.
 7. **Weak labels:** retain the upstream confidence/filtering decision; do not turn a VLM label into ground truth.
+8. **Recovery and re-entry anchors:** EgoRecovery-style clips; retain failure start, recovery-needed label, correction interval, and the boundary where execution returns to normal task behavior.
 
 For a general reward model, train outcome and pairwise preference heads on strata 1–3 and 6, typed diagnosis on 1–4, and calibrated progress on strata 5–6. Evaluate every synthetic-data model on held-out real failures and report results by provenance rather than only as one pooled accuracy.
 
@@ -126,3 +128,4 @@ For a general reward model, train outcome and pairwise preference heads on strat
 - [RH20T project and data](https://rh20t.github.io/)
 - [SOAR paper](https://arxiv.org/abs/2407.20635), [FAILSafe paper](https://arxiv.org/abs/2510.01642), [RACER data](https://huggingface.co/datasets/sled-umich/RACER-augmented_rlbench), [AutoEval paper](https://arxiv.org/abs/2503.24278), and [Fino-Net paper](https://arxiv.org/abs/2011.05817)
 - [Dream2Fix paper](https://arxiv.org/html/2603.13528v1), [project page](https://dream2fix.github.io/), and [failure-synthesis pipeline audit](failure-synthesis-pipelines.md)
+- [EgoRecovery paper](https://arxiv.org/html/2607.19745v1)

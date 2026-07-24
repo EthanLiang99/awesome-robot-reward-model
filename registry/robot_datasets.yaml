@@ -1,5 +1,5 @@
 schema_version: "0.1"
-verified_at: "2026-07-19"
+verified_at: "2026-07-24"
 count_policy: >-
   Keep physical episodes, camera/view annotations, temporal pairs, and VQA items
   separate. Counts below use the unit reported by each primary source.
@@ -413,3 +413,49 @@ datasets:
       observed_types: [miss, collision, fall, spill, overturn, post_manipulation_failure]
       caveat: a later extension adds 99 recordings, but RBM-1M reports the original 229
     source: https://arxiv.org/abs/2011.05817
+
+  - id: egorecovery-human-robot-recovery
+    title: EgoRecovery Human–Robot Recovery Demonstrations
+    environment: real_human_egocentric_and_real_robot
+    scale:
+      tasks: 4
+      per_task:
+        normal_robot_demonstrations: 50
+        robot_recovery_demonstrations: 50
+        human_recovery_demonstrations: 300
+      unit: short_recovery_demonstration
+    robots:
+      - arm: not_reported_in_accessible_paper_text
+        gripper: not_reported
+        role: robot_recovery_anchor_and_evaluation
+    tasks:
+      - insert_brush_into_cup
+      - sweep_objects_from_table
+      - place_disk
+      - stack_cubes
+    supervision:
+      - recovery_state_frame_label
+      - recovery_to_normal_boundary
+      - corrective_intent_4d
+      - correction_timing
+      - correction_magnitude
+      - final_success
+    failure:
+      provenance: [real_executed, human_staged_failure]
+      collection: task_level_failure_configurations_followed_by_short_recovery_segments
+      caveat: human recovery motion is aligned through corrective intent and is not a robot action-token label
+    reward_model_use:
+      direct_targets:
+        - recovery_needed_probability
+        - failure_to_recovery_boundary
+        - success_trajectory_reentry
+      adjacent_model: learned_recovery_gate
+    release:
+      paper: public
+      code: claimed_link_returned_404_on_2026-07-24
+      data: not_released
+      weights: not_released
+      license: not_available
+    source: https://arxiv.org/html/2607.19745v1
+    paper: https://arxiv.org/abs/2607.19745
+    claimed_code: https://github.com/EgoRecovery/EgoRecovery
