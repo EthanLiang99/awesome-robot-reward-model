@@ -2,13 +2,13 @@
 
 A curated, evidence-tracked list of **robotic reward models (RRMs)**, process/value models, verifiers, and failure/recovery data relevant to evaluating robot behavior.
 
-This repository supports the research project *Robotic Reward Models: A Taxonomy, Unified Benchmark, and Open Infrastructure*. It is a discovery and collaboration resource—not a claim that every listed method is directly comparable or reproducible.
+This repository supports the research project *Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark*. It is a discovery and collaboration resource—not a claim that every listed method is directly comparable or reproducible.
 
-- **Last literature check:** 2026-07-24
+- **Last literature check:** 2026-08-02
 - **Living registry:** [`registry/papers.yaml`](registry/papers.yaml)
 - **Robot/data registry:** [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml) · [human-readable matrix](docs/robot-data-matrix.md)
 - **Benchmark registry:** [`registry/benchmarks.yaml`](registry/benchmarks.yaml) · [landscape and RRM-Bench blueprint](docs/reward-model-benchmarks.md)
-- **Latest audit:** [`docs/updates/2026-07-24.md`](docs/updates/2026-07-24.md)
+- **Latest audit:** [`docs/updates/2026-08-02.md`](docs/updates/2026-08-02.md)
 
 ## Scope
 
@@ -42,7 +42,7 @@ Artifact availability and licensing are tracked separately. A GitHub repository 
 8. [Policy- and world-model-coupled value prediction](#8-policy--and-world-model-coupled-value-prediction)
 9. [Robot reward-model benchmarks](#9-robot-reward-model-benchmarks)
 10. [Adjacent system interfaces](#10-adjacent-system-interfaces)
-11. [Community discovery resources](#11-community-discovery-resources)
+11. [Related surveys, perspectives, and community discovery resources](#11-related-surveys-perspectives-and-community-discovery-resources)
 
 Methods may span multiple families. Sections 1–5 use reward semantics as the primary narrative taxonomy. Section 7 is a cross-cutting data index, Section 8 records where a value signal lives without treating architectural coupling as a new reward meaning, and Section 9 evaluates the evaluator itself. The registries preserve these dimensions through primary semantics, supervision provenance, `model_coupling`, and benchmark-capability metadata.
 
@@ -52,7 +52,7 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 |---|---|---|---|---|
 | 2026-02 | [World-VLA-Loop](https://arxiv.org/abs/2602.06508) | Video world model jointly predicts imagined future frames and binary reward; the reward drives VLA RL and policy failures are fed back to refine the world model | [project/repo; source code in preparation](https://github.com/showlab/World-VLA-Loop) | 2026-07-18 |
 | 2026-01 | [RoboReward](https://arxiv.org/abs/2601.00675) | General-purpose vision-language reward models; outcome/progress scoring with counterfactual negatives and near-misses | [W](https://huggingface.co/teetone/RoboReward-4B) | 2026-07-18 |
-| 2024-07 | [Adapt2Reward](https://arxiv.org/abs/2407.14872) | Failure-prompt adaptation for generalizable robotic rewards | — | 2026-07-18 |
+| 2024-07 | [Adapt2Reward](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/07430.pdf) | Failure-prompt adaptation for generalizable robotic rewards | — | 2026-08-02 |
 
 ## 2. Absolute process progress
 
@@ -67,13 +67,19 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 | 2026-03 | [SOLE-R1](https://arxiv.org/abs/2603.28730) | Per-timestep video-language reasoning and dense progress used as the sole online-RL reward | [C](https://github.com/rai-opensource/sole-r1) · [W/D collection](https://huggingface.co/collections/theaiinstitute/sole-r1) | 2026-07-18 |
 | 2026-03 | [ProgAgent](https://arxiv.org/abs/2603.07784) | Initial/current/goal progress potential for continual robot RL with OOD regularization | — | 2026-07-18 |
 | 2026-03 | [Rewarding DINO](https://arxiv.org/abs/2603.16978) | Language-conditioned dense visual reward distilled from analytical simulator rewards | — | 2026-07-18 |
+| 2026-02 | [TOPReward: Token Probabilities as Hidden Zero-Shot Rewards for Robotics](https://arxiv.org/abs/2602.19313) | Zero-shot reward extracted from VLM token probabilities; evaluated with ManiRewardBench | [C, MIT](https://github.com/TOPReward/TOPReward) | 2026-08-02 |
+| 2026-02 | [MARVL](https://arxiv.org/abs/2602.15872) | Multi-stage VLM guidance with spatial/semantic consistency and task-direction projection for robot manipulation | — | 2026-08-02 |
 | 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Continuous within-subtask progress jointly decoded with actions to stabilize transitions in long-horizon manipulation | [C](https://github.com/PLAN-Lab/PALM) · [W](https://github.com/PLAN-Lab/PALM#-checkpoints); license ? | 2026-07-18 |
 | 2025-12 | [EVOLVE-VLA](https://arxiv.org/abs/2512.14666) | Learned visual progress estimator provides smoothed dense reward for test-time VLA adaptation, stopping, and horizon extension | [project/repo shell](https://github.com/showlab/EVOLVE-VLA); runnable release not verified | 2026-07-24 |
 | 2025-09 | [World-Env](https://arxiv.org/abs/2509.24948) | LLaVA-based instant reflector with a trained scalar head estimates task-completion probability over imagined video for VLA reward and early termination | [C, Apache-2.0](https://github.com/amap-cvlab/world-env) · [W](https://www.modelscope.cn/models/junjxiao/world-env) | 2026-07-18 |
 | 2025-09 | [TimeRewarder](https://arxiv.org/abs/2509.26627) | Frame-wise temporal distance from passive human and robot video as dense reward | [C](https://github.com/CowAndSheep/TimeRewarder) | 2026-07-18 |
-| 2025-05 | [ReWiND](https://arxiv.org/abs/2505.10911) | Language-conditioned progress reward learned from human/robot video for reward relabeling and policy learning | [C](https://github.com/rewind-reward/ReWiND) | 2026-07-18 |
+| 2025-05 | [ReWiND](https://proceedings.mlr.press/v305/zhang25a.html) | Language-conditioned progress reward learned from human/robot video for reward relabeling and policy learning | [C](https://github.com/rewind-reward/ReWiND) | 2026-08-02 |
+| 2024-11 | [Generative Value Learning (GVL)](https://openreview.net/forum?id=friHAl5ofG) | Generative completion-percentage prediction from shuffled trajectory frames for robot policy learning | [project](https://generative-value-learning.github.io/); code/weights not verified | 2026-08-02 |
+| 2023-10 | [VLM-RM](https://openreview.net/forum?id=N0I2RtD8je) | Zero-shot CLIP-family vision-language reward for language-conditioned robot reinforcement learning | [C, MIT](https://github.com/AlignmentResearch/vlmrm) | 2026-08-02 |
+| 2023-10 | [RoboCLIP](https://proceedings.neurips.cc/paper_files/paper/2023/hash/ae54ce310476218f26dd48c1626d5187-Abstract-Conference.html) | Video-language similarity reward from a single demonstration for robot policy learning | [C](https://github.com/sumedh7/RoboCLIP) · [upstream S3D W](https://www.robots.ox.ac.uk/~vgg/software/S3D/) | 2026-08-02 |
+| 2023-06 | [LIV](https://proceedings.mlr.press/v202/ma23b.html) | Language-image representations trained from video provide goal-conditioned visual reward for robotic manipulation | [C, MIT](https://github.com/penn-pal-lab/LIV) · [W](https://huggingface.co/jasonyma/LIV) | 2026-08-02 |
+| 2022-09 | [VIP](https://openreview.net/forum?id=0kR3wP6ZKq) | Pretrained visual value representation supplies dense distance-based reward from passive human video | [C](https://github.com/facebookresearch/vip) | 2026-08-02 |
 | earlier | [PROGRESSOR](https://github.com/ripl/progressor) | Perceptually guided progress estimator with online refinement | C | 2026-07-18 |
-| 2026-02 | [TOPReward](https://github.com/TOPReward/TOPReward) | Zero-shot reward extracted from VLM token probabilities | C; paper metadata pending | 2026-07-18 |
 
 ## 3. Relative and preference reward
 
@@ -104,17 +110,22 @@ RoboMonkey and RoVer construct preferences from proximity to demonstrated action
 | 2026-04 | [ViVa](https://arxiv.org/abs/2604.08168) | Video-generative scalar value coupled to predicted future proprioception | [C](https://github.com/GigaAI-research/ViVa); license/weights ? | 2026-07-18 |
 | 2026-02 | [RISE](https://arxiv.org/abs/2602.11075) | Progress value evaluates action-conditioned imagined futures and supplies advantages for policy improvement | [C](https://github.com/OpenDriveLab/RISE) · [W: dynamics only](https://github.com/OpenDriveLab/RISE); code Apache-2.0, released data/checkpoints CC BY-NC-SA 4.0 | 2026-07-18 |
 | 2026-01 | [Cosmos Policy](https://arxiv.org/abs/2601.16163) | Joint action, future-state, and expected rewards-to-go prediction for direct control and best-of-N planning | [C, Apache-2.0](https://github.com/NVlabs/cosmos-policy) · [W/D](https://huggingface.co/collections/nvidia/cosmos-policy); item licenses require review | 2026-07-18 |
-| 2025-09 | [SARM](https://arxiv.org/abs/2509.25358) | Stage-aware video reward for long-horizon manipulation | [C](https://github.com/xdofai/opensarm) | 2026-07-18 |
+| 2025-09 | [SARM](https://openreview.net/forum?id=aemqAxScl9) | Stage-aware video reward for long-horizon manipulation | [C](https://github.com/xdofai/opensarm) | 2026-08-02 |
 | 2025-05 | [Hume](https://arxiv.org/abs/2505.21432) | Policy-internal value-query head estimates state–action value for sampled action chunks and drives System-2 best-of-N selection | [C, MIT](https://github.com/hume-vla/hume) · [W, MIT](https://huggingface.co/Hume-vla/Hume-System2) | 2026-07-24 |
+| 2024-05 | [Video-Language Critic](https://openreview.net/forum?id=jJOVpnNrEp) | Video-language preference critic supplies temporal reward for robot policy learning | [C, MIT](https://github.com/minttusofia/video_language_critic) | 2026-08-02 |
+| 2023-12 | [Diffusion Reward](https://arxiv.org/abs/2312.14134) | Negative conditional entropy from a video diffusion model provides history-conditioned reward for expert-like robot behavior | [C, MIT](https://github.com/TEA-Lab/diffusion_reward) · [W](https://huggingface.co/tauhuang/diffusion_reward) · [D](https://huggingface.co/datasets/tauhuang/diffusion_reward) | 2026-08-02 |
 
 ## 5. Hybrid evaluators and verifiers
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
 | 2026-07 | [DenseReward](https://arxiv.org/abs/2607.13033) | Dense frame-level reward trained with phase-aware success, failure, and recovery synthesis | [project](https://dense-reward.github.io/); code/data/weights links not yet verified | 2026-07-18 |
+| 2026-07 | [CoRe](https://arxiv.org/abs/2607.01721) | Combines a VLM-optimized formal reward with a residual reward learned from VLM-labelled video preferences | [project](https://core-2026.github.io/); code/weights/data not verified | 2026-08-02 |
 | 2026-06 | [Success Visitation Matching](https://arxiv.org/abs/2606.23640) | Discriminator turns successful-vs-unsuccessful state–action visitation into dense, outcome-preserving process reward for robot RL | [project; code coming soon](https://success-visitation-matching.github.io/) | 2026-07-24 |
+| 2026-06 | [Reward as An Agent](https://arxiv.org/abs/2606.19990) | Agentic evaluator judges physical plausibility and task completion in embodied world-model rollouts to provide robust reward signals | [C](https://github.com/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models); license ? | 2026-08-02 |
 | 2026-05 | [RoboAlign-R1](https://arxiv.org/abs/2605.03821) | Qwen3-VL-8B-Thinking teacher judge is distilled into a 98M six-dimensional reward model for GRPO post-training of robot video world models | [project](https://roboalign-r1.netlify.app/); public repo is currently a placeholder | 2026-07-18 |
 | 2026-03 | [Large Reward Models](https://arxiv.org/abs/2603.16065) | Multi-source VLM process, completion, and temporal-contrast reward generation for online refinement | [C](https://github.com/physical-superintelligence-lab/Large-Reward-Models) | 2026-07-18 |
+| 2026-03 | [MVR](https://openreview.net/forum?id=7lw6s9ELfr) | Multi-view video-text state relevance with state-dependent shaping for locomotion and manipulation RL | [C, MIT](https://github.com/mvr-rl/mvr) · [upstream ViCLIP W](https://github.com/OpenGVLab/InternVideo/tree/main/InternVideo1/Downstream/Video-Text-Retrieval) | 2026-08-02 |
 | 2026-03 | [PRIMO R1](https://arxiv.org/abs/2603.15600) | RL-induced process reasoning for progress estimation and zero-shot failure detection | — | 2026-07-18 |
 | 2026-03 | [PRM-as-a-Judge](https://arxiv.org/abs/2603.21669) | Dense robotic auditing with outcome/process/diagnosis metrics and progress-potential judges | [project](https://prm-as-a-judge.github.io/); artifact audit pending | 2026-07-18 |
 | 2026-03 | [Generalizable Dense Reward / VLLR](https://arxiv.org/abs/2604.00055) | VLM subtask progress plus policy self-certainty for long-horizon RL | [project](https://silongyong.github.io/vllr_project_page/); artifact audit pending | 2026-07-18 |
@@ -267,13 +278,15 @@ These are useful boundary papers when the evaluator is consumed for policy selec
 | 2025-05 | [WorldEval](https://arxiv.org/abs/2505.19017) | World-model policy ranking and safety checking; evaluator-system boundary |
 | 2026-06 | [Recover, Discover, Plan](https://arxiv.org/abs/2606.18328) | Failure-driven skill/concept learning and planning, without a separately benchmarked reward model |
 
-## 11. Community discovery resources
+## 11. Related surveys, perspectives, and community discovery resources
 
+- [Progress Reward Modeling for Robotic Learning: A Comprehensive Survey](https://arxiv.org/abs/2607.21655) — 2026 arXiv preprint with a progress-centered organization of model interfaces, construction, supervision, and evaluation.
+- [Position: Good Embodied Reward Models Need Bad Behavior Data](https://arxiv.org/abs/2606.01036) — ICML 2026 Position Track spotlight arguing for evaluation and training on low-quality, unsafe, and superficially task-like behavior.
 - [Awesome Progress Reward Model](https://github.com/VanceChu/Awesome-Progress-Reward-Model)
 - [Awesome Robot Failure Management](https://robot-failures.github.io/awesome-robot-failure-management/datasets.html)
 - [RewardScope](https://github.com/philfung/reward-scope)
 
-These lists are used for discovery. Claims in this repository must be rechecked against original papers, author project pages, official repositories, or model/data cards.
+Surveys, perspectives, and community lists are used for field framing and discovery. Claims in this repository must still be rechecked against original papers, author project pages, official repositories, or model/data cards.
 
 ## Contribution and update policy
 
