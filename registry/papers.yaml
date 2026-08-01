@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-07-24"
+last_updated: "2026-08-02"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -10,6 +10,241 @@ scope_note: >-
   availability and licenses are recorded separately.
 
 entries:
+  - id: "ma_2022_vip"
+    kind: "reward_model"
+    title: "VIP: Towards Universal Visual Reward and Representation via Value-Implicit Pre-Training"
+    released: "2022-09-30"
+    venue_or_preprint: "ICLR 2023 Spotlight"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["goal_conditioned_value", "visual_reward", "human_video_pretraining"]
+    training_data: ["ego4d_human_video"]
+    inference_inputs: ["frame", "goal_image"]
+    downstream_roles: ["dense_shaping", "offline_rl", "representation_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2210.00030"}
+      code: {status: "available", url: "https://github.com/facebookresearch/vip"}
+      weights: {status: "available", url: "https://github.com/facebookresearch/vip#vip-usage-examples"}
+      data: {status: "not_applicable_upstream", url: "https://ego4d-data.org/"}
+    license: {code: "unverified", weights: "unverified", data: "upstream_Ego4D_terms"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "VIP pretrains a goal-conditioned visual value representation on Ego4D and uses embedding distance to provide dense rewards for unseen simulated and real-robot tasks."
+    sources: ["https://arxiv.org/abs/2210.00030", "https://sites.google.com/view/vip-rl", "https://github.com/facebookresearch/vip"]
+
+  - id: "ma_2023_liv"
+    kind: "reward_model"
+    title: "LIV: Language-Image Representations and Rewards for Robotic Control"
+    released: "2023-06-01"
+    venue_or_preprint: "ICML 2023"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["goal_conditioned_value", "language_goal", "image_goal", "human_video_pretraining"]
+    training_data: ["epic_kitchens", "real_robot_demonstrations"]
+    inference_inputs: ["frame", "language_or_image_goal"]
+    downstream_roles: ["dense_shaping", "policy_synthesis", "representation_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://proceedings.mlr.press/v202/ma23b.html"}
+      code: {status: "available", url: "https://github.com/penn-pal-lab/LIV"}
+      weights: {status: "available", url: "https://huggingface.co/jasonyma/LIV"}
+      data: {status: "available", url: "https://github.com/penn-pal-lab/LIV/blob/main/liv/dataset/README.md"}
+    license: {code: "MIT", weights: "unverified", data: "unverified"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "LIV learns a multimodal value representation from text-annotated videos and produces dense frame rewards for language- or image-goal robotic control."
+    sources: ["https://proceedings.mlr.press/v202/ma23b.html", "https://penn-pal-lab.github.io/LIV/", "https://github.com/penn-pal-lab/LIV", "https://huggingface.co/jasonyma/LIV"]
+
+  - id: "sontakke_2023_roboclip"
+    kind: "reward_model"
+    title: "RoboCLIP: One Demonstration is Enough to Learn Robot Policies"
+    released: "2023-10-11"
+    venue_or_preprint: "NeurIPS 2023"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["video_language_reward", "one_demonstration", "trajectory_similarity"]
+    training_data: ["pretrained_howto100m_video_language_model", "single_video_or_text_demonstration"]
+    inference_inputs: ["rollout_video", "video_or_text_goal"]
+    downstream_roles: ["online_rl", "trajectory_reward"]
+    artifacts:
+      paper: {status: "available", url: "https://proceedings.neurips.cc/paper_files/paper/2023/hash/ae54ce310476218f26dd48c1626d5187-Abstract-Conference.html"}
+      code: {status: "available", url: "https://github.com/sumedh7/RoboCLIP"}
+      weights: {status: "upstream_only", url: "https://github.com/sumedh7/RoboCLIP#setting-up-the-env"}
+      data: {status: "not_applicable", url: null}
+    license: {code: "unverified", weights: "upstream_terms", data: "not_applicable"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "RoboCLIP converts video-language embedding similarity between an agent rollout and a single video or textual demonstration into a trajectory reward."
+    sources: ["https://proceedings.neurips.cc/paper_files/paper/2023/hash/ae54ce310476218f26dd48c1626d5187-Abstract-Conference.html", "https://arxiv.org/abs/2310.07899", "https://github.com/sumedh7/RoboCLIP"]
+
+  - id: "rocamonde_2024_vlm_rm"
+    kind: "reward_model"
+    title: "Vision-Language Models are Zero-Shot Reward Models for Reinforcement Learning"
+    released: "2023-10-19"
+    venue_or_preprint: "ICLR 2024"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["zero_shot", "clip_similarity", "language_conditioned"]
+    training_data: ["pretrained_vlm"]
+    inference_inputs: ["frame", "instruction"]
+    downstream_roles: ["dense_shaping", "reinforcement_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://openreview.net/forum?id=N0I2RtD8je"}
+      code: {status: "available", url: "https://github.com/AlignmentResearch/vlmrm"}
+      weights: {status: "not_applicable_upstream", url: "https://github.com/mlfoundations/open_clip"}
+      data: {status: "not_applicable", url: null}
+    license: {code: "MIT", weights: "upstream_item_specific", data: "not_applicable"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "VLM-RM uses frozen CLIP-family image-text compatibility as a zero-shot scalar reward; this is semantic similarity, not a calibrated success probability."
+    sources: ["https://openreview.net/forum?id=N0I2RtD8je", "https://arxiv.org/abs/2310.12921", "https://github.com/AlignmentResearch/vlmrm"]
+
+  - id: "huang_2023_diffusion_reward"
+    kind: "reward_model"
+    title: "Diffusion Reward: Learning Rewards via Conditional Video Diffusion"
+    released: "2023-12-21"
+    venue_or_preprint: "ECCV 2024"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["video_diffusion", "expert_likelihood", "history_conditioned", "zero_shot_task_generalization"]
+    training_data: ["expert_robot_videos"]
+    inference_inputs: ["historical_frames", "current_frame"]
+    downstream_roles: ["dense_shaping", "visual_reinforcement_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2312.14134"}
+      code: {status: "available", url: "https://github.com/TEA-Lab/diffusion_reward"}
+      weights: {status: "available", url: "https://huggingface.co/tauhuang/diffusion_reward"}
+      data: {status: "available", url: "https://huggingface.co/datasets/tauhuang/diffusion_reward"}
+    license: {code: "MIT", weights: "MIT", data: "MIT"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "Diffusion Reward uses the negative conditional entropy of a video diffusion model as a history-conditioned reward for expert-like manipulation behavior."
+    sources: ["https://arxiv.org/abs/2312.14134", "https://diffusion-reward.github.io/", "https://github.com/TEA-Lab/diffusion_reward", "https://huggingface.co/tauhuang/diffusion_reward", "https://huggingface.co/datasets/tauhuang/diffusion_reward"]
+
+  - id: "alakuijala_2024_video_language_critic"
+    kind: "reward_model"
+    title: "Video-Language Critic: Transferable Reward Functions for Language-Conditioned Robotics"
+    released: "2024-05-30"
+    venue_or_preprint: "TMLR 2025"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["video_language_reward", "temporal_ranking", "cross_embodiment"]
+    training_data: ["open_x_embodiment", "video_caption_pairs"]
+    inference_inputs: ["video_clip", "instruction"]
+    downstream_roles: ["dense_shaping", "robot_policy_training"]
+    artifacts:
+      paper: {status: "available", url: "https://openreview.net/forum?id=jJOVpnNrEp"}
+      code: {status: "available", url: "https://github.com/minttusofia/video_language_critic"}
+      weights: {status: "not_verified", url: null}
+      data: {status: "not_applicable_upstream", url: "https://robotics-transformer-x.github.io/"}
+    license: {code: "MIT", weights: "unknown", data: "upstream_item_specific"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "The critic is trained with contrastive and temporal-ranking objectives and scores language-conditioned behavior clips; its scalar is not automatically calibrated as task success."
+    sources: ["https://openreview.net/forum?id=jJOVpnNrEp", "https://arxiv.org/abs/2405.19988", "https://github.com/minttusofia/video_language_critic"]
+
+  - id: "ma_2024_gvl"
+    kind: "reward_model"
+    title: "Vision Language Models are In-Context Value Learners"
+    released: "2024-11-07"
+    venue_or_preprint: "ICLR 2025"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["generative_value_learning", "in_context_learning", "temporal_ordering", "multimodal_context"]
+    training_data: ["pretrained_vlm", "optional_in_context_human_or_robot_demonstrations"]
+    inference_inputs: ["shuffled_video_frames", "instruction", "optional_context_trajectories"]
+    downstream_roles: ["progress_estimation", "success_detection", "data_curation", "value_weighted_regression"]
+    artifacts:
+      paper: {status: "available", url: "https://openreview.net/forum?id=friHAl5ofG"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_applicable_closed_or_upstream_vlm", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "upstream_item_specific", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-08-02"
+    evidence_note: "GVL prompts a VLM to order shuffled frames and output task-completion percentages. VOC primarily tests temporal ordering on expert videos and should not be treated as full reward validity."
+    sources: ["https://openreview.net/forum?id=friHAl5ofG", "https://arxiv.org/abs/2411.04549", "https://generative-value-learning.github.io/"]
+
+  - id: "zhou_2026_marvl"
+    kind: "reward_model"
+    title: "MARVL: Multi-Stage Guidance for Robotic Manipulation via Vision-Language Models"
+    released: "2026-01-28"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["multi_stage", "task_direction_projection", "vlm_reward"]
+    training_data: ["metaworld_rollouts", "vlm_finetuning"]
+    inference_inputs: ["frame", "instruction", "task_stage"]
+    downstream_roles: ["dense_shaping", "reinforcement_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2602.15872"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-08-02"
+    evidence_note: "MARVL fine-tunes a VLM for spatial/semantic consistency and constructs multi-stage trajectory-sensitive dense guidance on Meta-World; no official reusable artifact was verified."
+    sources: ["https://arxiv.org/abs/2602.15872"]
+
+  - id: "luo_2026_mvr"
+    kind: "reward_model"
+    title: "MVR: Multi-view Video Reward Shaping for Reinforcement Learning"
+    released: "2026-03-02"
+    venue_or_preprint: "ICLR 2026"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["multi_view", "video_language_reward", "state_relevance", "potential_based_shaping"]
+    training_data: ["target_behavior_videos", "pretrained_viclip"]
+    inference_inputs: ["multi_view_video", "instruction", "state"]
+    downstream_roles: ["reward_shaping", "reinforcement_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://openreview.net/forum?id=7lw6s9ELfr"}
+      code: {status: "available", url: "https://github.com/mvr-rl/mvr"}
+      weights: {status: "upstream_only", url: "https://github.com/mvr-rl/mvr#download-pretrained-viclip-weights"}
+      data: {status: "not_found", url: null}
+    license: {code: "MIT", weights: "upstream_item_specific", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "MVR learns multi-view video state relevance and combines it with task reward through state-dependent shaping that decays as the target behavior emerges; it is not a calibrated completion score."
+    sources: ["https://openreview.net/forum?id=7lw6s9ELfr", "https://arxiv.org/abs/2603.01694", "https://mvr-rl.github.io/", "https://github.com/mvr-rl/mvr"]
+
+  - id: "li_2026_reward_as_agent"
+    kind: "reward_model"
+    title: "Reward as An Agent for Embodied World Models"
+    released: "2026-06-19"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["agentic_reward", "physical_plausibility", "task_completion", "world_model_alignment", "reward_hacking"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["embodied_world_model_rollouts"]
+    inference_inputs: ["generated_video", "instruction"]
+    downstream_roles: ["world_model_post_training", "verification", "reward_hacking_mitigation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.19990"}
+      code: {status: "available", url: "https://github.com/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models"}
+      weights: {status: "not_applicable_upstream_vlm", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unverified", weights: "upstream_item_specific", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-08-02"
+    evidence_note: "The agentic evaluator scores physical plausibility, interaction coherence, and task completion for embodied world-model rollouts. It evaluates generated robot behavior rather than directly controlling a robot."
+    sources: ["https://arxiv.org/abs/2606.19990", "https://github.com/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models"]
+
+  - id: "ni_2026_core"
+    kind: "reward_model"
+    title: "CoRe: Combined Rewards with Vision-Language Model Feedback for Preference-Aligned Reinforcement Learning"
+    released: "2026-07-02"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["formal_reward", "residual_reward", "vlm_preferences", "reward_program_optimization"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["vlm_generated_video_preferences", "robot_rollouts"]
+    inference_inputs: ["video", "instruction", "formal_state_features"]
+    downstream_roles: ["reward_construction", "reinforcement_learning", "preference_alignment"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.01721"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "blocked"
+    verification_date: "2026-08-02"
+    evidence_note: "CoRe combines a VLM-optimized formal reward with a VLM-preference-trained residual reward. The two components should remain visible rather than being described as one native progress score."
+    sources: ["https://arxiv.org/abs/2607.01721", "https://core-2026.github.io/"]
+
   - id: "wang_2024_rl_vlm_f"
     kind: "reward_model"
     title: "RL-VLM-F: Reinforcement Learning from Vision Language Foundation Model Feedback"
@@ -31,48 +266,46 @@ entries:
     evidence_note: "VLM pairwise feedback is converted into a learned reward for robot RL."
     sources: ["https://proceedings.mlr.press/v235/wang24bn.html", "https://arxiv.org/abs/2402.03681"]
 
-  - id: "ma_2024_adapt2reward"
+  - id: "yang_2024_adapt2reward"
     kind: "reward_model"
     title: "Adapt2Reward: Adapting Video-Language Models to Generalizable Robotic Rewards via Failure Prompts"
-    released: "2024-07"
-    venue_or_preprint: "preprint"
+    released: "2024-07-22"
+    venue_or_preprint: "ECCV 2024"
     primary_semantics: "hybrid_verifier"
     secondary_tags: ["failure_prompt", "vlm_reward"]
     training_data: ["robot_success", "failure_prompts"]
     inference_inputs: ["video", "instruction"]
     downstream_roles: ["rl", "dense_shaping"]
     artifacts:
-      paper: {status: "available", url: "https://arxiv.org/abs/2407.14872"}
+      paper: {status: "available", url: "https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/07430.pdf"}
       code: {status: "not_found", url: null}
       weights: {status: "not_found", url: null}
       data: {status: "unknown", url: null}
     license: {code: "unknown", weights: "unknown", data: "unknown"}
     adapter_status: "catalog_only"
-    verification_date: "2026-07-18"
-    evidence_note: "Failure prompts explicitly enter video-language reward adaptation."
-    sources: ["https://arxiv.org/abs/2407.14872"]
-
+    verification_date: "2026-08-02"
+    evidence_note: "ECCV 2024 paper; failure prompts explicitly enter video-language reward adaptation. No official reusable implementation was verified."
+    sources: ["https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/07430.pdf", "https://arxiv.org/abs/2407.14872"]
   - id: "zhang_2025_rewind"
     kind: "reward_model"
     title: "ReWiND: Language-Guided Rewards Teach Robot Policies without New Demonstrations"
     released: "2025-05"
-    venue_or_preprint: "preprint"
+    venue_or_preprint: "CoRL 2025"
     primary_semantics: "absolute_progress"
     secondary_tags: ["language_conditioned", "rewind_augmentation"]
     training_data: ["human_video", "robot_video"]
     inference_inputs: ["frame", "instruction"]
     downstream_roles: ["reward_relabeling", "offline_rl", "online_adaptation"]
     artifacts:
-      paper: {status: "available", url: "https://arxiv.org/abs/2505.10911"}
+      paper: {status: "available", url: "https://proceedings.mlr.press/v305/zhang25a.html"}
       code: {status: "available", url: "https://github.com/rewind-reward/ReWiND"}
       weights: {status: "unknown", url: null}
       data: {status: "unknown", url: null}
     license: {code: "unknown", weights: "unknown", data: "unknown"}
     adapter_status: "planned"
-    verification_date: "2026-07-18"
-    evidence_note: "Language-conditioned progress reward used for reward relabeling and policy learning."
-    sources: ["https://arxiv.org/abs/2505.10911", "https://github.com/rewind-reward/ReWiND"]
-
+    verification_date: "2026-08-02"
+    evidence_note: "CoRL 2025 paper; language-conditioned progress reward used for reward relabeling and policy learning."
+    sources: ["https://proceedings.mlr.press/v305/zhang25a.html", "https://arxiv.org/abs/2505.10911", "https://github.com/rewind-reward/ReWiND"]
   - id: "progressor"
     kind: "reward_model"
     title: "PROGRESSOR"
@@ -98,23 +331,22 @@ entries:
     kind: "reward_model"
     title: "SARM: Stage-Aware Reward Modeling for Long Horizon Robot Manipulation"
     released: "2025-09"
-    venue_or_preprint: "preprint"
+    venue_or_preprint: "ICLR 2026"
     primary_semantics: "temporal_value"
     secondary_tags: ["absolute_progress", "stage_aware"]
     training_data: ["real_robot_demonstrations"]
     inference_inputs: ["video", "multi_view"]
     downstream_roles: ["data_reweighting", "behavior_cloning"]
     artifacts:
-      paper: {status: "available", url: "https://arxiv.org/abs/2509.25358"}
+      paper: {status: "available", url: "https://openreview.net/forum?id=aemqAxScl9"}
       code: {status: "available", url: "https://github.com/xdofai/opensarm"}
       weights: {status: "not_found", url: null}
       data: {status: "not_found", url: null}
     license: {code: "unverified", weights: "unknown", data: "unknown"}
     adapter_status: "planned"
-    verification_date: "2026-07-18"
-    evidence_note: "Stage estimator plus within-stage progress value for long-horizon manipulation."
-    sources: ["https://arxiv.org/abs/2509.25358", "https://github.com/xdofai/opensarm"]
-
+    verification_date: "2026-08-02"
+    evidence_note: "ICLR 2026 paper; stage estimator plus within-stage progress value for long-horizon manipulation."
+    sources: ["https://openreview.net/forum?id=aemqAxScl9", "https://arxiv.org/abs/2509.25358", "https://github.com/xdofai/opensarm"]
   - id: "timerewarder_2025"
     kind: "reward_model"
     title: "TimeRewarder: Learning Dense Reward from Passive Videos via Frame-wise Temporal Distance"
@@ -161,25 +393,28 @@ entries:
 
   - id: "topreward_2026"
     kind: "reward_model"
-    title: "TOPReward"
-    released: "2026-02"
-    venue_or_preprint: "paper metadata pending"
+    title: "TOPReward: Token Probabilities as Hidden Zero-Shot Rewards for Robotics"
+    released: "2026-02-22"
+    venue_or_preprint: "preprint"
     primary_semantics: "absolute_progress"
-    secondary_tags: ["zero_shot", "token_probability"]
+    secondary_tags: ["zero_shot", "token_probability", "video_vlm", "success_detection"]
     training_data: ["pretrained_vlm"]
-    inference_inputs: ["image", "instruction"]
-    downstream_roles: ["dense_shaping", "evaluation"]
+    inference_inputs: ["video_trajectory", "instruction"]
+    downstream_roles: ["dense_shaping", "success_detection", "data_curation", "reward_aligned_behavior_cloning"]
+    benchmark:
+      name: "ManiRewardBench"
+      scale: {tasks: 113, episodes: 497}
+      metrics: ["VOC", "success_detection"]
     artifacts:
-      paper: {status: "unknown", url: null}
+      paper: {status: "available", url: "https://arxiv.org/abs/2602.19313"}
       code: {status: "available", url: "https://github.com/TOPReward/TOPReward"}
-      weights: {status: "unknown", url: null}
-      data: {status: "unknown", url: null}
-    license: {code: "unknown", weights: "unknown", data: "unknown"}
-    adapter_status: "catalog_only"
-    verification_date: "2026-07-18"
-    evidence_note: "Zero-shot completion/reward signal from VLM token probabilities; paper metadata needs audit."
-    sources: ["https://github.com/TOPReward/TOPReward"]
-
+      weights: {status: "not_applicable_upstream_vlm", url: null}
+      data: {status: "not_verified", url: null}
+    license: {code: "MIT", weights: "upstream_item_specific", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-08-02"
+    evidence_note: "TOPReward extracts the log-likelihood of task truth from video-VLM token logits. ManiRewardBench is paper-associated, and its standalone public data release was not verified."
+    sources: ["https://arxiv.org/abs/2602.19313", "https://topreward.github.io/webpage/", "https://github.com/TOPReward/TOPReward"]
   - id: "robodopamine_2025"
     kind: "reward_model"
     title: "Robo-Dopamine: General Process Reward Modeling for High-Precision Robotic Manipulation"
