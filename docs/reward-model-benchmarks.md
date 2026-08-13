@@ -1,6 +1,6 @@
 # Robot Reward-Model Benchmarks
 
-**Verified:** 2026-07-24
+**Verified:** 2026-08-13
 **Purpose:** map the existing evaluation landscape and define the requirements for a unified robot reward-model benchmark.
 
 A reward-model benchmark is not the same thing as a policy benchmark or a training corpus. The evaluator itself must be scored against independent human, physical, or simulator ground truth before its downstream policy gains are considered. The current landscape is fragmented: each benchmark tests a useful slice, but none covers outcome, process, failure onset, recoverability, recovery re-entry, robustness, and policy usefulness together.
@@ -9,6 +9,7 @@ A reward-model benchmark is not the same thing as a policy benchmark or a traini
 
 | Benchmark | Released | Evaluation unit and scale | Signal / metric | Failure and recovery coverage | Important boundary |
 |---|---|---|---|---|---|
+| [TrustRoboReward multi-paradigm benchmark](https://arxiv.org/abs/2608.08491) | 2026-08 | 7,030 human-annotated test items across Score-A, Score-B, Pair-A, and Pair-B | Pointwise normalized-error metrics, pairwise accuracy, and score-pair consistency | RoboReward-derived video pool contains task-progress variation; no explicit onset, recoverability, or recovery re-entry protocol | Paper-associated split; data and weights were not verified as public releases. Its combined Overall average is interface-specific and is not adopted as a universal RRM-Bench score |
 | [DenseReward evaluation suite](https://arxiv.org/html/2607.13033v1) | 2026-07 | 26,579 / approximately 27K episodes and 7.56M frame samples from DROID, Isaac Sim, RoboSuite, and LIBERO | Dense reward MAE; MPC distance; downstream RL success | Six modes: success, collision, miss, fall, smooth/suboptimal, recover | Model-native labels and splits are valuable but not an independent gold benchmark; simulated reward curves inherit the synthesis rules |
 | [Suboptimal-Value-Bench](https://zh1hao.wang/wvm/) | 2026-06 | 800 human-verified trajectories, 15 tasks; AgileX, ARX, and RoboSuite; real + simulation | Retry VOC and Hesitation RMSE with frame-level value annotations | Explicit hesitation and retry segments | Covers two important suboptimal patterns, not the wider failure/recovery taxonomy; the linked data repository was still empty on 2026-07-19 |
 | [RoboProcessBench](https://arxiv.org/html/2606.13040) | 2026-06 | About 58K multiple-choice QA items, 260 tasks, four source datasets | Accuracy across 12 static-monitoring and dynamic-reasoning families | Outcome, contact, motion, primitive progress and transitions; not a direct recovery benchmark | Diagnoses VLM prerequisites for reward modeling, but does not directly score a scalar reward curve or calibration |
@@ -59,6 +60,7 @@ Do not collapse the benchmark into a single RRM score. Report a profile and cate
 |---|---|---|
 | Outcome calibration | success, partial completion, ordinal score, annotator distribution | AUROC, AUPRC, Brier score, ECE, ordinal correlation |
 | Relative ordering | better / worse / tie for same task | Pairwise accuracy with ties, Kendall tau, Spearman correlation |
+| Cross-interface consistency | matched pointwise scores and pairwise preferences for the same cases | Score-pair reversal rate, order-constraint violations, calibration change before/after editing |
 | Candidate-action verification | fixed candidate action chunks with execution or simulator outcome | Top-1 regret, NDCG, pairwise accuracy, success@selected, oracle-gap closure |
 | Process consistency | dense or stage-conditioned progress | VOC plus monotonicity/consistency only on intervals where monotonic progress is valid |
 | Failure localization | onset interval, type, severity, confidence | Temporal AP, onset-tolerance F1, time-to-detection, false alarms per nominal episode |
@@ -128,6 +130,7 @@ Successful trajectories define the support of acceptable behavior, failures defi
 ## Primary sources
 
 - [RoboReward paper](https://arxiv.org/abs/2601.00675), [released dataset](https://huggingface.co/datasets/teetone/RoboReward), and [HELM leaderboard](https://crfm.stanford.edu/helm/robo-reward-bench/latest/)
+- [TrustRoboReward](https://arxiv.org/abs/2608.08491) and its [partial official repository](https://github.com/TrustRoboreward/TrustRoboReward)
 - [Robometer / RBM-EVAL](https://arxiv.org/html/2603.02115v2) and [code](https://github.com/robometer/robometer)
 - [PRM-as-a-Judge / RoboPulse](https://arxiv.org/html/2603.21669), [code](https://github.com/Yuheng2000/PRM-as-a-Judge), and [data](https://huggingface.co/datasets/yuheng2000/RoboPulse)
 - [World Value Models / Suboptimal-Value-Bench](https://arxiv.org/abs/2606.24742) and [project page](https://zh1hao.wang/wvm/)

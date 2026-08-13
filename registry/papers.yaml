@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-08-02"
+last_updated: "2026-08-13"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -1760,6 +1760,147 @@ entries:
     evidence_note: "VERITAS uses a gradient-free visual trace verifier to rank candidate actions and recycle verified rollouts. It is retained as an adjacent evaluator interface because the verifier is not a learned standalone reward model."
     sources: ["https://arxiv.org/abs/2606.18247", "https://veritas-improvement.github.io/", "https://github.com/princeton-prism/veritas"]
 
+  - id: "huang_2026_rynnvalue"
+    kind: "reward_model"
+    title: "RynnValue: Scaling Robotic Value Foundation Models with Temporal Distance"
+    released: "2026-08-10"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["absolute_temporal_distance", "relative_temporal_displacement", "cost_to_go", "outcome_verification", "failure_detection", "potential_based_shaping"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["agibot", "egodex", "galaxea_open_world", "interndata_a1", "open_x_embodiment", "rdt", "robocoin", "robomind", "robotwin", "soft_fold"]
+    corpus_scale: {hours: ">7000", original_episodes: 1671313, instruction_conditioned_segments: 3091969, instructions: 223395}
+    inference_inputs: ["instruction", "embodiment_metadata", "sampled_observation_sequence"]
+    downstream_roles: ["cost_to_go_estimation", "dense_reward_shaping", "failure_detection", "offline_rl", "online_rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2608.09853"}
+      code: {status: "available", url: "https://github.com/alibaba-damo-academy/RynnValue"}
+      weights: {status: "release_status_needs_recheck", url: "https://huggingface.co/collections/Alibaba-DAMO-Academy/rynnvalue"}
+      data: {status: "source_datasets_only", url: null}
+    license: {code: "Apache-2.0", weights: "unverified", data: "upstream_dataset_terms"}
+    adapter_status: "high_priority"
+    verification_date: "2026-08-13"
+    evidence_note: "RynnValue predicts remaining physical seconds and signed temporal displacement rather than normalized completion. Timestamp and cutoff labels scale cheaply, but execution speed and semantic cutoff quality remain part of the target; reversal and failure sensitivity must therefore be tested separately from monotone successful trajectories. The official repository links model pages while also saying checkpoint release is in progress, so weights are not marked fully released."
+    sources: ["https://arxiv.org/abs/2608.09853", "https://arxiv.org/html/2608.09853", "https://alibaba-damo-academy.github.io/RynnValue.github.io/", "https://github.com/alibaba-damo-academy/RynnValue", "https://huggingface.co/collections/Alibaba-DAMO-Academy/rynnvalue"]
+
+  - id: "wang_2026_trustroboreward"
+    kind: "reward_model"
+    title: "TrustRoboReward: Preference-Ordered Isotonic Score Editing for Multi-Paradigm Robot Reward Models"
+    released: "2026-08-09"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["absolute_progress", "relative_preference", "grounded_video_qa", "cross_interface_consistency", "isotonic_label_calibration"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["roboreward_video_pool", "distilled_pointwise_scores", "distilled_pairwise_preferences", "human_annotated_test_split"]
+    corpus_scale: {training_samples: 181692, human_annotated_test_samples: 7030, source_subsets: 23, human_correlation_subset: 1000}
+    inference_inputs: ["robot_video", "instruction", "optional_video_qa_answer", "optional_comparison_candidate"]
+    downstream_roles: ["trajectory_progress_scoring", "trajectory_preference", "video_qa_reward", "answer_preference", "reward_model_calibration"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2608.08491"}
+      code: {status: "partial_release", url: "https://github.com/TrustRoboreward/TrustRoboReward"}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "not_found", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-08-13"
+    evidence_note: "TrustRoboReward uses pairwise order constraints to edit pointwise labels and remove score-pair reversal conflicts across four native interfaces. Its paper-level combined Overall score is not imported as a universal project score: pointwise error, pairwise accuracy, and cross-interface consistency remain separate. The downstream PAIBench-G result compares generated videos rather than closing the loop on a physical robot."
+    sources: ["https://arxiv.org/abs/2608.08491", "https://github.com/TrustRoboreward/TrustRoboReward"]
+
+  - id: "protopapa_2026_gordon"
+    kind: "reward_model"
+    title: "GORDON: Graph-based Object-centric Rewards for Decomposition of Long-Horizon Manipulation"
+    released: "2026-08-04"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["object_centric", "scene_graph", "temporal_stage_profile", "stage_discovery", "hybrid_terminal_bonus"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["action_free_video_demonstrations", "detected_scene_graph_sequences"]
+    inference_inputs: ["current_scene_graph", "demonstrated_goal_scene_graph"]
+    downstream_roles: ["dense_shaping", "automatic_subtask_discovery", "subtask_specific_reward_learning", "sequential_policy_composition"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2608.03753"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-08-13"
+    evidence_note: "GORDON learns object-centric latent goal distance with temporal cycle consistency and uses the reward profile for automatic stage discovery. Activity-aware pooling and robot-motion masking target visual shortcuts, but evaluation is limited to seven simulated MAGICAL and ManiSkill3 tasks; object persistence, regressions, and terminal-classifier priors need independent tests."
+    sources: ["https://arxiv.org/abs/2608.03753", "https://andreaprotopapa.github.io/graph-reward-learning/"]
+
+  - id: "fei_2026_wcm"
+    kind: "policy_with_value"
+    title: "WCM: A World Critic Model for Vision-Language-Action Reinforcement Learning"
+    released: "2026-07-31"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["history_conditioned", "partial_observability", "latent_future_prediction", "failure_sensitive_return", "vla_reinforcement_learning"]
+    model_coupling: "value_world_model"
+    value_availability: "inference_queryable"
+    training_data: ["return_labeled_robot_rollouts", "maniskill", "metaworld", "calvin", "libero_plus", "widowx_real_robot_rollouts"]
+    corpus_scale: {simulation_tasks: 149, real_robot_tasks: 7}
+    inference_inputs: ["observation_history", "instruction"]
+    downstream_roles: ["state_value_estimation", "on_policy_vla_rl", "off_policy_vla_rl", "offline_value_curve_analysis"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.29613"}
+      code: {status: "available", url: "https://github.com/sylvestf/WCM"}
+      weights: {status: "partial_release", url: "https://huggingface.co/collections/Sylvest/wcm"}
+      data: {status: "partial_release", url: "https://huggingface.co/collections/Sylvest/wcm"}
+    license: {code: "MIT", weights: "unverified", data: "unverified"}
+    adapter_status: "planned"
+    verification_date: "2026-08-13"
+    evidence_note: "WCM jointly trains a history-conditioned task-value head and an action-conditioned future-latent objective so the critic represents temporal dynamics. It is a policy/task-dependent critic rather than a universal reward model; example pick-and-place data and a checkpoint are public, while the official repository says the paper's remaining checkpoints and RL code will be released gradually."
+    sources: ["https://arxiv.org/abs/2607.29613", "https://arxiv.org/html/2607.29613", "https://github.com/sylvestf/WCM", "https://huggingface.co/collections/Sylvest/wcm"]
+
+  - id: "wang_2026_thea"
+    kind: "evaluator_system"
+    title: "Towards the Harness of Embodied Agents"
+    released: "2026-08-03"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["outcome", "termination", "failure_diagnosis", "retry", "recovery", "evidence_grounding"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["pretrained_vlm", "tool_specific_postconditions"]
+    inference_inputs: ["current_synchronized_camera_observation", "tool_postcondition"]
+    downstream_roles: ["action_termination", "success_verification", "failure_diagnosis", "retry_and_recovery", "scene_graph_update_gating"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2608.11246"}
+      code: {status: "available", url: "https://github.com/EIT-HAI/Thea"}
+      weights: {status: "not_applicable_external_model", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "Apache-2.0", weights: "upstream_model_terms", data: "unknown"}
+    adapter_status: "planned"
+    verification_date: "2026-08-13"
+    evidence_note: "Thea's Evaluation as Exit Codes module independently maps current visual evidence and an explicit post-condition to in-progress, success, or failure, then gates termination, retry, recovery, and world-state updates. The authors report 93.3% average accuracy on 90 balanced real-robot checkpoints; the small test, lack of a confidence/unknown output, and harmful false-success errors make evidence calibration a central benchmark requirement."
+    sources: ["https://arxiv.org/abs/2608.11246", "https://eit-hai.github.io/thea/", "https://github.com/EIT-HAI/Thea"]
+
+  - id: "mahato_2026_openvla_failure_warning"
+    kind: "policy_with_value"
+    title: "Early Warning Signals for OpenVLA Failure under Visual Distribution Shift"
+    released: "2026-06-29"
+    venue_or_preprint: "preprint"
+    primary_semantics: "outcome"
+    secondary_tags: ["near_term_failure", "policy_internal_monitor", "distribution_shift", "linear_probe", "early_warning"]
+    model_coupling: "policy_internal"
+    value_availability: "inference_queryable"
+    training_data: ["libero_openvla_rollouts", "occlusion_shift", "camera_jitter_shift", "color_shift_control"]
+    inference_inputs: ["openvla_internal_activation"]
+    downstream_roles: ["near_term_failure_prediction", "execution_monitoring", "potential_recovery_trigger"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2606.29699"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-08-13"
+    evidence_note: "A post-hoc linear probe predicts failure within a 15-step horizon from frozen OpenVLA activations and transfers from occlusion to camera jitter in LIBERO. The paper explicitly limits the claim: it does not establish causal mechanism, task-held-out generalization, or a deployable recovery system, so the reported shift-specific AUROC/AUPRC must not be treated as general reward-model performance."
+    sources: ["https://arxiv.org/abs/2606.29699", "https://arxiv.org/html/2606.29699"]
+
 screened_out:
   - title: "RFM-HRI: A Multimodal Dataset of Medical Robot Failure, User Reaction and Recovery Preferences for Item Retrieval Tasks"
     source: "https://arxiv.org/abs/2603.05641"
@@ -1791,3 +1932,23 @@ screened_out:
     decision: "exclude_core"
     reason: "Uses a multi-term training reward rule for VLA post-training without a separately queryable or independently benchmarked robot reward model."
     verification_date: "2026-07-24"
+  - title: "Agentic Harnesses: LLM-Driven Verification Layers for Robot Autonomy"
+    source: "https://arxiv.org/abs/2608.09857"
+    decision: "adjacent_only"
+    reason: "Verifies proposed natural-language robot plans for governance and safety before execution, but does not evaluate observed robot behavior or expose a trajectory reward/value interface."
+    verification_date: "2026-08-13"
+  - title: "Adaptation of Generalist Robot Policies with Minimal Data"
+    source: "https://arxiv.org/abs/2608.11363"
+    decision: "exclude_core"
+    reason: "MiDAS uses task-specific value-based online RL as a policy-adaptation ingredient; the critic is not presented or independently evaluated as a transferable robot evaluator."
+    verification_date: "2026-08-13"
+  - title: "A Framework for Designing Reward Functions: From Objectives to Features to Human-Aligned Reward Functions"
+    source: "https://arxiv.org/abs/2608.12302"
+    decision: "exclude_core"
+    reason: "General formal reward-design workflow without robot behavior evaluation or a robotic reward-model artifact."
+    verification_date: "2026-08-13"
+  - title: "Synchronizing Beliefs with Second-Order Theory-of-Mind in Human-Autonomy Teams"
+    source: "https://arxiv.org/abs/2608.11229"
+    decision: "exclude_core"
+    reason: "Studies preference-teaching curricula in simulation without an evaluated robot-behavior reward or verifier interface."
+    verification_date: "2026-08-13"

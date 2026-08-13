@@ -1,6 +1,6 @@
 schema_version: "0.1"
 registry_name: "Robot Reward-Model Benchmarks"
-last_updated: "2026-07-19"
+last_updated: "2026-08-13"
 scope_note: >-
   Direct reward/value benchmarks, diagnostic capability benchmarks, and
   downstream policy-evaluation sources are tagged separately. Model-native
@@ -27,8 +27,33 @@ capability_tags:
   - robustness
   - process_reasoning
   - policy_usefulness
+  - grounded_video_qa
+  - cross_interface_consistency
 
 benchmarks:
+  - id: trustroboreward-benchmark
+    title: TrustRoboReward multi-paradigm benchmark
+    released: "2026-08-09"
+    benchmark_type: model_native
+    reality: roboreward_video_pool_with_human_annotated_test_labels
+    evaluation_unit: pointwise_or_pairwise_trajectory_or_video_qa_case
+    scale: {human_annotated_test_samples: 7030, paradigms: 4, source_subsets: 23, human_correlation_subset: 1000}
+    paradigms: [Score_A_trajectory_progress, Score_B_video_qa_answer_quality, Pair_A_trajectory_preference, Pair_B_answer_preference]
+    labels: [ordinal_1_to_5, win_lose_tie, cross_interface_order_constraint]
+    capabilities: [progress_ordering, trajectory_ranking, calibration, grounded_video_qa, cross_interface_consistency]
+    metrics: [pointwise_normalized_error, pairwise_accuracy, score_pair_consistency, paper_defined_overall_average]
+    artifacts:
+      paper: https://arxiv.org/abs/2608.08491
+      code_partial: https://github.com/TrustRoboreward/TrustRoboReward
+      data: not_verified_as_public_release
+      weights: not_verified_as_public_release
+    limitations:
+      - paper_associated_split_not_independent_hidden_gold_test
+      - dataset_and_model_weights_not_verified_as_public_releases
+      - combined_overall_average_is_paper_specific_not_a_universal_project_score
+      - downstream_paibench_g_comparison_is_not_closed_loop_physical_robot_validation
+    verification_date: "2026-08-13"
+
   - id: roborewardbench
     title: RoboRewardBench
     released: "2026-01-02"
