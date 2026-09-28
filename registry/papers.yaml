@@ -960,7 +960,7 @@ entries:
     downstream_roles: ["dense_shaping", "mpc", "online_rl"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2607.13033"}
-      code: {status: "placeholder_empty", url: "https://github.com/dense-reward/dense-reward"}
+      code: {status: "placeholder", url: "https://github.com/dense-reward/dense-reward"}
       weights: {status: "available", url: "https://huggingface.co/densereward/densereward-3frame-thinking"}
       data: {status: "available", url: "https://huggingface.co/datasets/densereward/DenseReward"}
     license: {code: "unknown", weights: "Apache-2.0 (model card)", data: "Apache-2.0 (dataset card)"}
