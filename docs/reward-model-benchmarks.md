@@ -1,6 +1,6 @@
 # Robot Reward-Model Benchmarks
 
-**Verified:** 2026-08-13
+**Verified:** 2026-09-28
 **Purpose:** map the existing evaluation landscape and define the requirements for a unified robot reward-model benchmark.
 
 A reward-model benchmark is not the same thing as a policy benchmark or a training corpus. The evaluator itself must be scored against independent human, physical, or simulator ground truth before its downstream policy gains are considered. The current landscape is fragmented: each benchmark tests a useful slice, but none covers outcome, process, failure onset, recoverability, recovery re-entry, robustness, and policy usefulness together.
@@ -9,6 +9,8 @@ A reward-model benchmark is not the same thing as a policy benchmark or a traini
 
 | Benchmark | Released | Evaluation unit and scale | Signal / metric | Failure and recovery coverage | Important boundary |
 |---|---|---|---|---|---|
+| [RoboRMBench](https://arxiv.org/abs/2609.05401) | 2026-09 | 2,390 real-robot trajectories from RoboRewardBench × 21,673 machine-filtered paraphrases | Score Crossing Rate, Flip Rate, and Mean Error versus human progress labels | No direct failure-onset or recovery annotations | Strong controlled language-robustness test, but parent-episode overlap requires leakage checks and benchmark files were not verified as public |
+| [HumanTracker / HumanScore](https://arxiv.org/abs/2608.13555) | 2026-08 | 6,000 released preference pairs and 2,500 released motion references; simulated humanoid tracking of real mocap | Human preference agreement, HumanScore, kinematic error and tracker success | Contact, support, and stability quality in tracking rollouts | Specialist motion-tracking evaluator; released subset is smaller than paper corpus, not general task success or a separate gold reward test |
 | [TrustRoboReward multi-paradigm benchmark](https://arxiv.org/abs/2608.08491) | 2026-08 | 7,030 human-annotated test items across Score-A, Score-B, Pair-A, and Pair-B | Pointwise normalized-error metrics, pairwise accuracy, and score-pair consistency | RoboReward-derived video pool contains task-progress variation; no explicit onset, recoverability, or recovery re-entry protocol | Paper-associated split; data and weights were not verified as public releases. Its combined Overall average is interface-specific and is not adopted as a universal RRM-Bench score |
 | [DenseReward evaluation suite](https://arxiv.org/html/2607.13033v1) | 2026-07 | 26,579 / approximately 27K episodes and 7.56M frame samples from DROID, Isaac Sim, RoboSuite, and LIBERO | Dense reward MAE; MPC distance; downstream RL success | Six modes: success, collision, miss, fall, smooth/suboptimal, recover | Model-native labels and splits are valuable but not an independent gold benchmark; simulated reward curves inherit the synthesis rules |
 | [Suboptimal-Value-Bench](https://zh1hao.wang/wvm/) | 2026-06 | 800 human-verified trajectories, 15 tasks; AgileX, ARX, and RoboSuite; real + simulation | Retry VOC and Hesitation RMSE with frame-level value annotations | Explicit hesitation and retry segments | Covers two important suboptimal patterns, not the wider failure/recovery taxonomy; the linked data repository was still empty on 2026-07-19 |
@@ -30,7 +32,7 @@ The machine-readable version is [`registry/benchmarks.yaml`](../registry/benchma
 | Suboptimal process | Suboptimal-Value-Bench; OPD | More than hesitation/retry; safety, force, collision, redundant motion, irreversible regress |
 | Failure type and reasoning | FailCoT / Guardian; DenseReward | Independent real-world taxonomy with onset, severity, causal confidence, and cross-embodiment transfer |
 | Recovery | DenseReward `recover`; failure/recovery datasets | True-vs-false recovery, point of no return, and re-entry into a valid success trajectory |
-| Robustness | Cross-source evaluations | Controlled camera, view, language, object, scene, embodiment, and temporal perturbation pairs |
+| Robustness | RoboRMBench for controlled language paraphrases; cross-source evaluations | Camera, view, object, scene, embodiment, and temporal perturbation pairs; parent-episode leakage controls for paraphrases |
 | Policy usefulness | Paper-specific RL/MPC studies; arenas | A fixed evaluator-to-policy protocol that separates reward quality from policy and optimizer effects |
 | Reward hacking | Scattered task-mismatch or rewind tests | A dedicated adversarial suite targeting shortcuts, terminal-frame bias, looping, and rubric gaming |
 
@@ -115,6 +117,7 @@ At minimum, include controlled pairs for:
 - attractive terminal frame after an earlier irreversible failure;
 - repeated oscillation, hesitation, retry loops, and redundant motion;
 - correct action video paired with a wrong instruction or wrong object/target;
+- one fixed trajectory under verified equivalent instruction paraphrases, preserving episode-grouped splits;
 - static success-looking frames inserted into an unsuccessful trajectory;
 - time reversal, frame duplication, temporal clipping, and camera-view removal;
 - background, operator, robot, or site cues correlated with outcome;
@@ -129,6 +132,8 @@ Successful trajectories define the support of acceptable behavior, failures defi
 
 ## Primary sources
 
+- [RoboRMBench paper](https://arxiv.org/abs/2609.05401) and its parent [RoboRewardBench dataset](https://huggingface.co/datasets/teetone/RoboReward)
+- [HumanTracker paper](https://arxiv.org/abs/2608.13555), [official code and HumanScore weights](https://github.com/GalaxyGeneralRobotics/HumanTracker), and [released subset](https://huggingface.co/datasets/GalaxyGeneralRobotics/HumanTracker)
 - [RoboReward paper](https://arxiv.org/abs/2601.00675), [released dataset](https://huggingface.co/datasets/teetone/RoboReward), and [HELM leaderboard](https://crfm.stanford.edu/helm/robo-reward-bench/latest/)
 - [TrustRoboReward](https://arxiv.org/abs/2608.08491) and its [partial official repository](https://github.com/TrustRoboreward/TrustRoboReward)
 - [Robometer / RBM-EVAL](https://arxiv.org/html/2603.02115v2) and [code](https://github.com/robometer/robometer)

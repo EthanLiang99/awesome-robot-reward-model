@@ -4,11 +4,11 @@ A curated, evidence-tracked list of **robotic reward models (RRMs)**, process/va
 
 This repository supports the research project *Robotic Reward Models: A Taxonomy, Unified Benchmark, and Open Infrastructure*. It is a discovery and collaboration resource—not a claim that every listed method is directly comparable or reproducible.
 
-- **Last literature check:** 2026-08-13
+- **Last literature check:** 2026-09-28
 - **Living registry:** [`registry/papers.yaml`](registry/papers.yaml)
 - **Robot/data registry:** [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml) · [human-readable matrix](docs/robot-data-matrix.md)
 - **Benchmark registry:** [`registry/benchmarks.yaml`](registry/benchmarks.yaml) · [landscape and RRM-Bench blueprint](docs/reward-model-benchmarks.md)
-- **Latest audit:** [`docs/updates/2026-08-13.md`](docs/updates/2026-08-13.md)
+- **Latest audit:** [`docs/updates/2026-09-28.md`](docs/updates/2026-09-28.md)
 
 ## Scope
 
@@ -59,6 +59,8 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
+| 2026-09 | [HiRE](https://arxiv.org/abs/2609.27068) | Hindsight edits foundation-feature rewards using successful and failed rollouts to penalize deceptively high-scoring trap states for policy fine-tuning | [qualitative project](https://hire-project.github.io/); code/data not verified | 2026-09-28 |
+| 2026-09 | [AnyviewMeter](https://arxiv.org/abs/2609.20106) | Camera geometry and synchronized views adapt Robometer for task-specific scalar progress; real-robot reward evaluation is offline | Code/weights/data not verified; paper's release link unresolved | 2026-09-28 |
 | 2026-08 | [GORDON](https://arxiv.org/abs/2608.03753) | Object-centric scene-graph goal distance supplies dense progress reward and exposes stage transitions for automatic long-horizon decomposition | [project](https://andreaprotopapa.github.io/graph-reward-learning/); code/weights/data not verified | 2026-08-13 |
 | 2026-07 | [ACE-Brain-0.5](https://arxiv.org/abs/2607.04426) | Shared embodied backbone estimates execution progress for self-monitoring, verification, and recovery alongside planning and action generation | [W](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) · [project repo; runnable task code not verified](https://github.com/DAXIAORobotics/ACE-Brain-0.5) | 2026-07-18 |
 | 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint visual/action/value generation with task-completion estimation, action–frame misalignment detection, and value-guided rollback | — | 2026-07-18 |
@@ -87,6 +89,7 @@ Methods may span multiple families. Sections 1–5 use reward semantics as the p
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
+| 2026-08 | [Dream2Reward](https://arxiv.org/abs/2608.18787) | Signed transition reward compares observed visual change with predicted successful latent change from positive demonstrations; tested as dense policy-learning feedback | — | 2026-09-28 |
 | 2026-06 | [Freeform Preference Learning](https://arxiv.org/abs/2606.32027) | Language-conditioned, axis-specific trajectory reward from freeform pairwise human preferences | [C](https://github.com/freeform-pl/fpl) · [real-world tools](https://github.com/freeform-pl/fpl_real); license ? | 2026-07-18 |
 | 2026-06 | [WARP-RM](https://arxiv.org/abs/2606.28320) | Dense signed relative-progress velocity learned self-supervised from time-warped successful demonstrations | [C, MIT](https://github.com/uynitsuj/WARP-RM) | 2026-07-18 |
 | 2026-05 | [TapSampling](https://arxiv.org/abs/2605.25547) | Task-progress-outcome verifier ranks sampled candidate action chunks at inference time | [C](https://github.com/aipixel/TapSampling) · [W](https://huggingface.co/collections/SizheZhao/tapsampling) · [D](https://huggingface.co/datasets/SizheZhao/TapSampling-CALVIN-Part-Data); licenses ? | 2026-07-24 |
@@ -105,7 +108,8 @@ RoboMonkey and RoVer construct preferences from proximity to demonstrated action
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
-| 2026-08 | [RynnValue](https://arxiv.org/abs/2608.09853) | Language-conditioned absolute and relative temporal distance (physical-seconds cost-to-go) used as a value interface and potential-based dense reward | [C, Apache-2.0](https://github.com/alibaba-damo-academy/RynnValue) · [model pages; release status needs recheck](https://huggingface.co/collections/Alibaba-DAMO-Academy/rynnvalue) | 2026-08-13 |
+| 2026-09 | [SeeQ](https://arxiv.org/abs/2609.22085) | PaliGemma-based subtask Q-function predicts the current subtask and ranks candidate action chunks for best-of-N steering; paper fine-tunes on target tasks | [W, pretrained only; Gemma terms](https://huggingface.co/CMU-AIRe/SeeQ-3B); method code not verified | 2026-09-28 |
+| 2026-08 | [RynnValue](https://arxiv.org/abs/2608.09853) | Language-conditioned absolute and relative temporal distance (physical-seconds cost-to-go) used as a value interface and potential-based dense reward | [C, Apache-2.0](https://github.com/alibaba-damo-academy/RynnValue) · [W 4B](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B) · [W 8B](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-8B) (model cards Apache-2.0; GitHub release note stale) | 2026-09-28 |
 | 2026-07 | [WCM](https://arxiv.org/abs/2607.29613) | History-aware critic jointly learns future latent prediction and task value for VLA reinforcement learning under partial observability | [C, MIT](https://github.com/sylvestf/WCM) · [example W/D](https://huggingface.co/collections/Sylvest/wcm) | 2026-08-13 |
 | 2026-06 | [SARM2](https://arxiv.org/abs/2606.10305) | Multi-task action-primitive stage estimator plus MoE value head for dense progress | [C](https://github.com/xdofai/opensarm) · [SPIRAL](https://github.com/Qianzhong-Chen/openspiral); weights — | 2026-07-18 |
 | 2026-06 | [WVM](https://arxiv.org/abs/2606.24742) | Temporally grounded value estimation with a human-labelled suboptimal/retry benchmark | [repo](https://github.com/255isWhite/WVM); release status ? | 2026-07-18 |
@@ -123,9 +127,10 @@ RoboMonkey and RoVer construct preferences from proximity to demonstrated action
 
 | Date | Work | Signal and role | Artifacts | Verified |
 |---|---|---|---|---|
+| 2026-09 | [VLA-Corrector (Song et al.)](https://arxiv.org/abs/2609.06508) | Stage-aware learned verifier uses visual, proprioceptive, and action history to trigger prompt-based recovery of a frozen VLA; separate from the July VLA-Corrector | — | 2026-09-28 |
 | 2026-08 | [TrustRoboReward](https://arxiv.org/abs/2608.08491) | Four-interface pointwise/pairwise trajectory-progress and grounded-video-QA reward model with preference-ordered isotonic score editing | [partial C](https://github.com/TrustRoboreward/TrustRoboReward); weights/data/license not verified | 2026-08-13 |
 | 2026-08 | [Thea](https://arxiv.org/abs/2608.11246) | Independent post-condition evaluator maps current physical evidence to in-progress/success/failure exit codes for termination, retry, and recovery | [C, Apache-2.0](https://github.com/EIT-HAI/Thea); evaluator weights/data not released | 2026-08-13 |
-| 2026-07 | [DenseReward](https://arxiv.org/abs/2607.13033) | Dense frame-level reward trained with phase-aware success, failure, and recovery synthesis | [project](https://dense-reward.github.io/); code/data/weights links not yet verified | 2026-07-18 |
+| 2026-07 | [DenseReward](https://arxiv.org/abs/2607.13033) | Dense frame-level reward trained with phase-aware success, failure, and recovery synthesis | [W](https://huggingface.co/densereward/densereward-3frame-thinking) · [D](https://huggingface.co/datasets/densereward/DenseReward) (Apache-2.0 cards); [code repo empty](https://github.com/dense-reward/dense-reward) | 2026-09-28 |
 | 2026-07 | [CoRe](https://arxiv.org/abs/2607.01721) | Combines a VLM-optimized formal reward with a residual reward learned from VLM-labelled video preferences | [project](https://core-2026.github.io/); code/weights/data not verified | 2026-08-02 |
 | 2026-06 | [Success Visitation Matching](https://arxiv.org/abs/2606.23640) | Discriminator turns successful-vs-unsuccessful state–action visitation into dense, outcome-preserving process reward for robot RL | [project; code coming soon](https://success-visitation-matching.github.io/) | 2026-07-24 |
 | 2026-06 | [Reward as An Agent](https://arxiv.org/abs/2606.19990) | Agentic evaluator judges physical plausibility and task completion in embodied world-model rollouts to provide robust reward signals | [C](https://github.com/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models); license ? | 2026-08-02 |
@@ -181,6 +186,8 @@ This is a cross-cutting index of data that can instantiate reward targets. It re
 | [Robo-Dopamine GRM data](https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset) | 35M samples from ~3,400h, >100K trajectories, and >350 tasks; real robot, simulation, and human egocentric video | Human-annotated keyframes define step segments; ordered state pairs yield progress hops and reversed-order pairs yield regress hops | Gated dataset; Apache-2.0 card | Most negative supervision is constructed by reversing temporal order inside expert trajectories. It is not equivalent to observing a robot make and recover from a real mistake. |
 | [RBM-1M / Robometer](https://arxiv.org/abs/2603.02115) | 1,059,370 video–language annotations across 21 robot embodiments; expert, paired human–robot, mixed-expertise/failure, and human-only sources | Frame-level progress/success on expert trajectories plus trajectory preferences over expert, suboptimal, failed, rewound, and task-mismatched pairs | [Processed data repository](https://huggingface.co/datasets/robometer/processed_datasets) exists; official project still labels the canonical RBM-1M release “coming soon” | The aggregate count may include multiple views/annotations from one episode. Source licenses and failure provenance remain dataset-specific. |
 
+| [DenseReward corpus](https://huggingface.co/datasets/densereward/DenseReward) | Paper reports 26,579 episodes and 7.56M frame samples across DROID, Isaac Sim, RoboSuite, and LIBERO; released dataset card is Apache-2.0 | Phase-aware frame reward with synthesized physical failure modes and recovery cases | [D](https://huggingface.co/datasets/densereward/DenseReward) · [W](https://huggingface.co/densereward/densereward-3frame-thinking); [code repo empty](https://github.com/dense-reward/dense-reward) | Simulated failure synthesis is not real executed failure; model-native reward targets are not independent gold labels. |
+
 ### Robot embodiment and failure provenance audit
 
 The [detailed robot/data matrix](docs/robot-data-matrix.md) records arm, gripper, sensing, task, count unit, label granularity, concrete failure modes, and reuse by Robometer/Robo-Dopamine. Its structured counterpart is [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml).
@@ -228,6 +235,8 @@ This is a **cross-cutting integration axis**, not a sixth reward-semantics famil
 
 | Date | Work | Coupling pattern | Predicted value and how it is used | Artifacts | Verified |
 |---|---|---|---|---|---|
+| 2026-09 | [SeeQ](https://arxiv.org/abs/2609.22085) | Separate subtask Q-function over a VLM backbone | Predicts the active subtask, then scores candidate action chunks for best-of-N steering after target-task fine-tuning | [W, pretrained only](https://huggingface.co/CMU-AIRe/SeeQ-3B); code not verified | 2026-09-28 |
+| 2026-09 | [VLA-Corrector (Song et al.)](https://arxiv.org/abs/2609.06508) | Separate execution verifier in a frozen-policy recovery loop | Stage/progress and binary risk trigger prompt recovery; not a scalar completion reward | — | 2026-09-28 |
 | 2026-07 | [WCM](https://arxiv.org/abs/2607.29613) | History-aware value/world critic | Task return from observation history and language; joint future-latent prediction shapes the representation used by on- or off-policy VLA RL | [C, MIT](https://github.com/sylvestf/WCM) · [example W/D](https://huggingface.co/collections/Sylvest/wcm) | 2026-08-13 |
 | 2026-07 | [ACE-Brain-0.5](https://arxiv.org/abs/2607.04426) | Shared embodied backbone | Execution progress; self-monitoring, verification, and recovery | [W](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) · [repo](https://github.com/DAXIAORobotics/ACE-Brain-0.5) | 2026-07-18 |
 | 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint world–action–value generator | Task completion/progress; misalignment detection and rollback | — | 2026-07-18 |
@@ -263,6 +272,8 @@ Benchmarking is a first-class category because a reward model can fit one output
 
 | Released | Benchmark | Primary target | Scale and metric | Main missing axis |
 |---|---|---|---|---|
+| 2026-09 | [RoboRMBench](https://arxiv.org/abs/2609.05401) | Score stability under semantically equivalent task instructions on the same trajectory | 2,390 real-robot trajectories, 21,673 filtered paraphrases; SCR / flip rate / mean error | Derived from RoboRewardBench; benchmark files not verified as released; no temporal failure/recovery tests |
+| 2026-08 | [HumanTracker / HumanScore](https://arxiv.org/abs/2608.13555) | Human preference alignment for humanoid motion-tracking quality | [6,000 preference pairs and 2,500 motion references released](https://huggingface.co/datasets/GalaxyGeneralRobotics/HumanTracker); [C/W](https://github.com/GalaxyGeneralRobotics/HumanTracker) | Specialized motion-tracking metric, not task-completion reward; public release is a subset of the paper's full data |
 | 2026-08 | [TrustRoboReward benchmark](https://arxiv.org/abs/2608.08491) | Pointwise/pairwise trajectory progress and grounded-video-QA quality, plus cross-interface consistency | 7,030 human-annotated test items across four paradigms; MAE-style score metrics, pairwise accuracy, consistency | Paper-associated split is not a released independent gold test; no closed-loop physical-robot validation |
 | 2026-07 | [DenseReward evaluation suite](https://arxiv.org/html/2607.13033v1) | Dense failure-aware reward plus MPC/RL use | 26,579 episodes / 7.56M frames; reward MAE | Model-native rather than independent gold test |
 | 2026-06 | [Suboptimal-Value-Bench](https://zh1hao.wang/wvm/) | Hesitation and retry value | 800 trajectories, 15 tasks; Retry VOC / Hesitation RMSE | Data repository still empty on 2026-07-19; only two suboptimal modes |
@@ -280,6 +291,7 @@ These are useful boundary papers when the evaluator is consumed for policy selec
 
 | Date | Work | Why it is adjacent |
 |---|---|---|
+| 2026-09 | [RoboRecover](https://arxiv.org/abs/2609.28952) | Simulation policy-recovery scenarios from replayed deviation states; possible source for future reward-model probes, but its reported metric is policy recovery rather than evaluator quality |
 | 2026-08 | [Agentic Harnesses](https://arxiv.org/abs/2608.09857) | Pre-execution governance layer verifies natural-language robot plans for feasibility, safety, ethics, and security; useful verifier context, but it does not evaluate observed robot behavior or expose a trajectory reward/value interface |
 | 2026-07 | [EgoRecovery](https://arxiv.org/abs/2607.19745) | Learned recovery gate and human-to-robot corrective-intent transfer; directly useful for re-entry labels, but not a general reward model |
 | 2026-06 | [VERITAS](https://arxiv.org/abs/2606.18247) | Gradient-free visual-trace verifier ranks candidate actions and recycles verified rollouts; an evaluator interface rather than a learned standalone reward model |
@@ -289,6 +301,8 @@ These are useful boundary papers when the evaluator is consumed for policy selec
 
 ## 11. Related surveys, perspectives, and community discovery resources
 
+- [No Free Checker: A Survey of Verifiers for Robot Policies](https://arxiv.org/abs/2609.09250) — September 2026 preprint with a broader policy-verification scope, including human and formal verifiers, availability/credibility, and reward-hacking validation; complements the semantics-first reward-model scope here.
+- [Intrinsic Robot Rewarding](https://arxiv.org/abs/2609.17115) — September 2026 position paper proposing to reuse a frozen VLA encoder and successful demonstration endpoints for outcome scoring; empirical policy-improvement validation remains future work.
 - [Progress Reward Modeling for Robotic Learning: A Comprehensive Survey](https://arxiv.org/abs/2607.21655) — 2026 arXiv preprint with a progress-centered organization of model interfaces, construction, supervision, and evaluation.
 - [Position: Good Embodied Reward Models Need Bad Behavior Data](https://arxiv.org/abs/2606.01036) — ICML 2026 Position Track spotlight arguing for evaluation and training on low-quality, unsafe, and superficially task-like behavior.
 - [Awesome Progress Reward Model](https://github.com/VanceChu/Awesome-Progress-Reward-Model)
