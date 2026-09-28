@@ -1,6 +1,6 @@
 schema_version: "0.1"
 registry_name: "Robot Reward-Model Benchmarks"
-last_updated: "2026-08-13"
+last_updated: "2026-09-28"
 scope_note: >-
   Direct reward/value benchmarks, diagnostic capability benchmarks, and
   downstream policy-evaluation sources are tagged separately. Model-native
@@ -25,12 +25,59 @@ capability_tags:
   - recoverability
   - recovery_reentry
   - robustness
+  - instruction_paraphrase_robustness
   - process_reasoning
   - policy_usefulness
   - grounded_video_qa
   - cross_interface_consistency
 
 benchmarks:
+  - id: robormbench
+    title: "RoboRMBench: Paraphrase Fragility in Vision Language Reward Models"
+    released: "2026-09-04"
+    benchmark_type: direct_reward
+    reality: real_robot_trajectories_with_generated_verified_paraphrases
+    parent_source: RoboRewardBench
+    evaluation_unit: fixed_trajectory_with_semantically_equivalent_instructions
+    scale: {trajectories: 2390, verified_paraphrases: 21673, embodiment_types_in_parent: 14}
+    labels: [human_verified_ordinal_progress_1_to_5, machine_filtered_instruction_equivalence]
+    capabilities: [outcome, robustness, instruction_paraphrase_robustness]
+    metrics: [score_crossing_rate, flip_rate, mean_error]
+    artifacts:
+      paper: https://arxiv.org/abs/2609.05401
+      code: not_verified_as_public_release
+      data: not_verified_as_public_release
+    limitations:
+      - derived_from_RoboRewardBench_not_independent_of_parent_data
+      - semantic_equivalence_filtered_by_model_ensemble_with_small_human_validation_subset
+      - no_temporal_failure_onset_or_recovery_reentry
+      - benchmark_artifacts_not_verified_as_released
+    verification_date: "2026-09-28"
+
+  - id: humantracker-humanscore
+    title: "HumanTracker / HumanScore preference evaluation"
+    released: "2026-08-13"
+    benchmark_type: model_native
+    reality: simulated_humanoid_tracking_of_real_human_mocap
+    evaluation_unit: human_preference_pair_and_tracker_rollout
+    scale: {released_motion_references: 2500, released_preference_pairs: 6000, released_heldout_preference_pairs: 1200}
+    labels: [pairwise_human_preference_with_ties, motion_family, tracker_success]
+    capabilities: [trajectory_ranking, suboptimal_process]
+    metrics: [human_preference_agreement, HumanScore, MPJPE, tracker_success]
+    artifacts:
+      paper: https://arxiv.org/abs/2608.13555
+      code: https://github.com/GalaxyGeneralRobotics/HumanTracker
+      weights: https://github.com/GalaxyGeneralRobotics/HumanTracker/blob/main/storage/checkpoints/reward_model/best.pt
+      data: https://huggingface.co/datasets/GalaxyGeneralRobotics/HumanTracker
+      code_license: Apache-2.0
+      data_license: Apache-2.0
+    limitations:
+      - specialized_humanoid_motion_tracking_not_general_task_completion
+      - model_native_preference_split_not_independent_external_gold
+      - released_motions_and_pairs_are_subsets_of_full_paper_corpus
+      - joint_motion_quality_not_per_task_robot_progress
+    verification_date: "2026-09-28"
+
   - id: trustroboreward-benchmark
     title: TrustRoboReward multi-paradigm benchmark
     released: "2026-08-09"
