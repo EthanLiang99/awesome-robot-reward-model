@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-08-13"
+last_updated: "2026-09-28"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -960,14 +960,14 @@ entries:
     downstream_roles: ["dense_shaping", "mpc", "online_rl"]
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2607.13033"}
-      code: {status: "claimed", url: null}
-      weights: {status: "claimed", url: null}
-      data: {status: "claimed", url: null}
-    license: {code: "unknown", weights: "unknown", data: "unknown"}
+      code: {status: "placeholder_empty", url: "https://github.com/dense-reward/dense-reward"}
+      weights: {status: "available", url: "https://huggingface.co/densereward/densereward-3frame-thinking"}
+      data: {status: "available", url: "https://huggingface.co/datasets/densereward/DenseReward"}
+    license: {code: "unknown", weights: "Apache-2.0 (model card)", data: "Apache-2.0 (dataset card)"}
     adapter_status: "blocked"
-    verification_date: "2026-07-19"
-    evidence_note: "The paper evaluates dense reward MAE on DROID, Isaac Sim, RoboSuite, and LIBERO and reports MPC/RL use; dataset, model, and suite releases are claimed, but usable artifact links were not verified."
-    sources: ["https://arxiv.org/html/2607.13033v1", "https://dense-reward.github.io/"]
+    verification_date: "2026-09-28"
+    evidence_note: "The paper evaluates dense reward MAE on DROID, Isaac Sim, RoboSuite, and LIBERO and reports MPC/RL use; the Hugging Face dataset and one-frame/three-frame model weight repositories now contain files, whereas the linked GitHub code repository remains empty."
+    sources: ["https://arxiv.org/html/2607.13033v1", "https://dense-reward.github.io/", "https://github.com/dense-reward/dense-reward", "https://huggingface.co/datasets/densereward/DenseReward", "https://huggingface.co/densereward/densereward-3frame-thinking/tree/main", "https://huggingface.co/densereward/densereward-1frame"]
 
   - id: "wu_2026_roboalign_r1"
     kind: "world_model_reward_alignment"
@@ -1776,13 +1776,13 @@ entries:
     artifacts:
       paper: {status: "available", url: "https://arxiv.org/abs/2608.09853"}
       code: {status: "available", url: "https://github.com/alibaba-damo-academy/RynnValue"}
-      weights: {status: "release_status_needs_recheck", url: "https://huggingface.co/collections/Alibaba-DAMO-Academy/rynnvalue"}
+      weights: {status: "available", url: "https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B"}
       data: {status: "source_datasets_only", url: null}
-    license: {code: "Apache-2.0", weights: "unverified", data: "upstream_dataset_terms"}
+    license: {code: "Apache-2.0", weights: "Apache-2.0 (model cards)", data: "upstream_dataset_terms"}
     adapter_status: "high_priority"
-    verification_date: "2026-08-13"
-    evidence_note: "RynnValue predicts remaining physical seconds and signed temporal displacement rather than normalized completion. Timestamp and cutoff labels scale cheaply, but execution speed and semantic cutoff quality remain part of the target; reversal and failure sensitivity must therefore be tested separately from monotone successful trajectories. The official repository links model pages while also saying checkpoint release is in progress, so weights are not marked fully released."
-    sources: ["https://arxiv.org/abs/2608.09853", "https://arxiv.org/html/2608.09853", "https://alibaba-damo-academy.github.io/RynnValue.github.io/", "https://github.com/alibaba-damo-academy/RynnValue", "https://huggingface.co/collections/Alibaba-DAMO-Academy/rynnvalue"]
+    verification_date: "2026-09-28"
+    evidence_note: "RynnValue predicts remaining physical seconds and signed temporal displacement rather than normalized completion. Timestamp and cutoff labels scale cheaply, but execution speed and semantic cutoff quality remain part of the target; reversal and failure sensitivity must therefore be tested separately from monotone successful trajectories. The 4B and 8B Hugging Face model repositories now contain safetensors weight shards and Apache-2.0 model cards, despite the older GitHub README still stating checkpoint release is in progress."
+    sources: ["https://arxiv.org/abs/2608.09853", "https://arxiv.org/html/2608.09853", "https://alibaba-damo-academy.github.io/RynnValue.github.io/", "https://github.com/alibaba-damo-academy/RynnValue", "https://huggingface.co/collections/Alibaba-DAMO-Academy/rynnvalue", "https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B/tree/main", "https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-8B/tree/main"]
 
   - id: "wang_2026_trustroboreward"
     kind: "reward_model"
@@ -1901,6 +1901,121 @@ entries:
     evidence_note: "A post-hoc linear probe predicts failure within a 15-step horizon from frozen OpenVLA activations and transfers from occlusion to camera jitter in LIBERO. The paper explicitly limits the claim: it does not establish causal mechanism, task-held-out generalization, or a deployable recovery system, so the reported shift-specific AUROC/AUPRC must not be treated as general reward-model performance."
     sources: ["https://arxiv.org/abs/2606.29699", "https://arxiv.org/html/2606.29699"]
 
+  - id: "zhang_2026_dream2reward"
+    kind: "reward_model"
+    title: "Dream2Reward: Transition-Alignment Reward Models from Positive Demonstrations for Robotic Manipulation"
+    released: "2026-08-19"
+    venue_or_preprint: "preprint"
+    primary_semantics: "relative_preference"
+    secondary_tags: ["signed_transition_reward", "successful_latent_transition_field", "causal_history", "positive_demonstrations", "failure_sensitivity"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["positive_robot_demonstrations"]
+    inference_inputs: ["instruction", "visual_history_to_transition_start", "observed_visual_transition"]
+    downstream_roles: ["dense_reward_shaping", "offline_policy_learning", "online_policy_learning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2608.18787"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-09-28"
+    evidence_note: "Scores the signed direction and magnitude of an observed latent transition against predicted successful change conditioned on past frames and language. Its native signal is a local transition reward, not a calibrated absolute task-completion probability. The reported robustness to bad transitions and downstream gains are author-reported; no official reusable artifacts were verified."
+    sources: ["https://arxiv.org/abs/2608.18787"]
+
+  - id: "song_2026_vla_corrector_stage_aware"
+    kind: "evaluator_system"
+    title: "VLA-Corrector: Stage-Aware Observable State Understanding for Prompt-Based Closed-Loop Recovery of Vision-Language-Action Policies"
+    released: "2026-09-06"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["stage_aware_progress", "binary_execution_risk", "observable_history", "recovery_trigger", "simulation_perturbation"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "internal_control_only"
+    training_data: ["libero_rollouts", "libero_plus_perturbations", "privileged_teacher_supervision"]
+    inference_inputs: ["multiview_history", "proprioceptive_history", "executed_action_history"]
+    downstream_roles: ["failure_verification", "recovery_trigger", "stage_conditioned_prompt_recovery"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2609.06508"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_found", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-09-28"
+    evidence_note: "Learned execution monitor infers progress and binary execution risk from observable visual/proprioceptive/action history and triggers prompt-based recovery of a frozen VLA. Its main quantitative result is closed-loop recovery, not an independently calibrated dense reward curve. This is Song et al.'s September stage-aware work, distinct from Pan et al.'s July paper with the same short name."
+    sources: ["https://arxiv.org/abs/2609.06508", "https://arxiv.org/html/2609.06508v1"]
+
+  - id: "tu_2026_anyviewmeter"
+    kind: "reward_model"
+    title: "AnyviewMeter: Adapting Robotic Reward Models with Camera Geometry and Multi-View Attention"
+    released: "2026-09-17"
+    venue_or_preprint: "preprint"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["multiview_reward", "camera_geometry", "viewpoint_robustness", "task_specific_adaptation", "robometer_backbone"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["pretrained_robometer", "task_specific_labeled_robot_trajectories", "calibrated_multiview_observations"]
+    inference_inputs: ["instruction", "current_and_historical_frames", "camera_plucker_rays", "optional_synchronized_views"]
+    downstream_roles: ["task_progress_estimation", "offline_reward_evaluation"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2609.20106"}
+      code: {status: "not_verified", url: null}
+      weights: {status: "not_verified", url: null}
+      data: {status: "not_verified", url: null}
+    license: {code: "unknown", weights: "unknown", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-09-28"
+    evidence_note: "Task-specific LoRA adaptation of Robometer with calibrated camera rays and synchronous multi-view attention predicts scalar progress. Real-robot reward evaluation is offline in this paper; policy improvement with these rewards has not been tested. The paper's claimed code/data link could not be resolved to an official usable release at this audit."
+    sources: ["https://arxiv.org/abs/2609.20106", "https://arxiv.org/html/2609.20106v1"]
+
+  - id: "singh_2026_seeq"
+    kind: "reward_model"
+    title: "SeeQ: Training Generalist Value Functions for Long-Horizon Robotic Manipulation"
+    released: "2026-09-18"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["subtask_q_value", "autoregressive_subtask_prediction", "action_chunk_scoring", "best_of_n", "target_task_finetuning"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["robocoin_bimanual_subset", "subtask_annotations", "offline_robot_trajectories"]
+    inference_inputs: ["three_camera_images", "task_instruction", "candidate_bimanual_action_chunk"]
+    downstream_roles: ["candidate_action_ranking", "best_of_n_policy_steering"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2609.22085"}
+      code: {status: "not_found", url: null}
+      weights: {status: "available", url: "https://huggingface.co/CMU-AIRe/SeeQ-3B"}
+      data: {status: "source_datasets_only", url: null}
+    license: {code: "unknown", weights: "Gemma Terms of Use", data: "upstream_dataset_terms"}
+    adapter_status: "planned"
+    verification_date: "2026-09-28"
+    evidence_note: "PaliGemma-based critic predicts the active subtask then scores a candidate action chunk by subtask-level Q-value. The released 3B weights are a RoboCOIN-pretrained checkpoint; the paper fine-tunes on each target real-robot task. These Q-values depend on the action candidates and data distribution and are not calibrated task-success probabilities. No method-specific training/inference code was verified."
+    sources: ["https://arxiv.org/abs/2609.22085", "https://arxiv.org/html/2609.22085v1", "https://huggingface.co/CMU-AIRe/SeeQ-3B", "https://huggingface.co/CMU-AIRe/SeeQ-3B/tree/main"]
+
+  - id: "niu_2026_hire"
+    kind: "reward_system"
+    title: "HiRE: Hindsight Reward Editing for Policy Finetuning"
+    released: "2026-09-22"
+    venue_or_preprint: "preprint (arXiv comments: CoRL 2026)"
+    primary_semantics: "absolute_progress"
+    secondary_tags: ["hindsight_reward_editing", "foundation_visual_representations", "trap_state_penalty", "success_failure_contrast", "offline_relabeling"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "training_only"
+    training_data: ["successful_and_failed_robot_rollouts", "pretrained_foundation_representations"]
+    inference_inputs: ["trajectory_observations", "task_outcome", "foundation_representation_features"]
+    downstream_roles: ["reward_relabeling", "policy_finetuning"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2609.27068"}
+      code: {status: "not_found", url: null}
+      weights: {status: "not_applicable_upstream", url: null}
+      data: {status: "not_found", url: null}
+    license: {code: "unknown", weights: "upstream_item_specific", data: "unknown"}
+    adapter_status: "catalog_only"
+    verification_date: "2026-09-28"
+    evidence_note: "Training-free editing of a foundation-representation reward retrospectively compares successful and failed trajectories, penalizing high-scoring states that led to failure and boosting critical success states. This is an outcome-conditioned edited reward for policy fine-tuning, not a separately trained general reward model or a causal online verifier. Only a qualitative project page was linked; no usable code/data release was verified."
+    sources: ["https://arxiv.org/abs/2609.27068", "https://arxiv.org/html/2609.27068v1", "https://hire-project.github.io/"]
+
 screened_out:
   - title: "RFM-HRI: A Multimodal Dataset of Medical Robot Failure, User Reaction and Recovery Preferences for Item Retrieval Tasks"
     source: "https://arxiv.org/abs/2603.05641"
@@ -1952,3 +2067,23 @@ screened_out:
     decision: "exclude_core"
     reason: "Studies preference-teaching curricula in simulation without an evaluated robot-behavior reward or verifier interface."
     verification_date: "2026-08-13"
+  - title: "Intrinsic Robot Rewarding: Reusing VLA Representations for Autonomous Evaluation and Policy Improvement"
+    source: "https://arxiv.org/abs/2609.17115"
+    decision: "adjacent_only"
+    reason: "Position paper proposing outcome scoring with frozen policy features and successful demonstration endpoints; robot-policy improvement through this evaluator remains proposed rather than empirically validated."
+    verification_date: "2026-09-28"
+  - title: "Rethinking the Implications of Human Feedback for Preference Learning in Human-Robot Collaboration"
+    source: "https://arxiv.org/abs/2609.13982"
+    decision: "adjacent_only"
+    reason: "Studies implication learning from direct and indirect human feedback in task-specific human-robot collaboration, without a foundation-model-era task-conditioned trajectory evaluator."
+    verification_date: "2026-09-28"
+  - title: "RoboRecover: Benchmarking Robot Policy Recovery under Execution Deviations"
+    source: "https://arxiv.org/abs/2609.28952"
+    decision: "adjacent_only"
+    reason: "Benchmarks closed-loop policy recovery from replayed deviation states in simulation; it does not directly evaluate a reward model or publish verified recovery-value/re-entry labels."
+    verification_date: "2026-09-28"
+  - title: "Facet-0: A Robotic Foundation Model for Contact-Rich Precise Manipulation"
+    source: "https://arxiv.org/abs/2609.01596"
+    decision: "adjacent_only"
+    reason: "Policy-internal action-wrench critic is used for adaptation, but no independently characterized task-conditioned reward/value evaluation was verified."
+    verification_date: "2026-09-28"
