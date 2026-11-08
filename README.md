@@ -9,6 +9,7 @@ This repository supports the research project *Robotic Reward Models: A Taxonomy
 - **Robot/data registry:** [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml) · [human-readable matrix](docs/robot-data-matrix.md)
 - **Benchmark registry:** [`registry/benchmarks.yaml`](registry/benchmarks.yaml) · [landscape and RRM-Bench blueprint](docs/reward-model-benchmarks.md)
 - **Latest audit:** [`docs/updates/2026-09-28.md`](docs/updates/2026-09-28.md)
+- **Project page:** [`project-page/`](project-page/), published to GitHub Pages by [`.github/workflows/project-page.yml`](.github/workflows/project-page.yml)
 
 ## Scope
 

@@ -1,0 +1,47 @@
+# Publishes project-page/ to GitHub Pages. Only index.html and assets/ are deployed;
+# project-page/README.md and project-page/_tools/ stay in the repository.
+#
+# One-time setup by a repository admin: Settings -> Pages -> Source: "GitHub Actions".
+# While the repository is private, pushes skip the deploy (Pages on a private repository
+# needs a paid plan, and the site would be public anyway). Use "Run workflow" on the
+# Actions tab to deploy by hand at any time.
+name: Project page
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "project-page/**"
+      - ".github/workflows/project-page.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || !github.event.repository.private
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Collect the site
+        run: |
+          mkdir _site
+          cp -r project-page/index.html project-page/assets _site/
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

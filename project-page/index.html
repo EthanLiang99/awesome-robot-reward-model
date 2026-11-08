@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Robotic Reward Models in the Foundation-Model Era</title>
+<meta name="description" content="A survey of 110 robotic reward models in five semantic families, RRM-Bench-1K (1,117 real-robot videos with task-state labels), and the RRM-Hub toolbox.">
+<meta name="theme-color" content="#faf7f2">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Robotic Reward Models in the Foundation-Model Era">
+<meta property="og:description" content="Survey · RRM-Bench-1K · RRM-Hub. Same word, different questions: what robotic reward models credit, and when they should not.">
+<!-- Link previews need absolute URLs. This is the GitHub Pages address of the repository; update the
+     three URLs below if the site moves (for example to a custom domain). -->
+<meta property="og:url" content="https://ethanliang99.github.io/awesome-robot-reward-model/">
+<meta property="og:image" content="https://ethanliang99.github.io/awesome-robot-reward-model/assets/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A reward model's credit keeps rising after the robot knocks the shelf over, while the task-state label drops to zero.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ethanliang99.github.io/awesome-robot-reward-model/assets/img/og.jpg">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/instrument-serif-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/fonts.css">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<a class="skip" href="#taxonomy">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#top" aria-label="Back to top"><span class="brand-mark" aria-hidden="true"></span>RRM</a>
+    <nav aria-label="Sections">
+      <a href="#taxonomy">Taxonomy</a>
+      <a href="#bench">Benchmark</a>
+      <a href="#lab">Lab</a>
+      <a href="#findings">Findings</a>
+      <a href="#leaderboard">Leaderboard</a>
+      <a href="#hub">Hub</a>
+      <a href="#cite">Cite</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================================================ HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-in">
+    <p class="kicker rise">Survey&ensp;·&ensp;Benchmark&ensp;·&ensp;Toolbox</p>
+    <h1 class="rise">Robotic Reward Models<br><span class="dim">in the Foundation-Model Era</span></h1>
+    <p class="subtitle rise">A Survey and Capability Benchmark</p>
+
+    <p class="authors rise">
+      <span>Guoqiang Liang<sup>*1</sup></span>
+      <span>Yiqi Lin<sup>*1</sup></span>
+      <span>Shangchen Zhou<sup>2</sup></span>
+      <span>Wenzheng Zeng<sup>1</sup></span>
+      <span>Yanzhe Chen<sup>1</sup></span>
+      <span>Zechen Bai<sup>1</sup></span>
+      <span>Mike Zheng Shou<sup>†1</sup></span>
+    </p>
+    <p class="affil rise">
+      <span><sup>1</sup>National University of Singapore</span>
+      <span><sup>2</sup>Nanyang Technological University</span>
+      <span class="eq"><sup>*</sup>Equal contribution&ensp;<sup>†</sup>Corresponding author</span>
+    </p>
+
+    <!-- Links: replace href="#" with the real URL and delete data-soon. -->
+    <div class="cta rise">
+      <a class="btn primary" href="#" data-soon><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M4 1.5h5.5L13 5v9.5H4z M9.5 1.5V5H13" /></svg>Paper</a>
+      <a class="btn" href="#" data-soon><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M3 13 8 3l5 10 M5 9h6" /></svg>arXiv</a>
+      <a class="btn" href="#" data-soon><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M5.5 4.5 2 8l3.5 3.5 M10.5 4.5 14 8l-3.5 3.5" /></svg>Code · RRM-Hub</a>
+      <a class="btn" href="#" data-soon><svg aria-hidden="true" viewBox="0 0 16 16"><path d="M2.5 4.5c0-1.2 2.5-2 5.5-2s5.5.8 5.5 2v7c0 1.2-2.5 2-5.5 2s-5.5-.8-5.5-2z M2.5 4.5c0 1.2 2.5 2 5.5 2s5.5-.8 5.5-2 M2.5 8c0 1.2 2.5 2 5.5 2s5.5-.8 5.5-2" /></svg>Data · RRM-Bench-1K</a>
+      <a class="btn ghost" href="#cite">BibTeX</a>
+    </div>
+  </div>
+
+  <figure class="trace rise" id="hero-trace" aria-label="Task-state label and VLAC-Cut reward over a real execution of putting books back. The label drops to zero when the shelf is knocked over at 19.6 seconds; the model's reward keeps rising to 0.65.">
+    <div class="wrap"><svg class="trace-svg" role="presentation"></svg></div>
+    <figcaption class="wrap">
+      <span><i class="key key-gt"></i>Task state (human label)</span>
+      <span><i class="key key-model"></i>VLAC-Cut reward</span>
+      <span class="trace-src">Real execution · <em>put the books back</em> · <a href="#lab" data-lab="C">replay it in the Lab ↓</a></span>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ============================================================ TL;DR -->
+<section class="tldr" aria-label="Contributions">
+  <div class="wrap tldr-grid">
+    <a class="tile reveal" href="#taxonomy">
+      <span class="tile-k">Survey</span>
+      <b class="count" data-to="110">110</b>
+      <span class="tile-t">methods in five semantic families, sorted by the question their native output answers</span>
+    </a>
+    <a class="tile reveal" href="#bench">
+      <span class="tile-k">Benchmark</span>
+      <b class="count" data-to="1117">1,117</b>
+      <span class="tile-t">real-robot videos with task-state and camera-evidence labels, in four contrast suites</span>
+    </a>
+    <a class="tile reveal" href="#hub">
+      <span class="tile-k">Toolbox</span>
+      <b class="count" data-to="14">14</b>
+      <span class="tile-t">existing reward models behind one interface in RRM-Hub, native outputs kept</span>
+    </a>
+  </div>
+</section>
+
+<!-- ============================================================ 01 TAXONOMY -->
+<section id="taxonomy" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">01 / Survey</span>
+      <h2>One word. <em>Five questions.</em></h2>
+      <p class="lead">Success probabilities, completion percentages, preferences, expected returns and diagnoses all go by <i>reward</i>. We group 110 methods by the question their native output answers.</p>
+    </header>
+
+    <div class="families" id="families">
+      <!-- Glyphs illustrate each family's native output; dots are filled from data/site.js -->
+      <article class="fam reveal" style="--c: var(--fam-o)" data-family="Outcome">
+        <svg class="glyph g-outcome" viewBox="0 0 132 64" aria-hidden="true">
+          <circle class="trk" cx="30" cy="32" r="22"/>
+          <circle class="arc" cx="30" cy="32" r="22" transform="rotate(-90 30 32)"/>
+          <path class="chk" d="M20 33l7 7 13-15"/>
+          <text class="lbl" x="64" y="27">p(success)</text>
+          <text class="val" x="64" y="47">0.93</text>
+        </svg>
+        <h3>Outcome <span class="n">12</span></h3>
+        <p class="q">Is the task done, or will it fail?</p>
+        <div class="dots" role="group" aria-label="Outcome methods"></div>
+        <p class="out">success · grade · failure forecast</p>
+      </article>
+
+      <article class="fam reveal" style="--c: var(--fam-ap)" data-family="Absolute Progress">
+        <svg class="glyph g-progress" viewBox="0 0 132 64" aria-hidden="true">
+          <text class="lbl" x="6" y="16">pₜ</text>
+          <text class="val sm" x="126" y="16" text-anchor="end">0.62</text>
+          <rect class="trk" x="6" y="27" width="120" height="8" rx="4"/>
+          <rect class="fill" x="6" y="27" width="120" height="8" rx="4"/>
+          <text class="lbl" x="6" y="54">0</text>
+          <text class="lbl" x="126" y="54" text-anchor="end">1</text>
+        </svg>
+        <h3>Absolute Progress <span class="n">29</span></h3>
+        <p class="q">How far along is it?</p>
+        <div class="dots" role="group" aria-label="Absolute Progress methods"></div>
+        <p class="out">pₜ ∈ [0, 1] on a whole-task scale</p>
+      </article>
+
+      <article class="fam reveal" style="--c: var(--fam-r)" data-family="Relative">
+        <svg class="glyph g-relative" viewBox="0 0 132 64" aria-hidden="true">
+          <rect class="fr a" x="6" y="6" width="46" height="36" rx="6"/>
+          <rect class="fr b" x="80" y="6" width="46" height="36" rx="6"/>
+          <text class="lbl c" x="29" y="29" text-anchor="middle">A</text>
+          <text class="lbl c" x="103" y="29" text-anchor="middle">B</text>
+          <text class="cmp" x="66" y="32" text-anchor="middle">≻</text>
+          <text class="lbl pref" x="66" y="60" text-anchor="middle">A preferred</text>
+        </svg>
+        <h3>Relative <span class="n">23</span></h3>
+        <p class="q">Which is better?</p>
+        <div class="dots" role="group" aria-label="Relative methods"></div>
+        <p class="out">pairwise order · utility from comparisons</p>
+      </article>
+
+      <article class="fam reveal" style="--c: var(--fam-tv)" data-family="Temporal Value">
+        <svg class="glyph g-value" viewBox="0 0 132 64" aria-hidden="true">
+          <line class="trk" x1="10" y1="24" x2="122" y2="24"/>
+          <line class="prog" x1="10" y1="24" x2="122" y2="24"/>
+          <circle class="pip on p1" cx="10" cy="24" r="5"/>
+          <circle class="pip on p2" cx="47" cy="24" r="5"/>
+          <circle class="pip on p3" cx="85" cy="24" r="5"/>
+          <circle class="pip p4" cx="122" cy="24" r="5"/>
+          <text class="lbl" x="6" y="52">stage 3/4</text>
+          <text class="lbl eta" x="126" y="52" text-anchor="end">4 s to go</text>
+        </svg>
+        <h3>Temporal Value <span class="n">24</span></h3>
+        <p class="q">Which stage, and how well is it going?</p>
+        <div class="dots" role="group" aria-label="Temporal Value methods"></div>
+        <p class="out">stage · time to go · V<sup>π</sup>, Q<sup>π</sup></p>
+      </article>
+
+      <article class="fam reveal" style="--c: var(--fam-h)" data-family="Hybrid">
+        <svg class="glyph g-hybrid" viewBox="0 0 132 64" aria-hidden="true">
+          <text class="lbl" x="6" y="15">prog</text>
+          <text class="lbl" x="6" y="35">succ</text>
+          <text class="lbl" x="6" y="55">why</text>
+          <rect class="trk" x="40" y="9" width="86" height="6" rx="3"/>
+          <rect class="trk" x="40" y="29" width="86" height="6" rx="3"/>
+          <rect class="bar b1" x="40" y="9" width="86" height="6" rx="3"/>
+          <rect class="bar b2" x="40" y="29" width="86" height="6" rx="3"/>
+          <text class="why" x="40" y="56">“gripper slipped”</text>
+        </svg>
+        <h3>Hybrid <span class="n">22</span></h3>
+        <p class="q">What happened, and on what evidence?</p>
+        <div class="dots" role="group" aria-label="Hybrid methods"></div>
+        <p class="out">several judgments from one evaluator</p>
+      </article>
+    </div>
+
+    <p class="fam-key reveal"><span><i></i>one method; hover or tap for its name</span><span><i class="gen"></i>* evaluates generated behavior</span><span><i class="proto"></i>‡ a protocol or harness</span></p>
+
+    <details class="all-methods reveal">
+      <summary>All 110 methods by family and design route</summary>
+      <div id="method-list" class="method-list"></div>
+      <p class="fine">* evaluates generated behavior&ensp;·&ensp;‡ a protocol or harness</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============================================================ 02 BENCHMARK -->
+<section id="bench" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">02 / Benchmark</span>
+      <h2>RRM-Bench-1K</h2>
+      <p class="lead">Real closed-loop executions, failures and retries kept whole, labeled by which task conditions hold at each moment and by whether each camera shows enough to judge.</p>
+    </header>
+
+    <div class="kpis reveal" role="list">
+      <div class="kpi" role="listitem"><b class="count" data-to="1117">1,117</b><span>real-robot videos</span></div>
+      <div class="kpi" role="listitem"><b class="count" data-to="205">205</b><span>three-camera inputs</span></div>
+      <div class="kpi" role="listitem"><b class="count" data-to="52">52</b><span>tasks</span></div>
+      <div class="kpi" role="listitem"><b class="count" data-to="5">5</b><span>embodiments</span></div>
+      <div class="kpi" role="listitem"><b class="count" data-to="17381">17,381</b><span>scored 1 FPS transitions</span></div>
+      <div class="kpi" role="listitem"><b class="count" data-to="1702">1,702</b><span>task-state falls</span></div>
+    </div>
+
+    <figure class="wall reveal">
+      <div class="wall-frame">
+        <video src="assets/video/mosaic.mp4" poster="assets/img/mosaic.jpg" muted loop playsinline preload="metadata" aria-label="24 robot executions from RRM-Bench-1K playing side by side"></video>
+      </div>
+      <figcaption>24 of 1,117 executions. ARX-5, UR5, Franka, Cobot Magic ALOHA and DOS-W1, up to three cameras each.</figcaption>
+    </figure>
+
+    <h3 class="sub-h reveal">Four contrast suites <span>each separates the credited condition from a cue that usually comes with it</span></h3>
+    <div class="suites" id="suites">
+      <button class="suite reveal" data-suite="A" type="button">
+        <span class="s-top"><span class="s-letter">A</span><span class="s-n"><b>159</b> videos</span></span>
+        <svg class="s-glyph sg-a" viewBox="0 0 160 70" aria-hidden="true">
+          <line class="base" x1="14" y1="60" x2="146" y2="60"/>
+          <ellipse class="stain-ring" cx="80" cy="47" rx="30" ry="8"/>
+          <ellipse class="stain" cx="80" cy="47" rx="9" ry="3.5"/>
+          <rect class="rag" x="64" y="22" width="32" height="14" rx="4"/>
+          <path class="tag-x" d="M120 18l8 8M128 18l-8 8"/>
+        </svg>
+        <span class="s-name">Action–Effect</span>
+        <span class="s-slogan">Motion ≠ effect</span>
+        <span class="s-desc">Task-like motion, but the required effect never happens: wiping that leaves the stain.</span>
+        <span class="s-foot">proxy validity <i>Lab →</i></span>
+      </button>
+      <button class="suite reveal" data-suite="B" type="button">
+        <span class="s-top"><span class="s-letter">B</span><span class="s-n"><b>290</b> videos</span></span>
+        <svg class="s-glyph sg-b" viewBox="0 0 160 70" aria-hidden="true">
+          <rect class="bin ok" x="20" y="38" width="42" height="24" rx="4"/>
+          <rect class="bin bad" x="98" y="38" width="42" height="24" rx="4"/>
+          <text class="bl" x="41" y="32" text-anchor="middle">target</text>
+          <path class="arcpath" d="M41 44 Q80 -6 119 44"/>
+          <rect class="obj" x="113" y="44" width="12" height="12" rx="2"/>
+          <path class="tag-x" d="M115 20l8 8M123 20l-8 8"/>
+        </svg>
+        <span class="s-name">Semantic / Ordered</span>
+        <span class="s-slogan">Manipulation ≠ constraint</span>
+        <span class="s-desc">Grasp, carry and release all succeed, with the wrong object, destination or order.</span>
+        <span class="s-foot">proxy validity <i>Lab →</i></span>
+      </button>
+      <button class="suite reveal" data-suite="C" type="button">
+        <span class="s-top"><span class="s-letter">C</span><span class="s-n"><b>467</b> videos</span></span>
+        <svg class="s-glyph sg-c" viewBox="0 0 160 70" aria-hidden="true">
+          <line class="base" x1="10" y1="60" x2="150" y2="60"/>
+          <path class="curve" d="M10 60 L52 22 L104 22 L114 60 L150 60"/>
+          <circle class="peak" cx="78" cy="22" r="4"/>
+          <circle class="drop" cx="114" cy="60" r="4"/>
+          <path class="tag-x" d="M120 36l8 8M128 36l-8 8"/>
+        </svg>
+        <span class="s-name">Persistence / Reversal</span>
+        <span class="s-slogan">Attained ≠ still holds</span>
+        <span class="s-desc">An achieved condition is later lost. Credit must fall at the reversal.</span>
+        <span class="s-foot">temporal validity <i>Lab →</i></span>
+      </button>
+      <button class="suite reveal" data-suite="D" type="button">
+        <span class="s-top"><span class="s-letter">D</span><span class="s-n"><b>394</b> videos</span></span>
+        <svg class="s-glyph sg-d" viewBox="0 0 160 70" aria-hidden="true">
+          <rect class="view v" x="14" y="8" width="58" height="44" rx="5"/>
+          <rect class="view p" x="88" y="8" width="58" height="44" rx="5"/>
+          <path class="eye" d="M29 30q14-12 28 0q-14 12-28 0z"/>
+          <circle class="pupil" cx="43" cy="30" r="3.2"/>
+          <path class="slash" d="M100 18l34 24"/>
+          <text class="q" x="117" y="35" text-anchor="middle">?</text>
+          <text class="vl" x="20" y="19">V</text>
+          <text class="vl" x="94" y="19">P</text>
+          <text class="vl" x="43" y="67" text-anchor="middle">sees it</text>
+          <text class="vl" x="117" y="67" text-anchor="middle">can’t tell</text>
+        </svg>
+        <span class="s-name">Visibility</span>
+        <span class="s-slogan">Unknown ≠ failure</span>
+        <span class="s-desc">The camera does not show the decisive state. The right answer is to abstain.</span>
+        <span class="s-foot">evidence validity <i>Lab →</i></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 03 LAB -->
+<section id="lab" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">03 / Reward Lab</span>
+      <h2>Credit vs. <em>task state</em></h2>
+      <p class="lead">Ten real executions from the suites. Play one and watch nine evaluators' outputs against the human task-state label.</p>
+    </header>
+
+    <div class="lab reveal" id="lab-root">
+      <div class="lab-tabs" role="tablist" aria-label="Contrast suite" id="lab-tabs"></div>
+      <p class="lab-slogan" id="lab-slogan"></p>
+      <div class="lab-cases" id="lab-cases" role="group" aria-label="Execution"></div>
+
+      <div class="lab-main">
+        <div class="lab-video">
+          <div class="vid-frame">
+            <video id="lab-video" muted playsinline preload="metadata"></video>
+            <span class="vid-badge" id="lab-cam"></span>
+            <span class="vid-event" id="lab-event" aria-live="polite"></span>
+          </div>
+          <div class="vid-controls">
+            <button class="icon-btn" id="lab-play" type="button" aria-label="Play">
+              <svg viewBox="0 0 16 16" aria-hidden="true"><path class="i-play" d="M4.5 2.8v10.4L13 8z"/><path class="i-pause" d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z"/></svg>
+            </button>
+            <div class="scrub" id="lab-scrub" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="scrub-fill"></div><div class="scrub-knob"></div></div>
+            <span class="time" id="lab-time">0.0 s</span>
+            <button class="txt-btn" id="lab-speed" type="button" aria-label="Playback speed">1×</button>
+          </div>
+          <div class="cam-toggle" id="lab-camtoggle" role="group" aria-label="Camera" hidden>
+            <button type="button" data-view="P" aria-pressed="true"><b>Wrist camera</b><span>P · partial evidence</span></button>
+            <button type="button" data-view="V" aria-pressed="false"><b>Front camera</b><span>V · shows the outcome</span></button>
+          </div>
+        </div>
+
+        <div class="lab-panel">
+          <p class="lab-inst" id="lab-inst"></p>
+          <p class="lab-desc" id="lab-desc"></p>
+          <div class="lab-readout" id="lab-readout" aria-hidden="true"></div>
+          <div class="lab-chart" id="lab-chart" tabindex="0" role="img"></div>
+          <ol class="lab-events" id="lab-events" aria-label="Events in this execution"></ol>
+          <div class="lab-legend">
+            <span><i class="key key-gt"></i>Task state (GT)</span>
+            <span><i class="key key-model"></i><b id="lab-legend-model">Model</b></span>
+            <label class="toggle"><input type="checkbox" id="lab-others" checked> <i class="key key-other"></i>Other evaluators</label>
+            <span><i class="key key-rev"></i>GT reversal</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-models" id="lab-models" role="group" aria-label="Evaluator"></div>
+      <p class="fine lab-note">Saved outputs at each model's native timestamps after a fixed unit conversion, no fitting. VOC is the benchmark-level value from the paper; <i>r</i> is the per-clip Pearson correlation with the label, not a paper metric. Qualitative examples picked from the benchmark, not a random sample.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 04 FINDINGS -->
+<section id="findings" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">04 / Findings</span>
+      <h2>What one score <em>hides</em></h2>
+      <p class="lead">A unified study of 26 evaluators separates capabilities that a single leaderboard number merges.</p>
+    </header>
+
+    <article class="finding reveal">
+      <div class="f-text">
+        <span class="f-k">Endpoint judgment</span>
+        <b class="f-big">75–85%</b>
+        <h3>Final scores can pick the winner</h3>
+        <p>For the strongest evaluators, the highest final score picks the most complete execution of a task in 75–85% of cases. Their top tenth holds 87–100% fully completed executions.</p>
+      </div>
+      <div class="f-viz meters">
+        <div class="meter" style="--lo:75; --hi:85; --base:44">
+          <p class="m-title">Highest final score picks the most complete execution</p>
+          <div class="m-top"><span class="band">best evaluators 75–85%</span></div>
+          <div class="m-track"><i class="m-band"></i><i class="m-base"></i></div>
+          <div class="m-bot"><span>0</span><span class="base">random 44%</span><span>100%</span></div>
+        </div>
+        <div class="meter" style="--lo:87; --hi:100; --base:47">
+          <p class="m-title">Fully completed executions among the top tenth by final score</p>
+          <div class="m-top"><span class="band">best evaluators 87–100%</span></div>
+          <div class="m-track"><i class="m-band"></i><i class="m-base"></i></div>
+          <div class="m-bot"><span>0</span><span class="base">random 47%</span><span>100%</span></div>
+        </div>
+        <p class="fine">Selection: Sequence-queried GPT-6.1 Sol, Jev 1.14, Flora-Rewarder. Filtering: Robometer, RoboReward, GPT-6.1 Sol.</p>
+      </div>
+    </article>
+
+    <article class="finding reveal">
+      <div class="f-text">
+        <span class="f-k">Dense credit</span>
+        <b class="f-big">VOC 1.000</b>
+        <h3>A clock beats every evaluator on VOC</h3>
+        <p>A control that reads only elapsed time tops the standard progress metric, yet never detects a fall. Where task state and time diverge, 17 of 26 evaluators follow time.</p>
+      </div>
+      <figure class="f-viz">
+        <div class="chart" id="chart-voc" role="img" aria-label="Scatter of VOC against falling F1 for 26 evaluators and a time-only control. The control has VOC 1.000 and falling F1 0. Values are in the leaderboard table."></div>
+        <figcaption class="legend">
+          <span><i class="mk mk-spec"></i>Specialized</span>
+          <span><i class="mk mk-vlm"></i>General VLM</span>
+          <span><i class="mk mk-dec"></i>Decision model</span>
+          <span><i class="mk mk-clock"></i>Time-only control</span>
+        </figcaption>
+      </figure>
+    </article>
+
+    <article class="finding reveal">
+      <div class="f-text">
+        <span class="f-k">Evidence</span>
+        <b class="f-big">24 / 26</b>
+        <h3>No evaluator says “I can't see”</h3>
+        <p>Hiding the decisive view lowers Macro-F1 for 24 of 26 evaluators, and no evaluated interface can report that its evidence is insufficient.</p>
+      </div>
+      <figure class="f-viz">
+        <div class="chart" id="chart-view" role="img" aria-label="Macro-F1 of 26 evaluators with a sufficient view and with a reduced view of the same transitions. 24 drop. Values are in the leaderboard table."></div>
+        <figcaption class="legend">
+          <span><i class="mk mk-v"></i>Sufficient view (V)</span>
+          <span><i class="mk mk-px"></i>Reduced view (P/X)</span>
+        </figcaption>
+      </figure>
+    </article>
+
+    <h3 class="sub-h reveal">Six directions <span>from the gaps above</span></h3>
+    <ol class="directions reveal">
+      <li><b>Learning from real failures</b><span>Signed targets and cause labels, so credit can fall.</span></li>
+      <li><b>Task structure beyond the instruction</b><span>Check the constraints that motion does not reveal.</span></li>
+      <li><b>Query design</b><span>Pair-query recall with Sequence-query precision.</span></li>
+      <li><b>Evidence sufficiency and abstention</b><span>Abstain or widen uncertainty without the decisive view.</span></li>
+      <li><b>Measuring what matters</b><span>Test credit withdrawal apart from chronology.</span></li>
+      <li><b>From evaluators to decisions</b><span>Match fidelity to the optimization pressure of the decision.</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============================================================ 05 LEADERBOARD -->
+<section id="leaderboard" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">05 / Leaderboard</span>
+      <h2>26 evaluators</h2>
+      <p class="lead">Direction metrics over 17,381 non-flat 1 FPS transitions, 1,702 of them falling. Because nine in ten transitions rise, always answering “rising” already scores Macro-F1 0.474.</p>
+    </header>
+
+    <div class="board reveal">
+      <div class="board-filters" role="group" aria-label="Filter evaluators" id="board-filters">
+        <button type="button" data-kind="all" aria-pressed="true">All</button>
+        <button type="button" data-kind="Specialized" aria-pressed="false">Specialized</button>
+        <button type="button" data-kind="General VLM" aria-pressed="false">General VLM</button>
+        <button type="button" data-kind="Decision" aria-pressed="false">Decision</button>
+      </div>
+      <div class="table-scroll">
+        <table id="board-table">
+          <thead>
+            <tr>
+              <th scope="col" class="c-rank">#</th>
+              <th scope="col" class="c-name" data-sort="name">Evaluator</th>
+              <th scope="col" data-sort="mf1" class="num" title="Mean of rising and falling F1">Macro-F1</th>
+              <th scope="col" data-sort="ff1" class="num" title="F1 on task-state falls">Falling F1</th>
+              <th scope="col" data-sort="voc" class="num" title="Correlation with elapsed time on successful executions">VOC</th>
+              <th scope="col" data-sort="tau" class="num" title="Kendall tau-a of final scores against endpoint fulfillment">τ<sub>a</sub></th>
+              <th scope="col" data-sort="v" class="num" title="Macro-F1, sufficient camera view">V</th>
+              <th scope="col" data-sort="px" class="num" title="Macro-F1, reduced camera view, same transitions">P/X</th>
+              <th scope="col" data-sort="pair" class="num" title="Macro-F1 under Pair queries">Pair</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+          <tfoot>
+            <tr class="ref"><td></td><td class="c-name">Always “rising” <span class="tag">reference</span></td><td class="num">0.474</td><td class="num">0.000</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+            <tr class="ref"><td></td><td class="c-name">Normalized elapsed time <span class="tag">reference</span></td><td class="num">—</td><td class="num">0.000</td><td class="num">1.000</td><td class="num">0.000</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+          </tfoot>
+        </table>
+      </div>
+      <p class="fine">General VLMs and Jev 1.14 use Sequence queries; the Pair column gives their Macro-F1 under Pair queries. † Curve interpolated to 1 FPS. V and P/X: Macro-F1 on the 347 paired views, same transitions. Bold marks the best value among the rows shown; click a column to sort.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 06 HUB -->
+<section id="hub" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">06 / Toolbox</span>
+      <h2>RRM-Hub</h2>
+      <p class="lead">Adapters keep each reward model's native inputs and outputs, so existing models run on new robot videos and new evaluators are tested on the same capabilities.</p>
+    </header>
+
+    <div class="hub reveal">
+      <div class="code-card">
+        <div class="code-tabs" role="tablist" aria-label="Code example">
+          <button role="tab" type="button" aria-selected="true" data-code="py">Python</button>
+          <button role="tab" type="button" aria-selected="false" data-code="cli">CLI</button>
+          <button role="tab" type="button" aria-selected="false" data-code="bench">Benchmark</button>
+          <span class="dots3" aria-hidden="true"><i></i><i></i><i></i></span>
+        </div>
+<pre class="code on" data-code="py"><code><span class="k">import</span> rewardbox
+
+rm  = rewardbox.create_reward(<span class="s">"robometer-4b"</span>)
+out = rm(<span class="s">"robot.mp4"</span>, <span class="s">"open the drawer"</span>)
+
+out.progress        <span class="c"># native scale, never rescaled</span>
+out.frame_indices   <span class="c"># source frame of each value</span>
+out.success         <span class="c"># models that output it</span></code></pre>
+<pre class="code" data-code="cli"><code><span class="p">$</span> pip install -e .
+<span class="p">$</span> rewardbox list                  <span class="c"># 35 configurations</span>
+<span class="p">$</span> rewardbox doctor robometer-4b   <span class="c"># deps · checkout · GPU</span>
+<span class="p">$</span> rewardbox run robometer-4b robot.mp4 \
+      --instruction <span class="s">"open the drawer"</span> -o result.json</code></pre>
+<pre class="code" data-code="bench"><code><span class="p">$</span> rewardbox bench \
+      --manifest RRM-Bench-1K/inputs/single_view.jsonl \
+      --model robometer-4b --strategy fps --fps 1 \
+      --no-include-last -o runs/robometer-4b
+<span class="p">$</span> python RRM-Bench-1K/tools/evaluate.py \
+      --predictions runs/robometer-4b/robometer-4b.json</code></pre>
+      </div>
+
+      <div class="hub-side">
+        <div class="hub-stats">
+          <div><b class="count" data-to="14">14</b><span>methods</span></div>
+          <div><b class="count" data-to="35">35</b><span>configurations</span></div>
+          <div><b>1</b><span>interface</span></div>
+        </div>
+        <ul class="chips" aria-label="Methods in RRM-Hub">
+          <li>Robometer</li><li>RoboReward</li><li>TOPReward</li><li>Robo-Dopamine</li><li>GVL</li><li>VLAC</li><li>VLAC-Cut</li><li>PRIMO-R1</li><li>Flora-Rewarder</li><li>SOLE-R1</li><li>LRM</li><li>RynnValue</li><li>ProcVLM</li><li>Robo-ValueRL</li>
+        </ul>
+        <ul class="hub-points">
+          <li><b>Native outputs.</b> Fractions, percentages, seconds to go or signed scores, never rescaled.</li>
+          <li><b>Explicit sampling.</b> Every model runs its upstream protocol unless told otherwise.</li>
+          <li><b>Capabilities apart.</b> Endpoint, dense credit and evidence use are reported separately.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ CITE -->
+<section id="cite" class="sec">
+  <div class="wrap">
+    <header class="sec-head reveal">
+      <span class="idx">Citation</span>
+      <h2>BibTeX</h2>
+    </header>
+    <div class="bib reveal">
+      <button class="copy" type="button" id="copy-bib">Copy</button>
+<pre id="bibtex"><code>@article{liang2026rrm,
+  title   = {Robotic Reward Models in the Foundation-Model Era:
+             A Survey and Capability Benchmark},
+  author  = {Liang, Guoqiang and Lin, Yiqi and Zhou, Shangchen and
+             Zeng, Wenzheng and Chen, Yanzhe and Bai, Zechen and
+             Shou, Mike Zheng},
+  journal = {arXiv preprint},
+  year    = {2026}
+}</code></pre>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <span>© 2026 the authors · National University of Singapore · Nanyang Technological University</span>
+    <span>Robot videos: RoboChallenge Table30 executions in RRM-Bench-1K</span>
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="tooltip" hidden></div>
+
+<script src="assets/data/site.js"></script>
+<script src="assets/data/cases.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/lab.js"></script>
+</body>
+</html>
