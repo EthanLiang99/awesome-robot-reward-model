@@ -31,11 +31,12 @@ Then open http://127.0.0.1:8765. `python -m http.server` also works, but it igno
 
 - A repository admin sets this up once: Settings → Pages → Source: **GitHub Actions**.
 - While the repository is private, pushes skip the deploy. Pages on a private repository needs a paid plan, and the site would be public anyway. To deploy by hand, use **Run workflow** on the Actions tab.
+- Making the repository public does not deploy by itself, because a visibility change is not a push. After the switch, use **Run workflow** once, or push a change to this folder.
 
 Before the site goes public:
 
 1. In `index.html`, search for `data-soon`. Put the real URL in each `href="#"` (Paper, arXiv, Code, Data) and delete `data-soon`. Until then those buttons show "link coming soon".
-2. The clips are RoboChallenge Table30 executions from RRM-Bench-1K. The benchmark release notes list their redistribution terms as "to be decided before public release". Confirm those terms before publishing the videos.
+2. The clips are RoboChallenge Table30 and Table30 V2 executions from RRM-Bench-1K. The benchmark release notes list their redistribution terms as "to be decided before public release". Confirm those terms before publishing the videos.
 3. If the site moves, for example to a custom domain, update `og:url`, `og:image` and `twitter:image` in `index.html`.
 
 ## Rebuild the data

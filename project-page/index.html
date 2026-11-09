@@ -230,7 +230,7 @@
       <div class="wall-frame">
         <video src="assets/video/mosaic.mp4" poster="assets/img/mosaic.jpg" muted loop playsinline preload="metadata" aria-label="24 robot executions from RRM-Bench-1K playing side by side"></video>
       </div>
-      <figcaption>24 of 1,117 executions. ARX-5, UR5, Franka, Cobot Magic ALOHA and DOS-W1, up to three cameras each.</figcaption>
+      <figcaption>24 of the 1,117 videos. ARX-5, UR5, Franka, Cobot Magic ALOHA and DOS-W1, up to three cameras per execution.</figcaption>
     </figure>
 
     <h3 class="sub-h reveal">Four contrast suites <span>each separates the credited condition from a cue that usually comes with it</span></h3>
@@ -294,7 +294,7 @@
         </svg>
         <span class="s-name">Visibility</span>
         <span class="s-slogan">Unknown ≠ failure</span>
-        <span class="s-desc">The camera does not show the decisive state. The right answer is to abstain.</span>
+        <span class="s-desc">The camera does not show the decisive state. The expected answer is to abstain or widen uncertainty.</span>
         <span class="s-foot">evidence validity <i>Lab →</i></span>
       </button>
     </div>
@@ -352,7 +352,7 @@
       </div>
 
       <div class="lab-models" id="lab-models" role="group" aria-label="Evaluator"></div>
-      <p class="fine lab-note">Saved outputs at each model's native timestamps after a fixed unit conversion, no fitting. VOC is the benchmark-level value from the paper; <i>r</i> is the per-clip Pearson correlation with the label, not a paper metric. Qualitative examples picked from the benchmark, not a random sample.</p>
+      <p class="fine lab-note">Saved outputs at each model's native timestamps after a fixed unit conversion, no fitting. VOC is the benchmark-level value from the paper; <i>r</i> is the per-video Pearson correlation with the label, not a paper metric. Qualitative examples picked from the benchmark, not a random sample.</p>
     </div>
   </div>
 </section>
@@ -363,7 +363,7 @@
     <header class="sec-head reveal">
       <span class="idx">04 / Findings</span>
       <h2>What one score <em>hides</em></h2>
-      <p class="lead">A unified study of 26 evaluators separates capabilities that a single leaderboard number merges.</p>
+      <p class="lead">A unified study of 27 evaluators separates capabilities that a single leaderboard number merges.</p>
     </header>
 
     <article class="finding reveal">
@@ -371,7 +371,7 @@
         <span class="f-k">Endpoint judgment</span>
         <b class="f-big">75–85%</b>
         <h3>Final scores can pick the winner</h3>
-        <p>For the strongest evaluators, the highest final score picks the most complete execution of a task in 75–85% of cases. Their top tenth holds 87–100% fully completed executions.</p>
+        <p>For the strongest evaluators, the highest final score picks the most complete execution of a task in 75–85% of cases. Their top tenth by final score holds 90–100% fully completed executions. RoboReward filters this well with the lowest falling F1 among specialized evaluators: endpoint judgment and dense credit are separate capabilities.</p>
       </div>
       <div class="f-viz meters">
         <div class="meter" style="--lo:75; --hi:85; --base:44">
@@ -380,13 +380,13 @@
           <div class="m-track"><i class="m-band"></i><i class="m-base"></i></div>
           <div class="m-bot"><span>0</span><span class="base">random 44%</span><span>100%</span></div>
         </div>
-        <div class="meter" style="--lo:87; --hi:100; --base:47">
+        <div class="meter" style="--lo:90; --hi:100; --base:47">
           <p class="m-title">Fully completed executions among the top tenth by final score</p>
-          <div class="m-top"><span class="band">best evaluators 87–100%</span></div>
+          <div class="m-top"><span class="band">best evaluators 90–100%</span></div>
           <div class="m-track"><i class="m-band"></i><i class="m-base"></i></div>
           <div class="m-bot"><span>0</span><span class="base">random 47%</span><span>100%</span></div>
         </div>
-        <p class="fine">Selection: Sequence-queried GPT-6.1 Sol, Jev 1.14, Flora-Rewarder. Filtering: Robometer, RoboReward, GPT-6.1 Sol.</p>
+        <p class="fine">Selection: Sequence-queried GPT-6.1 Sol and GPT-5.6 Terra, then Jev 1.14 and Flora-Rewarder. Filtering: Robometer and RoboReward, then several evaluators at 90%.</p>
       </div>
     </article>
 
@@ -395,10 +395,10 @@
         <span class="f-k">Dense credit</span>
         <b class="f-big">VOC 1.000</b>
         <h3>A clock beats every evaluator on VOC</h3>
-        <p>A control that reads only elapsed time tops the standard progress metric, yet never detects a fall. Where task state and time diverge, 17 of 26 evaluators follow time.</p>
+        <p>A control that reads only elapsed time tops the standard progress metric, yet never detects a fall. Where task state and time diverge, 17 of 27 evaluators follow time.</p>
       </div>
       <figure class="f-viz">
-        <div class="chart" id="chart-voc" role="img" aria-label="Scatter of VOC against falling F1 for 26 evaluators and a time-only control. The control has VOC 1.000 and falling F1 0. Values are in the leaderboard table."></div>
+        <div class="chart" id="chart-voc" role="img" aria-label="Scatter of VOC against falling F1 for 26 single-view evaluators and a time-only control. The control has VOC 1.000 and falling F1 0. Values are in the leaderboard table."></div>
         <figcaption class="legend">
           <span><i class="mk mk-spec"></i>Specialized</span>
           <span><i class="mk mk-vlm"></i>General VLM</span>
@@ -413,10 +413,10 @@
         <span class="f-k">Evidence</span>
         <b class="f-big">24 / 26</b>
         <h3>No evaluator says “I can't see”</h3>
-        <p>Hiding the decisive view lowers Macro-F1 for 24 of 26 evaluators, and no evaluated interface can report that its evidence is insufficient.</p>
+        <p>Hiding the decisive view lowers Macro-F1 for 24 of 26 single-view evaluators, and no evaluated interface can report that its evidence is insufficient. Extra cameras help where the interface fuses them, yet the judgment shifts with the camera in the primary slot.</p>
       </div>
       <figure class="f-viz">
-        <div class="chart" id="chart-view" role="img" aria-label="Macro-F1 of 26 evaluators with a sufficient view and with a reduced view of the same transitions. 24 drop. Values are in the leaderboard table."></div>
+        <div class="chart" id="chart-view" role="img" aria-label="Macro-F1 of 26 single-view evaluators with a sufficient view and with a reduced view of the same transitions. 24 drop. Values are in the leaderboard table."></div>
         <figcaption class="legend">
           <span><i class="mk mk-v"></i>Sufficient view (V)</span>
           <span><i class="mk mk-px"></i>Reduced view (P/X)</span>
@@ -441,7 +441,7 @@
   <div class="wrap">
     <header class="sec-head reveal">
       <span class="idx">05 / Leaderboard</span>
-      <h2>26 evaluators</h2>
+      <h2>26 single-view evaluators</h2>
       <p class="lead">Direction metrics over 17,381 non-flat 1 FPS transitions, 1,702 of them falling. Because nine in ten transitions rise, always answering “rising” already scores Macro-F1 0.474.</p>
     </header>
 
@@ -470,11 +470,11 @@
           <tbody></tbody>
           <tfoot>
             <tr class="ref"><td></td><td class="c-name">Always “rising” <span class="tag">reference</span></td><td class="num">0.474</td><td class="num">0.000</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
-            <tr class="ref"><td></td><td class="c-name">Normalized elapsed time <span class="tag">reference</span></td><td class="num">—</td><td class="num">0.000</td><td class="num">1.000</td><td class="num">0.000</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+            <tr class="ref"><td></td><td class="c-name">Normalized elapsed time <span class="tag">reference</span></td><td class="num">0.474</td><td class="num">0.000</td><td class="num">1.000</td><td class="num">0.000</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
           </tfoot>
         </table>
       </div>
-      <p class="fine">General VLMs and Jev 1.14 use Sequence queries; the Pair column gives their Macro-F1 under Pair queries. † Curve interpolated to 1 FPS. V and P/X: Macro-F1 on the 347 paired views, same transitions. Bold marks the best value among the rows shown; click a column to sort.</p>
+      <p class="fine">General VLMs and Jev 1.14 use Sequence queries; the Pair column gives their Macro-F1 under Pair queries. † Curve interpolated to 1 FPS. V and P/X: Macro-F1 on the 347 paired views, same transitions. Robo-ValueRL takes only multiview input and is reported with the paper's multiview rows. Bold marks the best value among the rows shown; click a column to sort.</p>
     </div>
   </div>
 </section>
@@ -563,7 +563,7 @@ out.success         <span class="c"># models that output it</span></code></pre>
 <footer class="foot">
   <div class="wrap foot-in">
     <span>© 2026 the authors · National University of Singapore · Nanyang Technological University</span>
-    <span>Robot videos: RoboChallenge Table30 executions in RRM-Bench-1K</span>
+    <span>Robot videos: RoboChallenge Table30 and Table30 V2 executions in RRM-Bench-1K</span>
   </div>
 </footer>
 

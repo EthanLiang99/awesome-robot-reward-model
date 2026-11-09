@@ -54,7 +54,7 @@ CASES = [
     ("books_shelf_swept", "C", "Shelf knocked over",
      "One book is shelved, then the arm knocks the shelf over at 19.6 s and all progress is lost."),
     ("flowers_retries", "C", "Three failed tries",
-     "Three failed placements, then two flowers make it into the vase."),
+     "Three attempts fail, then two flowers stay in the vase."),
     ("drawer_wrist_view", "D", "Success, out of sight",
      "A successful execution seen from the wrist camera, which only shows the drawer front."),
     ("books_wrist_view", "D", "The fall nobody sees",
