@@ -1,4 +1,4 @@
-/* RRM project page: shared helpers, hero trace, taxonomy, findings charts,
+/* RRM project page: shared helpers, hero stage, taxonomy, findings charts,
    leaderboard and toolbox. Data comes from assets/data/site.js and
    assets/data/cases.js (plain globals, so the page also works from file://). */
 (() => {
@@ -224,19 +224,32 @@
     $$('.count[data-to]').forEach((el) => io.observe(el));
   }
 
-  /* ------------------------------------------------------------ hero trace */
-  // Real data: task-state label vs VLAC-Cut on "put the books back" (paper Fig. 9).
-  function heroTrace() {
-    const fig = $('#hero-trace'), svg = fig && $('svg', fig), D = window.RRM_CASES;
-    if (!svg || !D) return;
+  /* ------------------------------------------------------------ hero stage */
+  // Opening shot: the camera drifts over the benchmark wall, pushes into one execution, and the
+  // trace then draws in step with that video. Real data: task-state label vs VLAC-Cut on
+  // "put the books back" (paper Fig. 9). The clip stands in for wall tile (row 1, column 5).
+  function heroStage() {
+    const fig = $('#hero-trace'), D = window.RRM_CASES;
+    const svg = fig && $('svg.trace-svg', fig), box = fig && $('.stage-box', fig), frame = fig && $('.stage-frame', fig);
+    const wallEl = fig && $('.stage-wall', fig), mosaic = fig && $('.stage-mosaic', fig), clip = fig && $('.stage-clip', fig);
+    if (!svg || !D || !box || !frame || !wallEl || !mosaic || !clip) return;
     const C = D.cases.find((c) => c.id === 'books_shelf_swept');
     const M = C && C.models.find((m) => m.key === 'vlaccut');
     if (!C || !M) return;
     const T = C.duration;
     const fall = C.events.find((e) => /shelf/i.test(e.label)) || C.events[C.events.length - 1];
-    const DRAW = 9000, HOLD = 4200, FADE = 900, CYCLE = DRAW + HOLD + FADE;
-    let R = null, elapsed = 0, last = 0, raf = 0, running = false, visible = false;
 
+    // wall in source pixels: 8 x 3 tiles of 240 x 180
+    const WW = 1920, WH = 540, TW = 240, TH = 180, TX = 5 * TW, TY = 1 * TH;
+    const RATE = 2, DRIFT = 6500, PUSH = 1900, HOLD = 2800, BACK = 1700;
+    const wideMQ = window.matchMedia ? window.matchMedia('(min-width: 860px)') : { matches: true };
+    const easeIO = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+    const easeSine = (p) => (1 - Math.cos(Math.PI * p)) / 2;
+    const lerp = (a, b, p) => a + (b - a) * p;
+    const still = reduced();
+
+    /* chart */
+    let R = null;
     function build() {
       const W = svg.clientWidth, H = svg.clientHeight;
       if (!W || !H) return;
@@ -291,51 +304,178 @@
       svgText(ends, { x: xe, y: y(gEnd) - 4, class: 'vl' }, gEnd.toFixed(2));
 
       R = { x, y, clipR, bands, fg, ph, phL, phT, dG, dM, ends };
-      render();
     }
 
-    function render() {
+    // mode: 'idle' (nothing drawn), 'play' (drawn up to t), 'done' (whole trace, end values), 'fade'
+    function drawChart(t, mode) {
       if (!R) return;
-      const still = reduced();
-      const e = elapsed % CYCLE, fading = !still && e >= DRAW + HOLD;
-      const t = still ? T : Math.min(1, e / DRAW) * T, xp = R.x(t);
-      R.clipR.setAttribute('width', xp + 2);
+      t = clamp(t || 0, 0, T);
+      const fading = mode === 'fade', xp = R.x(t);
+      R.clipR.setAttribute('width', mode === 'idle' ? 0 : xp + 2);
       R.phL.setAttribute('x1', xp);
       R.phL.setAttribute('x2', xp);
       R.phT.setAttribute('x', xp);
       R.phT.textContent = t.toFixed(1) + ' s';
-      R.dG.setAttribute('cx', xp);
-      R.dG.setAttribute('cy', R.y(interp(C.gt, t)));
-      const m = interp(M.pts, t);
+      const g = interp(C.gt, t), m = interp(M.pts, t);
+      R.dG.setAttribute('opacity', g == null ? 0 : 1);
+      if (g != null) { R.dG.setAttribute('cx', xp); R.dG.setAttribute('cy', R.y(g)); }
       R.dM.setAttribute('opacity', m == null ? 0 : 1);
       if (m != null) { R.dM.setAttribute('cx', xp); R.dM.setAttribute('cy', R.y(m)); }
-      R.bands.forEach((b) => b.el.classList.toggle('on', t >= b.t && !fading));
-      R.fg.classList.toggle('on', t >= fall.t && !fading);
-      const done = still || e >= DRAW;
-      R.ends.classList.toggle('on', done && !fading);
-      R.ph.classList.toggle('off', done);
+      const shown = mode === 'play' || mode === 'done';
+      R.bands.forEach((b) => b.el.classList.toggle('on', shown && t >= b.t));
+      R.fg.classList.toggle('on', shown && t >= fall.t);
+      R.ends.classList.toggle('on', mode === 'done');
+      R.ph.classList.toggle('off', mode !== 'play');
       svg.classList.toggle('fade', fading);
     }
 
+    /* camera: scale s (frame px per wall px) and the wall point (ox, oy) at the frame's top-left */
+    let G = null;
+    function geom() {
+      const wide = wideMQ.matches;
+      const fh = frame.clientHeight;
+      const fw0 = wide ? box.clientWidth - 2 : frame.clientWidth;
+      const fw1 = wide ? Math.round(fh * 4 / 3) : fw0;
+      if (!fh || !fw0) { G = null; return; }
+      const cam = (s, ox, oy, fw) => {
+        s = Math.max(s, fh / WH, fw / WW);
+        return { s, ox: clamp(ox, 0, WW - fw / s), oy: clamp(oy, 0, WH - fh / s) };
+      };
+      const fit = Math.max(fh / WH, fw0 / WW), sA = fit * 1.45, sB = fit * 1.04;
+      G = {
+        wide, fh, fw0, fw1, cam,
+        A: cam(sA, 0.04 * (WW - fw0 / sA), 0.12 * (WH - fh / sA), fw0),
+        B: cam(sB, TX + TW / 2 - 0.62 * fw0 / sB, (WH - fh / sB) / 2, fw0),
+        C: { s: fh / TH, ox: TX, oy: TY },
+      };
+    }
+    // Moves the clip's tile on screen from where it sits in view k0 to where it sits in k1,
+    // zooming at a constant rate, while the frame width eases from fw0 to fw1.
+    function tween(k0, k1, fw0, fw1, p) {
+      const e = easeIO(clamp(p, 0, 1));
+      const r = (k) => ({ x: (TX - k.ox) * k.s, y: (TY - k.oy) * k.s, w: TW * k.s });
+      const a = r(k0), b = r(k1);
+      const w = a.w * Math.pow(b.w / a.w, e), s = w / TW, fw = lerp(fw0, fw1, e);
+      return { k: G.cam(s, TX - lerp(a.x, b.x, e) / s, TY - lerp(a.y, b.y, e) / s, fw), fw };
+    }
+    function place(k, fw) {
+      wallEl.style.transform = `translate3d(${(-k.ox * k.s).toFixed(2)}px, ${(-k.oy * k.s).toFixed(2)}px, 0) scale(${k.s.toFixed(4)})`;
+      frame.style.width = G.wide ? (fw + 2).toFixed(1) + 'px' : '';
+    }
+
+    /* timeline: drift -> push -> clip (video time drives the trace) -> hold -> back -> drift */
+    let phase = still ? 'hold' : 'drift', pt = 0, clipOn = false;
+    let raf = 0, last = 0, running = false, visible = false, userPaused = still;
+
+    function paint() {
+      if (!G) return;
+      let v;
+      switch (phase) {
+        case 'drift': {
+          const e = easeSine(clamp(pt / DRIFT, 0, 1));
+          v = { k: G.cam(G.A.s * Math.pow(G.B.s / G.A.s, e), lerp(G.A.ox, G.B.ox, e), lerp(G.A.oy, G.B.oy, e), G.fw0), fw: G.fw0 };
+          drawChart(0, 'idle');
+          break;
+        }
+        case 'push':
+          v = tween(G.B, G.C, G.fw0, G.fw1, pt / PUSH);
+          drawChart(clip.currentTime, clipOn ? 'play' : 'idle');
+          break;
+        case 'clip':
+          v = { k: G.C, fw: G.fw1 };
+          drawChart(clip.currentTime, 'play');
+          break;
+        case 'hold':
+          v = { k: G.C, fw: G.fw1 };
+          drawChart(T, 'done');
+          break;
+        default: // back
+          v = tween(G.C, G.A, G.fw1, G.fw0, pt / BACK);
+          drawChart(T, 'fade');
+      }
+      place(v.k, v.fw);
+    }
+
+    function playClip() {
+      clipOn = true;
+      clip.defaultPlaybackRate = RATE;
+      clip.playbackRate = RATE;
+      const p = clip.play();
+      if (p && p.catch) p.catch(() => { userPaused = true; update(); });
+    }
+    function go(next) {
+      phase = next;
+      pt = 0;
+      if (next === 'clip' || next === 'hold') mosaic.pause();
+      if (next === 'back') mosaic.play().catch(() => {});
+      if (next === 'drift') { clipOn = false; clip.pause(); try { clip.currentTime = 0; } catch (err) { /* not loaded yet */ } }
+      if (next === 'hold' && still) { userPaused = true; update(); }
+    }
+    function step(dt) {
+      if (phase === 'clip') {
+        if (clip.ended || (clip.duration && clip.currentTime >= clip.duration - 0.05)) go('hold');
+        return;
+      }
+      if (phase === 'hold' && still) return;
+      pt += dt;
+      if (phase === 'drift' && pt >= DRIFT) go('push');
+      else if (phase === 'push') {
+        if (!clipOn && pt >= PUSH * 0.45) playClip();
+        if (pt >= PUSH) go('clip');
+      } else if (phase === 'hold' && pt >= HOLD) go('back');
+      else if (phase === 'back' && pt >= BACK) go('drift');
+    }
+
     const tick = (now) => {
-      elapsed += Math.min(250, now - last);
+      step(Math.min(100, now - last));
       last = now;
-      render();
-      raf = requestAnimationFrame(tick);
+      paint();
+      if (running) raf = requestAnimationFrame(tick);
     };
-    const start = () => {
-      if (running || reduced()) return;
+    function start() {
+      if (running) return;
       running = true;
+      if (phase === 'drift' || phase === 'push' || phase === 'back') mosaic.play().catch(() => {});
+      if ((phase === 'push' && clipOn) || phase === 'clip') playClip();
       last = performance.now();
       raf = requestAnimationFrame(tick);
-    };
-    const stop = () => { running = false; cancelAnimationFrame(raf); };
+    }
+    function stop() {
+      running = false;
+      cancelAnimationFrame(raf);
+      mosaic.pause();
+      clip.pause();
+    }
+    function update() {
+      if (!userPaused && visible && !document.hidden) start(); else stop();
+      sync();
+    }
 
-    build();
-    onResize(svg, build);
-    if (reduced()) return;
-    watch(fig, (on) => { visible = on; if (on && !document.hidden) start(); else stop(); });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else if (visible) start(); });
+    const btn = h('button', { type: 'button', class: 'wall-btn' });
+    function sync() {
+      const on = !userPaused;
+      btn.replaceChildren(mediaIcon(on ? 'pause' : 'play'));
+      btn.setAttribute('aria-label', on ? 'Pause the opening video' : 'Play the opening video');
+    }
+    btn.addEventListener('click', () => {
+      if (userPaused && still && phase === 'hold') { go('clip'); try { clip.currentTime = 0; } catch (err) { /* not loaded yet */ } clipOn = true; }
+      userPaused = !userPaused;
+      update();
+    });
+    frame.append(btn);
+
+    const relayout = () => { geom(); build(); paint(); };
+    relayout();
+    onResize(box, relayout);
+    if (wideMQ.addEventListener) wideMQ.addEventListener('change', relayout);
+    if (still) {
+      // static frame: the shelf already down, the whole trace drawn
+      const seek = () => { try { if (phase === 'hold') clip.currentTime = Math.min(20.4, (clip.duration || T) - 0.1); } catch (err) { /* ignore */ } };
+      if (clip.readyState >= 1) seek(); else clip.addEventListener('loadedmetadata', seek, { once: true });
+    }
+    sync();
+    watch(fig, (on) => { visible = on; update(); });
+    document.addEventListener('visibilitychange', update);
   }
 
   /* ------------------------------------------------------------ taxonomy */
@@ -649,7 +789,7 @@
   run('nav', nav);
   run('glyphs', glyphs);
   run('counters', counters);
-  run('hero', heroTrace);
+  run('hero', heroStage);
   run('taxonomy', taxonomy);
   run('suites', suites);
   run('wall', wall);

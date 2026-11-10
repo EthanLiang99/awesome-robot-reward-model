@@ -8,7 +8,7 @@ index.html              the page
 assets/css/style.css    one warm, light theme
 assets/css/fonts.css    @font-face rules for the bundled fonts
 assets/fonts/           Inter, Instrument Serif, JetBrains Mono (SIL OFL 1.1, see OFL.txt)
-assets/js/main.js       hero trace, taxonomy, findings charts, leaderboard, hub, citation
+assets/js/main.js       hero stage, taxonomy, findings charts, leaderboard, hub, citation
 assets/js/lab.js        Reward Lab: a clip played against the task-state label and nine evaluators
 assets/data/cases.js    10 benchmark clips: labels, events, evaluator outputs (window.RRM_CASES)
 assets/data/site.js     113 surveyed methods by family, 26-evaluator leaderboard (window.RRM_SITE)
