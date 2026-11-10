@@ -226,7 +226,7 @@
 
   /* ------------------------------------------------------------ hero stage */
   // Opening shot: the camera drifts over the benchmark wall, pushes into one execution, and the
-  // trace then draws in step with that video. Real data: task-state label vs VLAC-Cut on
+  // trace then draws in step with that video. Real data: task-state label vs Claude Opus 5.5 on
   // "put the books back" (paper Fig. 9). The clip stands in for wall tile (row 1, column 5).
   function heroStage() {
     const fig = $('#hero-trace'), D = window.RRM_CASES;
@@ -234,7 +234,7 @@
     const wallEl = fig && $('.stage-wall', fig), mosaic = fig && $('.stage-mosaic', fig), clip = fig && $('.stage-clip', fig);
     if (!svg || !D || !box || !frame || !wallEl || !mosaic || !clip) return;
     const C = D.cases.find((c) => c.id === 'books_shelf_swept');
-    const M = C && C.models.find((m) => m.key === 'vlaccut');
+    const M = C && C.models.find((m) => m.key === 'opus');
     if (!C || !M) return;
     const T = C.duration;
     const fall = C.events.find((e) => /shelf/i.test(e.label)) || C.events[C.events.length - 1];
@@ -295,13 +295,22 @@
       const dG = svgEl('circle', { r: 4.5, class: 'dot dot-gt' }, ph);
       const dM = svgEl('circle', { r: 4.5, class: 'dot dot-m' }, ph);
 
+      // end values: one name + value block per line, kept apart and above the x axis
       const ends = svgEl('g', { class: 'ends' }, fadeG);
       const mEnd = M.pts[M.pts.length - 1][1], gEnd = C.gtEnd, xe = x(T) + 13;
-      svgEl('line', { x1: x(T) + 5, x2: x(T) + 5, y1: y(gEnd) - 3, y2: y(mEnd) + 3, class: 'gap' }, ends);
-      svgText(ends, { x: xe, y: y(mEnd) - 6, class: 'nm' }, 'VLAC-Cut');
-      svgText(ends, { x: xe, y: y(mEnd) + 12, class: 'vl' }, mEnd.toFixed(2));
-      svgText(ends, { x: xe, y: y(gEnd) - 22, class: 'nm' }, 'task state');
-      svgText(ends, { x: xe, y: y(gEnd) - 4, class: 'vl' }, gEnd.toFixed(2));
+      if (Math.abs(mEnd - gEnd) >= 0.15) {
+        svgEl('line', { x1: x(T) + 5, x2: x(T) + 5, y1: y(Math.min(mEnd, gEnd)) - 3, y2: y(Math.max(mEnd, gEnd)) + 3, class: 'gap' }, ends);
+      }
+      const BH = 38, floor = y(0) - 30;
+      const blocks = [{ v: mEnd, name: 'Opus 5.5' }, { v: gEnd, name: 'task state' }]
+        .map((b) => Object.assign(b, { top: Math.min(y(b.v) - 16, floor) }))
+        .sort((a, b) => a.top - b.top);
+      blocks[1].top = Math.max(blocks[1].top, blocks[0].top + BH);
+      const lift = Math.max(0, blocks[1].top - floor);
+      blocks.forEach((b) => {
+        svgText(ends, { x: xe, y: b.top - lift + 10, class: 'nm' }, b.name);
+        svgText(ends, { x: xe, y: b.top - lift + 28, class: 'vl' }, b.v.toFixed(2));
+      });
 
       R = { x, y, clipR, bands, fg, ph, phL, phT, dG, dM, ends };
     }
@@ -514,14 +523,14 @@
   }
 
   /* ------------------------------------------------------------ suites, lab links, video wall */
-  function openLab(suite, id) {
-    if (window.RRMLab) window.RRMLab.open(suite, id);
+  function openLab(suite, id, model) {
+    if (window.RRMLab) window.RRMLab.open(suite, id, model);
     const target = $('#lab-root') || $('#lab');
     if (target) target.scrollIntoView({ behavior: reduced() ? 'auto' : 'smooth', block: 'start' });
   }
   function suites() {
     $$('.suite[data-suite]').forEach((b) => b.addEventListener('click', () => openLab(b.dataset.suite)));
-    $$('a[data-lab]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); openLab(a.dataset.lab, 'books_shelf_swept'); }));
+    $$('a[data-lab]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); openLab(a.dataset.lab, 'books_shelf_swept', a.dataset.model); }));
   }
 
   function wall() {
