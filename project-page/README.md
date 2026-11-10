@@ -10,7 +10,7 @@ assets/css/fonts.css    @font-face rules for the bundled fonts
 assets/fonts/           Inter, Instrument Serif, JetBrains Mono (SIL OFL 1.1, see OFL.txt)
 assets/js/main.js       hero stage, taxonomy, findings charts, leaderboard, hub, citation
 assets/js/lab.js        Reward Lab: a clip played against the task-state label and nine evaluators
-assets/data/cases.js    10 benchmark clips: labels, events, evaluator outputs (window.RRM_CASES)
+assets/data/cases.js    11 benchmark clips: labels, events, evaluator outputs (window.RRM_CASES)
 assets/data/site.js     113 surveyed methods by family, 26-evaluator leaderboard (window.RRM_SITE)
 assets/video/           web encodes of the clips and the 24-clip wall (about 11 MB)
 assets/img/             posters, favicon, og.jpg (social card)
@@ -48,7 +48,7 @@ bash project-page/_tools/stage_from_server.sh <ssh-host> <codebase-root> <stage-
 python project-page/_tools/build_data.py --stage <stage-dir> --paper <paper-repo>
 ```
 
-The first command copies saved outputs and encodes the clips on the lab server. `<codebase-root>` is the server directory that holds `Rewardbox/` and `Rewardbox_release/`. `build_data.py` then reads `fig/taxonomy_tree.tex` and `sections/06_evaluation.tex` from the paper repository, plus the staged reward-profile kits. These are the saved outputs behind Fig. 9 and the supplementary reward-profile figures, along with the GPT-6 Luna reference results. No model is run.
+The first command copies saved outputs and encodes the clips on the lab server. `<codebase-root>` is the server directory that holds `Rewardbox/` and `Rewardbox_release/`. `build_data.py` then reads `fig/taxonomy_tree.tex` and `sections/06_evaluation.tex` from the paper repository, plus the staged reward-profile kits. These are the saved outputs behind Fig. 9 and the supplementary reward-profile figures, along with the GPT-6 Luna reference results. The plate-rack visibility case has no kit: `stage_remote.py` (`SAVED`) collects its task-state events and the nine evaluators' saved outputs for both cameras from the benchmark release. No model is run.
 
 To redraw the social card after a title change, run `serve.py` and open http://127.0.0.1:8765/_tools/og_card.html. It overwrites `assets/img/og.jpg`.
 

@@ -11,7 +11,7 @@
     A: { name: 'Action–Effect', slogan: 'Motion ≠ effect', desc: 'Task-like motion, but the required effect never happens.', def: 'sweep_trash_not_swept' },
     B: { name: 'Semantic / Ordered', slogan: 'Manipulation ≠ constraint', desc: 'Grasp, carry and release succeed with the wrong object, destination or order.', def: 'sandwich_order_skipped' },
     C: { name: 'Persistence / Reversal', slogan: 'Attained ≠ still holds', desc: 'An achieved condition is later lost, so credit should fall.', def: 'books_shelf_swept' },
-    D: { name: 'Visibility', slogan: 'Unknown ≠ failure', desc: 'The wrist camera misses the decisive state; switch to the front camera to compare.', def: 'drawer_wrist_view' },
+    D: { name: 'Visibility', slogan: 'Unknown ≠ failure', desc: 'The wrist camera misses the decisive state; switch to the fixed camera to compare.', def: 'plates_wrist_view' },
   };
   const ORDER = ['A', 'B', 'C', 'D'];
   const MODELS = D.models, byKey = new Map(MODELS.map((m) => [m.key, m]));
