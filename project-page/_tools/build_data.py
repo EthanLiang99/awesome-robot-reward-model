@@ -2,6 +2,7 @@
 benchmark outputs.
 
     python _tools/build_data.py --stage <stage_dir> --paper <repo_root>
+    python _tools/build_data.py --site-only --paper <repo_root>   # taxonomy and leaderboard only
 
 <stage_dir> is what _tools/stage_from_server.sh copies from the server:
   kits/<spec>/data/*.csv     reward-profile kits (paper_figures_20261101)
@@ -213,7 +214,7 @@ def parse_taxonomy(path):
             route["methods"] = [n for n in names if n]
     for f in fams:
         assert sum(len(r["methods"]) for r in f["routes"]) == f["count"], f["name"]
-    assert sum(f["count"] for f in fams) == 110
+    assert sum(f["count"] for f in fams) == 113
     return fams
 
 
@@ -238,7 +239,9 @@ def parse_results(path):
     t2 = t2[:t2.index("\\end{tabularx}")]
     t3 = tex[tex.index("\\label{tab:bench-evidence-results}"):]
     t3 = t3[:t3.index("\\end{tabularx}")]
-    r2 = parse_rows(t2, 9)
+    # Table II also lists multiview rows (double dagger) since 9 November 2026;
+    # the leaderboard is the single-view roster of Table III.
+    r2 = [r for r in parse_rows(t2, 9) if "\\ddagger" not in r["raw"]]
     r3 = parse_rows(t3, 6)
     assert len(r2) == 35 and len(r3) == 26, (len(r2), len(r3))
 
@@ -297,10 +300,21 @@ def write_js(path, var, obj):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", required=True)
+    ap.add_argument("--stage")
     ap.add_argument("--paper", required=True)
     ap.add_argument("--no-media", action="store_true")
+    ap.add_argument("--site-only", action="store_true",
+                    help="rewrite only site.js from the paper sources; needs no stage directory")
     a = ap.parse_args()
+    if a.site_only:
+        fams = parse_taxonomy(os.path.join(a.paper, "fig", "taxonomy_tree.tex"))
+        board = parse_results(os.path.join(a.paper, "sections", "06_evaluation.tex"))
+        write_js(os.path.join(PAGE, "assets", "data", "site.js"), "RRM_SITE",
+                 {"families": fams, "board": board})
+        print(f"site.js only · families {len(fams)} · leaderboard rows {len(board)}")
+        return
+    if not a.stage:
+        ap.error("--stage is required unless --site-only is given")
 
     cases = build_cases(a.stage)
     check_luna_books(cases, a.stage)
