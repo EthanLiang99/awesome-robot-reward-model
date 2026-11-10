@@ -10,6 +10,7 @@ This repository supports the research project *Robotic Reward Models: A Taxonomy
 - **Benchmark registry:** [`registry/benchmarks.yaml`](registry/benchmarks.yaml) · [landscape and RRM-Bench blueprint](docs/reward-model-benchmarks.md)
 - **Latest audit:** [`docs/updates/2026-09-28.md`](docs/updates/2026-09-28.md)
 - **Targeted addition:** [`docs/updates/2026-11-10.md`](docs/updates/2026-11-10.md) (three evaluators benchmarked in the survey)
+- **Project page:** [`project-page/`](project-page/), published to GitHub Pages by [`.github/workflows/project-page.yml`](.github/workflows/project-page.yml)
 
 ## Scope
 

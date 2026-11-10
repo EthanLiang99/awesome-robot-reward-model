@@ -1,0 +1,103 @@
+<!doctype html>
+<!-- Social card (1200x630) for og:image. Run `python project-page/_tools/serve.py`, open
+     http://127.0.0.1:8765/_tools/og_card.html, and it saves assets/img/og.jpg (the tab title says "saved"). -->
+<meta charset="utf-8">
+<title>og card</title>
+<link rel="stylesheet" href="/assets/css/fonts.css">
+<style>body{margin:0;background:#ddd}canvas{display:block;width:1200px;height:630px}</style>
+<canvas id="c" width="1200" height="630"></canvas>
+<script src="/assets/data/cases.js"></script>
+<script>
+(async () => {
+  await Promise.all([
+    document.fonts.load('700 68px Inter'), document.fonts.load('500 16px Inter'), document.fonts.load('600 16px Inter'),
+    document.fonts.load('italic 400 36px "Instrument Serif"'), document.fonts.load('500 14px "JetBrains Mono"'),
+  ]);
+  const W = 1200, H = 630, cv = document.getElementById('c'), x = cv.getContext('2d');
+  const C = (window.RRM_CASES.cases || window.RRM_CASES).find((c) => c.id === 'books_shelf_swept');
+  const M = C.models.find((m) => m.key === 'vlaccut');
+  const ink = '#2b241e', ink2 = '#5b5149', ink3 = '#75695e', acc = '#e2622c', accInk = '#b5461a', gt = '#3b332c', crit = '#d03b3b';
+
+  // ground, grid fading out from the centre, warm glow
+  x.fillStyle = '#faf7f2'; x.fillRect(0, 0, W, H);
+  x.strokeStyle = 'rgba(66,44,24,.07)'; x.lineWidth = 1;
+  for (let i = 0.5 + (W / 2) % 56; i < W; i += 56) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, H); x.stroke(); }
+  for (let j = 0.5; j < H; j += 56) { x.beginPath(); x.moveTo(0, j); x.lineTo(W, j); x.stroke(); }
+  let g = x.createRadialGradient(600, 200, 80, 600, 200, 680);
+  g.addColorStop(0, 'rgba(250,247,242,0)'); g.addColorStop(1, 'rgba(250,247,242,1)');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  const glow = (cx, cy, r, rgba) => { const q = x.createRadialGradient(cx, cy, 0, cx, cy, r); q.addColorStop(0, rgba); q.addColorStop(1, 'rgba(250,247,242,0)'); x.fillStyle = q; x.fillRect(0, 0, W, H); };
+  glow(600, -60, 560, 'rgba(235,104,52,.20)');
+  glow(1110, 30, 380, 'rgba(237,161,0,.12)');
+  glow(90, 60, 360, 'rgba(232,123,164,.10)');
+
+  // kicker pill
+  x.font = '500 14px "JetBrains Mono"'; x.letterSpacing = '3px';
+  const kick = 'SURVEY · BENCHMARK · TOOLBOX', kw = x.measureText(kick).width, pw = kw + 50, px = (W - pw) / 2, py = 40;
+  x.beginPath(); x.roundRect(px, py, pw, 34, 17); x.fillStyle = 'rgba(255,255,255,.85)'; x.fill();
+  x.strokeStyle = 'rgba(66,44,24,.16)'; x.stroke();
+  x.beginPath(); x.arc(px + 20, py + 17, 4, 0, 7); x.fillStyle = acc; x.fill();
+  x.fillStyle = ink2; x.textBaseline = 'middle'; x.fillText(kick, px + 34, py + 18);
+
+  // title + subtitle
+  x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  x.font = '700 64px Inter'; x.letterSpacing = '-2.4px'; x.fillStyle = ink;
+  x.fillText('Robotic Reward Models', W / 2, 152);
+  const l2 = 'in the Foundation-Model Era', w2 = x.measureText(l2).width;
+  g = x.createLinearGradient(W / 2 - w2 / 2, 0, W / 2 + w2 / 2, 0);
+  g.addColorStop(0.1, ink2); g.addColorStop(0.9, accInk);
+  x.fillStyle = g; x.fillText(l2, W / 2, 224);
+  x.font = 'italic 400 34px "Instrument Serif"'; x.letterSpacing = '0px'; x.fillStyle = ink2;
+  x.fillText('A Survey and Capability Benchmark', W / 2, 274);
+
+  // the trace: task state vs VLAC-Cut on "put the books back"
+  const L = 92, R = 980, T0 = 352, B0 = 540, T = C.duration;
+  const sx = (t) => L + (t / T) * (R - L), sy = (v) => B0 - v * (B0 - T0);
+  x.strokeStyle = 'rgba(66,44,24,.10)'; x.lineWidth = 1;
+  [0.5, 1].forEach((v) => { x.beginPath(); x.moveTo(L, sy(v) + .5); x.lineTo(R, sy(v) + .5); x.stroke(); });
+  x.strokeStyle = 'rgba(66,44,24,.28)'; x.beginPath(); x.moveTo(L, B0 + .5); x.lineTo(R, B0 + .5); x.stroke();
+  x.fillStyle = 'rgba(208,59,59,.12)';
+  C.reversals.forEach(([a, b]) => x.fillRect(sx(a), T0, Math.max(3, sx(b) - sx(a)), B0 - T0));
+  const path = (pts) => { x.beginPath(); pts.forEach(([t, v], i) => (i ? x.lineTo(sx(t), sy(v)) : x.moveTo(sx(t), sy(v)))); };
+  path(C.gt); x.lineTo(sx(C.gt[C.gt.length - 1][0]), B0); x.lineTo(sx(C.gt[0][0]), B0); x.closePath();
+  x.fillStyle = 'rgba(59,51,44,.06)'; x.fill();
+  x.lineJoin = x.lineCap = 'round';
+  path(C.gt); x.strokeStyle = gt; x.lineWidth = 2.6; x.stroke();
+  path(M.pts); x.strokeStyle = 'rgba(226,98,44,.22)'; x.lineWidth = 11; x.stroke();
+  path(M.pts); x.strokeStyle = acc; x.lineWidth = 3.4; x.stroke();
+
+  // the fall
+  const fe = C.events.find((e) => /knock/i.test(e.label)) || { t: 19.6, label: 'Shelf knocked over' };
+  const fx = sx(fe.t);
+  x.setLineDash([3, 4]); x.strokeStyle = 'rgba(208,59,59,.5)'; x.lineWidth = 1.2;
+  x.beginPath(); x.moveTo(fx, T0 - 4); x.lineTo(fx, B0); x.stroke(); x.setLineDash([]);
+  x.beginPath(); x.arc(fx, T0 - 14, 10, 0, 7); x.fillStyle = crit; x.fill();
+  x.strokeStyle = '#fff'; x.lineWidth = 2; x.beginPath();
+  x.moveTo(fx - 3.6, T0 - 17.6); x.lineTo(fx + 3.6, T0 - 10.4); x.moveTo(fx + 3.6, T0 - 17.6); x.lineTo(fx - 3.6, T0 - 10.4); x.stroke();
+  x.font = '500 16px Inter'; x.textAlign = 'right'; x.fillStyle = ink2; x.fillText('Shelf knocked over', fx - 18, T0 - 9);
+
+  // end values
+  const mEnd = M.pts[M.pts.length - 1], gEnd = C.gt[C.gt.length - 1];
+  const ex = sx(mEnd[0]);
+  [[mEnd, acc], [gEnd, gt]].forEach(([p, col]) => { x.beginPath(); x.arc(sx(p[0]), sy(p[1]), 6, 0, 7); x.fillStyle = col; x.fill(); x.strokeStyle = '#faf7f2'; x.lineWidth = 2.5; x.stroke(); });
+  x.setLineDash([2, 4]); x.strokeStyle = crit; x.lineWidth = 1.6;
+  x.beginPath(); x.moveTo(ex + 22, sy(mEnd[1]) + 10); x.lineTo(ex + 22, sy(gEnd[1]) - 10); x.stroke(); x.setLineDash([]);
+  x.textAlign = 'left';
+  x.font = '500 13px "JetBrains Mono"'; x.fillStyle = ink3;
+  x.fillText('VLAC-CUT REWARD', ex + 38, sy(mEnd[1]) - 8);
+  x.fillText('TASK STATE', ex + 38, sy(gEnd[1]) - 22);
+  x.font = '700 30px Inter'; x.letterSpacing = '-0.6px'; x.fillStyle = ink;
+  x.fillText(mEnd[1].toFixed(2), ex + 38, sy(mEnd[1]) + 24);
+  x.fillText('0.00', ex + 38, sy(gEnd[1]) + 10);
+  x.letterSpacing = '0px';
+
+  // footer facts
+  x.textAlign = 'center'; x.font = '500 15px "JetBrains Mono"'; x.fillStyle = ink3; x.letterSpacing = '1px';
+  x.fillText('113 METHODS  ·  1,117 ROBOT VIDEOS  ·  26 EVALUATORS  ·  14 MODELS IN RRM-HUB', W / 2, 598);
+
+  cv.toBlob(async (b) => {
+    const r = await fetch('/_tools/save-og', { method: 'POST', body: b });
+    document.title = 'saved ' + r.status + ' ' + b.size;
+  }, 'image/jpeg', 0.9);
+})().catch((e) => { document.title = 'error ' + e.message; });
+</script>
