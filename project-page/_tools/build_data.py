@@ -9,6 +9,8 @@ benchmark outputs.
   luna.json                  GPT-6 Luna Sequence outputs for the kit clips
   gt_records.json            ground_truth.json entries of the kit clips
   figures_meta.json          supplementary figures.json (+ instructions)
+  saved_cases.json           kit-less visibility cases: clip ids of both views, task-state
+                             events and the nine evaluators' saved outputs (stage_remote.SAVED)
   videos/<case_id>.mp4       web encodes of the kit clips
   posters/<case_id>.jpg      first frames
   mosaic.mp4, mosaic_poster.jpg
@@ -56,6 +58,8 @@ CASES = [
      "One book is shelved, then the arm knocks the shelf over at 19.6 s and all progress is lost."),
     ("flowers_retries", "C", "Three failed tries",
      "Three attempts fail, then two flowers stay in the vase."),
+    ("plates_wrist_view", "D", "Placed out of sight",
+     "A plate set upright in the rack, seen from the wrist camera, which never shows the rack."),
     ("drawer_wrist_view", "D", "Success, out of sight",
      "A successful execution seen from the wrist camera, which only shows the drawer front."),
     ("books_wrist_view", "D", "The fall nobody sees",
@@ -65,6 +69,17 @@ CASES = [
 # Event wording of the paper's Fig. 9 for the bookshelf execution.
 BOOK_LABELS = {"Shelved": "Book 1 shelved", "Shelf falls": "Shelf knocked over",
                "Final GT 0": "End · GT 0"}
+
+# Kit-less cases (saved_cases.json): saved-output file of each lane and its fixed unit change,
+# the same as the kits' (percentages / 100, the rest as is; checked against drawer_wrist_view).
+SAVED_FILES = {
+    "opus": ("claude-opus-5.5", 100), "luna": ("gpt-6-luna", 100), "vlaccut": ("vlac-cut", 100),
+    "flora": ("flora-rewarder-27b-prefix", 1), "sole": ("sole-r1-8b", 100), "primo": ("primo-r1-7b-prefix", 100),
+    "rd2": ("robodopamine-v2-4b", 1), "rd1": ("robodopamine-v1-3b", 1), "procvlm": ("procvlm-2b", 100),
+}
+# Event wording by the task-state event's phase, and the name of the clip's V camera.
+SAVED_EVENT_LABELS = {"plates_wrist_view": {"pick": "Plate picked up", "place": "Plate in the rack"}}
+SAVED_V_LABEL = {"plates_wrist_view": "Fixed camera"}
 
 
 def rd(x, n=3):
@@ -105,12 +120,74 @@ def luna_curve(luna, gt_records, case_id):
     return pts
 
 
+def falling_windows(gt):
+    """Spans where the task-state label decreases (the kits' failure_windows)."""
+    wins, start = [], None
+    for (t0, v0), (t1, v1) in zip(gt, gt[1:]):
+        if v1 < v0 - 1e-9:
+            start = t0 if start is None else start
+            end = t1
+        elif start is not None:
+            wins.append([rd(start, 2), rd(end, 2)])
+            start = None
+    if start is not None:
+        wins.append([rd(start, 2), rd(end, 2)])
+    return wins
+
+
+def build_saved_case(spec, suite, title, desc, s, gtr):
+    """A visibility case read from the benchmark's saved outputs: the wrist view (P) and the
+    same clip's fixed view (V) share one task-state label."""
+    rec = gtr[s["p"]]
+    gt = [(p["time"], p["value"]) for p in rec["curve"]]
+    labels = SAVED_EVENT_LABELS[spec]
+    events = []
+    for e in s["events"]:
+        a, b = e["output_time_interval_sec"]
+        eff = e.get("completion_count_effect") or 0
+        events.append({"t": rd((a + b) / 2, 2), "label": labels[e["phase"]],
+                       "kind": "success" if eff > 0 else "failure" if eff < 0 else "neutral"})
+    events.sort(key=lambda e: e["t"])
+    per_view = {}
+    for view, cid in (("P", s["p"]), ("V", s["v"])):
+        fps = gtr[cid]["fps"]
+        mods = []
+        for key, lane, name, sub, voc in MODELS:
+            fn, unit = SAVED_FILES[key]
+            o = s["outputs"][fn][cid]
+            pts = sorted((f / fps, p / unit) for f, p in zip(o["frame_indices"], o["progress"]) if p is not None)
+            r = pearson([v for _, v in pts], [interp(gt, t) for t, _ in pts])
+            mods.append({"key": key, "r": rd(r, 2), "end": rd(pts[-1][1], 2),
+                         "pts": [[rd(t, 2), rd(v, 3)] for t, v in pts]})
+        per_view[view] = mods
+    video, poster = f"assets/video/{spec}.mp4", f"assets/img/posters/{spec}.jpg"
+    ref = spec + "--front"
+    return {
+        "id": spec, "suite": suite, "title": title, "desc": desc,
+        "task": rec["task"].replace("_", " "), "instruction": s["instruction"],
+        "duration": rd(rec["frames"] / rec["fps"], 3), "camera": rec["camera"],
+        "gt": [[rd(t, 3), rd(v, 3)] for t, v in gt], "gtEnd": rd(rec["gt_fraction"], 2),
+        "events": events, "reversals": falling_windows(gt), "video": video, "poster": poster,
+        "views": {
+            "P": {"label": "Wrist camera", "tag": "P", "video": video, "poster": poster, "models": per_view["P"]},
+            "V": {"label": SAVED_V_LABEL.get(spec, "Front camera"), "tag": "V", "video": f"assets/video/{ref}.mp4",
+                  "poster": f"assets/img/posters/{ref}.jpg", "models": per_view["V"]},
+        },
+        "_media": [(s["p"], spec), (s["v"], ref)],
+    }
+
+
 def build_cases(stage):
     meta = json.load(open(os.path.join(stage, "figures_meta.json"), encoding="utf-8"))
     luna = json.load(open(os.path.join(stage, "luna.json"), encoding="utf-8"))
     gtr = json.load(open(os.path.join(stage, "gt_records.json"), encoding="utf-8"))
+    sp = os.path.join(stage, "saved_cases.json")
+    saved = json.load(open(sp, encoding="utf-8")) if os.path.exists(sp) else {}
     out = []
     for spec, suite, title, desc in CASES:
+        if spec in saved:
+            out.append(build_saved_case(spec, suite, title, desc, saved[spec], gtr))
+            continue
         m = meta[spec]
         assert SUITE_OF_INTERNAL[m["category"]] == suite, (spec, m["category"], suite)
         d = os.path.join(stage, "kits", spec, "data")

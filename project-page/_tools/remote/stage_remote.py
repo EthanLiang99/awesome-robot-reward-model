@@ -1,5 +1,6 @@
 """Runs ON THE SERVER (python3, ffmpeg with libx264). Collects what build_data.py needs:
-reward-profile kits, saved GPT-6 Luna outputs, ground-truth records, web encodes and posters.
+reward-profile kits, saved GPT-6 Luna outputs, ground-truth records, web encodes and posters,
+plus the task-state events and nine evaluators' saved outputs of the kit-less cases (SAVED).
 
     python3 stage_remote.py <codebase-root> <out-dir>
 
@@ -46,6 +47,30 @@ for f in figs:
     m['instruction'] = sv[f['case_id']]['instruction']
     meta[spec] = m
 json.dump(meta, open(OUT + '/figures_meta.json', 'w'), indent=1)
+
+# Visibility cases that have no reward-profile kit: the page builds them from the benchmark's
+# saved outputs. spec -> (wrist view, labeled P; the same clip's fixed view, labeled V).
+SAVED = {
+    'plates_wrist_view': ('table_30_23aa_cbab5d3e-9a83-47aa-8e38-105380426be1__unit_01__videos_1',
+                          'table_30_23aa_cbab5d3e-9a83-47aa-8e38-105380426be1__unit_01__videos_2'),
+}
+SAVED_MODELS = ['claude-opus-5.5', 'gpt-6-luna', 'vlac-cut', 'flora-rewarder-27b-prefix', 'sole-r1-8b',
+                'primo-r1-7b-prefix', 'robodopamine-v2-4b', 'robodopamine-v1-3b', 'procvlm-2b']
+saved = {}
+for spec, (p, v) in SAVED.items():
+    assert gt[p]['view_label'] == 'P' and gt[v]['view_label'] == 'V' and gt[p]['clip_id'] == gt[v]['clip_id'], spec
+    for cid in (p, v):
+        if cid not in need:
+            need.append(cid)
+    state = json.load(open(REL + '/' + gt[p]['state_v2_path']))
+    saved[spec] = {'p': p, 'v': v, 'instruction': sv[p]['instruction'], 'events': state['events'], 'outputs': {}}
+for fn in SAVED_MODELS:
+    for line in open(f'{REL}/reference_results/single_view/{fn}.jsonl'):
+        d = json.loads(line)
+        for s in saved.values():
+            if d['id'] in (s['p'], s['v']):
+                s['outputs'].setdefault(fn, {})[d['id']] = d
+json.dump(saved, open(OUT + '/saved_cases.json', 'w'))
 
 # GPT-6 Luna (Sequence) outputs and the ground-truth records of those clips
 luna = {}
