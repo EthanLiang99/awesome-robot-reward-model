@@ -175,6 +175,28 @@ sup { font-size: .68em; line-height: 0; }
 .trace figcaption a { color: var(--accent-ink); border-bottom: 1px solid var(--accent-line); }
 .trace figcaption a:hover { border-color: var(--accent-ink); }
 
+/* hero stage: video frame (wall, then one execution) beside or above the trace.
+   Wide screens: the frame spans the stage, then closes to a 4:3 box at the left and uncovers the chart.
+   Narrow screens: a 4:3 frame with the chart below. main.js sets the camera and the frame width. */
+.stage-box { position: relative; --sh: clamp(260px, 27vw, 340px); }
+.stage-frame {
+  position: relative; z-index: 1; overflow: hidden; width: 100%; max-width: 560px; aspect-ratio: 4 / 3; margin: 0 auto;
+  border: 1px solid var(--line); border-radius: var(--r); background: #1c1916; box-shadow: var(--shadow);
+}
+.stage-wall { position: absolute; left: 0; top: 0; width: 1920px; height: 540px; transform-origin: 0 0; will-change: transform; }
+.stage-wall video { position: absolute; display: block; }
+.stage-mosaic { left: 0; top: 0; width: 1920px; height: 540px; }
+.stage-clip { left: 1200px; top: 180px; width: 240px; height: 180px; object-fit: cover; background: #1c1916; }
+.stage-chart { position: relative; margin-top: 20px; }
+.stage .trace-svg { height: clamp(180px, 48vw, 240px); }
+.stage .wall-btn { z-index: 2; }
+@media (min-width: 860px) {
+  .stage-box { height: var(--sh); }
+  .stage-frame { position: absolute; left: 0; top: 0; height: 100%; max-width: none; aspect-ratio: auto; margin: 0; }
+  .stage-chart { position: absolute; top: 0; right: 0; bottom: 0; left: calc(var(--sh) * 4 / 3 + 32px); margin: 0; }
+  .stage .trace-svg { height: 100%; }
+}
+
 /* shared chart vocabulary (hero, lab, findings) */
 .key { display: inline-block; width: 16px; height: 2px; border-radius: 2px; margin-right: 8px; vertical-align: middle; background: var(--gt); }
 .key-model { height: 3px; background: var(--accent); }
