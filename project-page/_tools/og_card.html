@@ -15,7 +15,7 @@
   ]);
   const W = 1200, H = 630, cv = document.getElementById('c'), x = cv.getContext('2d');
   const C = (window.RRM_CASES.cases || window.RRM_CASES).find((c) => c.id === 'books_shelf_swept');
-  const M = C.models.find((m) => m.key === 'vlaccut');
+  const M = C.models.find((m) => m.key === 'opus');
   const ink = '#2b241e', ink2 = '#5b5149', ink3 = '#75695e', acc = '#e2622c', accInk = '#b5461a', gt = '#3b332c', crit = '#d03b3b';
 
   // ground, grid fading out from the centre, warm glow
@@ -50,7 +50,7 @@
   x.font = 'italic 400 34px "Instrument Serif"'; x.letterSpacing = '0px'; x.fillStyle = ink2;
   x.fillText('A Survey and Capability Benchmark', W / 2, 274);
 
-  // the trace: task state vs VLAC-Cut on "put the books back"
+  // the trace: task state vs Claude Opus 5.5 on "put the books back"
   const L = 92, R = 980, T0 = 352, B0 = 540, T = C.duration;
   const sx = (t) => L + (t / T) * (R - L), sy = (v) => B0 - v * (B0 - T0);
   x.strokeStyle = 'rgba(66,44,24,.10)'; x.lineWidth = 1;
@@ -78,22 +78,21 @@
 
   // end values
   const mEnd = M.pts[M.pts.length - 1], gEnd = C.gt[C.gt.length - 1];
-  const ex = sx(mEnd[0]);
+  const ex = Math.max(sx(mEnd[0]), sx(gEnd[0]));
   [[mEnd, acc], [gEnd, gt]].forEach(([p, col]) => { x.beginPath(); x.arc(sx(p[0]), sy(p[1]), 6, 0, 7); x.fillStyle = col; x.fill(); x.strokeStyle = '#faf7f2'; x.lineWidth = 2.5; x.stroke(); });
-  x.setLineDash([2, 4]); x.strokeStyle = crit; x.lineWidth = 1.6;
-  x.beginPath(); x.moveTo(ex + 22, sy(mEnd[1]) + 10); x.lineTo(ex + 22, sy(gEnd[1]) - 10); x.stroke(); x.setLineDash([]);
+  // both end near zero, so the two name + value blocks stack above the axis
   x.textAlign = 'left';
   x.font = '500 13px "JetBrains Mono"'; x.fillStyle = ink3;
-  x.fillText('VLAC-CUT REWARD', ex + 38, sy(mEnd[1]) - 8);
-  x.fillText('TASK STATE', ex + 38, sy(gEnd[1]) - 22);
+  x.fillText('OPUS 5.5 REWARD', ex + 24, B0 - 92);
+  x.fillText('TASK STATE', ex + 24, B0 - 28);
   x.font = '700 30px Inter'; x.letterSpacing = '-0.6px'; x.fillStyle = ink;
-  x.fillText(mEnd[1].toFixed(2), ex + 38, sy(mEnd[1]) + 24);
-  x.fillText('0.00', ex + 38, sy(gEnd[1]) + 10);
+  x.fillText(mEnd[1].toFixed(2), ex + 24, B0 - 60);
+  x.fillText(gEnd[1].toFixed(2), ex + 24, B0 + 6);
   x.letterSpacing = '0px';
 
   // footer facts
   x.textAlign = 'center'; x.font = '500 15px "JetBrains Mono"'; x.fillStyle = ink3; x.letterSpacing = '1px';
-  x.fillText('113 METHODS  ·  1,117 ROBOT VIDEOS  ·  26 EVALUATORS  ·  14 MODELS IN RRM-HUB', W / 2, 598);
+  x.fillText('113 METHODS  ·  1,117 ROBOT VIDEOS  ·  27 EVALUATORS  ·  14 MODELS IN RRM-HUB', W / 2, 598);
 
   cv.toBlob(async (b) => {
     const r = await fetch('/_tools/save-og', { method: 'POST', body: b });

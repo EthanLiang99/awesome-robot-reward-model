@@ -357,10 +357,17 @@
 
   /* ------------------------------------------------------------ boot */
   window.RRMLab = {
-    open(suite, id) {
+    // model (optional): select this evaluator's trace, as the hero link does for its own curve
+    open(suite, id, model) {
       if (!SUITES[suite]) return;
       userPaused = false;
-      if (suite === st.suite && (!id || id === st.id)) { if (!reduced()) play(); return; }
+      const pick = !!model && byKey.has(model) && model !== st.model;
+      if (pick) st.model = model;
+      if (suite === st.suite && (!id || id === st.id)) {
+        if (pick) { renderModels(); buildChart(); update(curT()); }
+        if (!reduced()) play();
+        return;
+      }
       selectSuite(suite, id, !reduced());
     },
   };
