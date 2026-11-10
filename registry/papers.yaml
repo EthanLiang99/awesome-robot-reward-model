@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-09-28"
+last_updated: "2026-11-10"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -2015,6 +2015,78 @@ entries:
     verification_date: "2026-09-28"
     evidence_note: "Training-free editing of a foundation-representation reward retrospectively compares successful and failed trajectories, penalizing high-scoring states that led to failure and boosting critical success states. This is an outcome-conditioned edited reward for policy fine-tuning, not a separately trained general reward model or a causal online verifier. Only a qualitative project page was linked; no usable code/data release was verified."
     sources: ["https://arxiv.org/abs/2609.27068", "https://arxiv.org/html/2609.27068v1", "https://hire-project.github.io/"]
+
+  - id: "xia_2026_robo_valuerl"
+    kind: "reward_model"
+    title: "Robo-ValueRL: Reliable Value Estimation for Offline-to-Online Reinforcement Learning"
+    released: "2026-07-10"
+    venue_or_preprint: "preprint"
+    primary_semantics: "temporal_value"
+    secondary_tags: ["remaining_time_value", "failure_penalty", "history_conditioned", "distributional_value", "action_quality_indicator", "value_reliability_metrics"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["open_x_embodiment", "self_collected_demonstrations", "chip_insertion_demonstrations", "block_disassembly_demonstrations", "online_rollouts"]
+    corpus_scale: {offline_demonstration_hours: 240, online_rollout_trajectories: ">3000"}
+    inference_inputs: ["instruction", "three_view_current_observation", "visual_history"]
+    downstream_roles: ["data_quality_labelling", "quality_conditioned_policy_pretraining", "online_residual_adaptation", "offline_rl", "online_rl"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.09866"}
+      code: {status: "available", url: "https://github.com/Open-X-Humanoid/Robo-ValueRL"}
+      weights: {status: "available", url: "https://huggingface.co/X-Humanoid/Robo-ValueRL"}
+      data: {status: "available", url: "https://huggingface.co/datasets/X-Humanoid/Robo-ValueRL"}
+    license: {code: "not_stated", weights: "MIT (model card)", data: "not_stated"}
+    adapter_status: "high_priority"
+    verification_date: "2026-11-10"
+    evidence_note: "The value estimator is a separate module: a frozen PaliGemma backbone with a transformer value head over the current three-view observation, the instruction, and Perceiver-summarized visual history. Its target is remaining time to completion with an added penalty on failed trajectories, normalized to a progress-style value and learned as an HL-Gauss distribution over bins (Sections 3.1 and 9.1). The value therefore reflects the trajectories it was fitted on, and thresholded value differences become the action-quality indicator that conditions the policy. The paper evaluates the estimator with its own global-progress and local-preference metrics. The model repository holds a value_estimator checkpoint beside the offline and online policy checkpoints; the GitHub repository carries no license file and the dataset card states no license."
+    sources: ["https://arxiv.org/abs/2607.09866", "https://arxiv.org/html/2607.09866", "https://gewu-lab.github.io/Robo-ValueRL/", "https://github.com/Open-X-Humanoid/Robo-ValueRL", "https://huggingface.co/collections/X-Humanoid/robo-valuerl", "https://huggingface.co/X-Humanoid/Robo-ValueRL/tree/main", "https://huggingface.co/datasets/X-Humanoid/Robo-ValueRL"]
+
+  - id: "zhai_2026_help_vlac_cut"
+    kind: "reward_model"
+    title: "HELP: Human-Efficient Large-Scale Robot Post-Training with Rollout Segmentation"
+    released: "2026-07-08"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["signed_progress", "non_monotonic_progress", "diagnostic_language", "rollout_segmentation", "cut_points", "success_failure_analysis", "recovery_segments"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["droid", "libero", "vlabench", "arx_data_in_house_failures_and_recoveries", "public_multimodal_and_reasoning_datasets"]
+    corpus_scale: {curated_video_records: 28167, episodes: 22978, task_units: 15206, progress_points: 375172, held_out_vpb_records: 3515}
+    inference_inputs: ["instruction", "optional_task_plan", "rollout_video_or_prefix", "optional_reference_episode"]
+    downstream_roles: ["rollout_segmentation", "post_training_data_curation", "progress_estimation", "failure_and_recovery_diagnosis"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2607.09776"}
+      code: {status: "available", url: "https://github.com/InternRobotics/VLAC-cut"}
+      weights: {status: "available", url: "https://huggingface.co/InternRobotics/VLAC-Cut"}
+      data: {status: "available", url: "https://huggingface.co/datasets/InternRobotics/VLAC-Cut-FullData"}
+    license: {code: "MIT", weights: "other (model card)", data: "other (dataset cards); third-party source terms apply"}
+    adapter_status: "high_priority"
+    verification_date: "2026-11-10"
+    evidence_note: "VLAC-Cut is the rollout segmentation critic of the HELP post-training pipeline. From an instruction and a rollout, prefix, or candidate segment it estimates signed task progress, which may fall below zero for states worse than the start, explains each change (state, action, success/failure analysis, correction plan), and predicts cut points between progress-making, idle, failure-inducing, and recovery segments. The authors describe its score as closer to a policy-conditioned value than to a policy-agnostic reward, because the same state can score differently in different trajectories. Progress labels are re-annotated at sparse semantic keyframes and include physically executed failures and recoveries from an in-house ARX collection. The Video Progress Benchmark (VPB) is the model's own held-out split, so it is a model-native test and is not added to the benchmark registry in this update."
+    sources: ["https://arxiv.org/abs/2607.09776", "https://arxiv.org/html/2607.09776", "https://github.com/InternRobotics/VLAC-cut", "https://huggingface.co/InternRobotics/VLAC-Cut", "https://huggingface.co/datasets/InternRobotics/VLAC-Cut-FullData", "https://huggingface.co/datasets/InternRobotics/VLAC-Cut-Benchmark"]
+
+  - id: "leng_2026_flora_rewarder"
+    kind: "reward_model"
+    title: "FLORA: An Open Model Suite for Scaling Robotics Data Engines"
+    released: "2026-10-15"
+    venue_or_preprint: "preprint"
+    primary_semantics: "hybrid_verifier"
+    secondary_tags: ["outcome", "episode_grade_1_to_5", "dense_action_quality", "rubric_step_scores", "multi_view_mosaic", "deployment_monitoring"]
+    model_coupling: "standalone_evaluator"
+    value_availability: "inference_queryable"
+    training_data: ["open_source_robot_datasets", "vendor_licensed_datasets", "nvidia_in_house_data"]
+    corpus_scale: {training_examples: "<1000000", video_hours: "<10000"}
+    inference_inputs: ["prompt_naming_the_annotation_task", "optional_instruction", "episode_or_window_video", "one_to_four_camera_views"]
+    downstream_roles: ["deployment_monitoring", "policy_evaluation", "data_filtering", "rl_post_training_reward"]
+    artifacts:
+      paper: {status: "available", url: "https://arxiv.org/abs/2610.31779"}
+      code: {status: "available", url: "https://github.com/NVlabs/Flora"}
+      weights: {status: "available", url: "https://huggingface.co/nvidia/Flora-Rewarder"}
+      data: {status: "not_found", url: null}
+    license: {code: "NVIDIA License (repository LICENSE)", weights: "NVIDIA OneWay Noncommercial License (research and development only)", data: "unknown"}
+    adapter_status: "high_priority_noncommercial"
+    verification_date: "2026-11-10"
+    evidence_note: "Flora-Rewarder is the reward component of the FLORA suite, a full fine-tune of Qwen3.5-27B. One set of weights answers three prompt types: an outcome reward (an integer episode score from 1, complete failure, to 5, complete success), a dense reward (an action-quality score of failure, suboptimal, or normal for each 0.5 s step of a 16 s window), and a rubric reward (one score per rubric step after a reasoning trace). These are separate judgments, so the record is Hybrid rather than Outcome, although the episode score alone is an Outcome signal. Training labels mix human annotations, success signals recorded with the data, and VLM-generated annotations. The model card dates the Hugging Face release to 2026-10-15; the arXiv report was submitted on 2026-10-22. The weights are limited to non-commercial research use, and no training data release was found."
+    sources: ["https://arxiv.org/abs/2610.31779", "https://research.nvidia.com/labs/gear/flora/", "https://research.nvidia.com/labs/gear/flora/assets/paper/flora.pdf", "https://github.com/NVlabs/Flora", "https://huggingface.co/collections/nvidia/flora", "https://huggingface.co/nvidia/Flora-Rewarder"]
 
 screened_out:
   - title: "RFM-HRI: A Multimodal Dataset of Medical Robot Failure, User Reaction and Recovery Preferences for Item Retrieval Tasks"
