@@ -130,8 +130,10 @@ benchmarks:
     evaluation_unit: trajectory_and_frame_reward
     scale:
       id: {trajectories: 25726, embodiments: 5}
-      ood: {trajectories: 976, embodiment_groups: 6, scenes: 6, institutions: 3}
-    embodiments_ood: [Franka_Panda, bimanual_Koch_v1_1, Trossen, xArm, SO-101, human_hands]
+      # Table VII of the paper and the authors' note in robometer/robometer#22
+      # (the split behind the reported metrics); the main text of v2 reads 976.
+      ood: {trajectories: 571, embodiments: 5, subsets: 6, institutions: 3}
+    embodiments_ood: [Franka_Panda, bimanual_Koch_v1_1, Trossen, xArm, SO-101]
     labels: [normalized_timestep_progress, trajectory_quality, task_instruction]
     capabilities: [progress_ordering, trajectory_ranking, outcome]
     metrics: [VOC_Pearson, Kendall_tau, preference_accuracy, success_failure_final_reward_gap]
@@ -143,7 +145,7 @@ benchmarks:
       - normalized_timestep_is_not_always_semantic_progress
       - failure_type_onset_and_recovery_labels_are_not_the_primary_protocol
       - id_and_ood_are_paper_associated_not_an_independent_hidden_test_server
-    verification_date: "2026-07-19"
+    verification_date: "2026-11-14"
 
   - id: robopulse
     title: RoboPulse
