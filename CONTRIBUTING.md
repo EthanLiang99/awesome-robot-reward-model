@@ -1,63 +1,34 @@
 # Contributing
 
-Thanks for helping maintain the robotic reward-model literature registry.
+Thank you for helping to keep this list current. New papers, corrections, better categorization, and dead-link fixes are all welcome.
 
-## Before adding a work
+## Add a paper
 
-Confirm that the work exposes, learns, evaluates, or directly supplies data for a task-conditioned robot-behavior evaluator. Generic VLA, robot-control, world-model, failure-management, or video-understanding papers belong only when an explicit reward/value/critic/verifier interface is central.
+Edit `README.md` and open a pull request against `main`. An entry has two lines:
 
-## Required evidence
+```markdown
+- **Name**: Paper title `YYYY.MM`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/XXXX.XXXXX) [![Code](https://img.shields.io/github/stars/OWNER/REPO?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/OWNER/REPO) <sub>Native output: what the model returns</sub>
+```
 
-Every entry must include:
+- **Date**: the first public release, usually the first arXiv version.
+- **Native output**: what the model returns before any downstream transformation, in a few words.
+- **Links**: the paper, and code, weights, or data only when they are released.
 
-- original paper or official proceedings URL;
-- release/submission date and venue or `preprint` status;
-- primary reward semantics plus secondary tags;
-- for policy/world-model-coupled value prediction, the coupling pattern and whether the value is queryable at inference or only used during training/control;
-- inputs, supervision/data provenance, outputs, and downstream role;
-- code, weights, data, benchmark, and license status as separate fields;
-- source URL and the date each status was checked;
-- a short evidence note explaining ambiguous classification.
+## Where it goes
 
-Prefer official proceedings, arXiv, author project pages, official repositories, and official model/data cards. Discovery lists and third-party summaries are not sufficient evidence.
+Place the entry in the family whose question its native output answers, under the closest design route, in order of first release.
 
-## Status language
+| Family | Question |
+|---|---|
+| Outcome | Is the task done, or will it fail? |
+| Absolute Progress | How far along is it? |
+| Relative | Which is better? |
+| Temporal Value | Which stage, and how well is it going? |
+| Hybrid | What happened, and on what evidence? |
 
-- `available`: a working official link was verified.
-- `claimed`: the authors state that an artifact is released, but a usable official link was not verified.
-- `coming_soon`: the official page explicitly says it is forthcoming.
-- `placeholder`: an official repository exists but does not yet contain the promised implementation.
-- `placeholder_empty`: an official data repository exists but has no usable data files at the verification date.
-- `not_verified`: the artifact may be referenced, but a usable official release could not be confirmed during the audit.
-- `not_found`: no artifact was found during the recorded search.
-- `unknown`: not yet audited.
+A model with several independent judgments from different families is Hybrid. A rationale or a confidence attached to one judgment keeps that judgment's family.
 
-Never infer weights from code, data from a paper, or a usable license from public visibility.
+## Scope
 
-## Coupled value predictors
-
-Do not propose a VLA or world model solely because it predicts actions or future observations. A coupled-value entry must expose an explicit task-conditioned value, progress, reward, advantage, or critic target. Keep its reward meaning in `primary_semantics`; use `model_coupling` only for the architecture (`policy_internal`, `joint_world_action_value`, `compositional_world_value`, `shared_backbone_multi_interface`, or `value_world_model`).
-
-## Benchmark contributions
-
-Update [`registry/benchmarks.yaml`](registry/benchmarks.yaml) and the benchmark section of the README for any new evaluation resource. Record:
-
-- benchmark type: `direct_reward`, `diagnostic`, `model_native`, or `downstream_source`;
-- release date, evaluation unit, scale, embodiments, and real/sim/counterfactual provenance;
-- exact targets and metrics, including unsupported capabilities as `N/A`;
-- split and leakage controls, label source, baseline protocol, artifact/license status, and verification date;
-- whether failures are typed, temporally localized, recoverable, or followed by a labelled recovery;
-- a limitation note explaining what the benchmark cannot establish.
-
-Do not present a model-native test set as an independent gold benchmark, or downstream policy success as a substitute for reward calibration and error analysis.
-
-## Pull requests
-
-Keep one logical literature update per pull request. Update `README.md` and the applicable paper, dataset, or benchmark registry, then add a dated note under `docs/updates/` describing:
-
-1. search date and sources;
-2. added or changed entries;
-3. exclusions and reasons;
-4. unresolved artifact/license questions.
-
-Do not include third-party weights, datasets, or paper PDFs in this repository.
+The list covers task-conditioned evaluators of robot behavior that use a foundation model for representation, supervision, or the judgment itself. Benchmarks and datasets go in their own sections. If you are unsure whether a paper fits, open an issue and we will sort it out together.
