@@ -1,6 +1,6 @@
 schema_version: "0.2"
 registry_name: "Awesome Robot Reward Models"
-last_updated: "2026-11-10"
+last_updated: "2026-11-14"
 baseline_source: "robotic_reward_pami_handover_2026-07-18.md"
 scope_note: >-
   Primary narrative categories follow reward semantics. Failure/recovery work is
@@ -57,7 +57,7 @@ entries:
     title: "RoboCLIP: One Demonstration is Enough to Learn Robot Policies"
     released: "2023-10-11"
     venue_or_preprint: "NeurIPS 2023"
-    primary_semantics: "absolute_progress"
+    primary_semantics: "outcome"
     secondary_tags: ["video_language_reward", "one_demonstration", "trajectory_similarity"]
     training_data: ["pretrained_howto100m_video_language_model", "single_video_or_text_demonstration"]
     inference_inputs: ["rollout_video", "video_or_text_goal"]
@@ -120,7 +120,7 @@ entries:
     title: "Video-Language Critic: Transferable Reward Functions for Language-Conditioned Robotics"
     released: "2024-05-30"
     venue_or_preprint: "TMLR 2025"
-    primary_semantics: "temporal_value"
+    primary_semantics: "absolute_progress"
     secondary_tags: ["video_language_reward", "temporal_ranking", "cross_embodiment"]
     training_data: ["open_x_embodiment", "video_caption_pairs"]
     inference_inputs: ["video_clip", "instruction"]
@@ -162,7 +162,7 @@ entries:
     title: "MARVL: Multi-Stage Guidance for Robotic Manipulation via Vision-Language Models"
     released: "2026-01-28"
     venue_or_preprint: "preprint"
-    primary_semantics: "absolute_progress"
+    primary_semantics: "temporal_value"
     secondary_tags: ["multi_stage", "task_direction_projection", "vlm_reward"]
     training_data: ["metaworld_rollouts", "vlm_finetuning"]
     inference_inputs: ["frame", "instruction", "task_stage"]
@@ -183,7 +183,7 @@ entries:
     title: "MVR: Multi-view Video Reward Shaping for Reinforcement Learning"
     released: "2026-03-02"
     venue_or_preprint: "ICLR 2026"
-    primary_semantics: "hybrid_verifier"
+    primary_semantics: "relative_preference"
     secondary_tags: ["multi_view", "video_language_reward", "state_relevance", "potential_based_shaping"]
     training_data: ["target_behavior_videos", "pretrained_viclip"]
     inference_inputs: ["multi_view_video", "instruction", "state"]
@@ -271,7 +271,7 @@ entries:
     title: "Adapt2Reward: Adapting Video-Language Models to Generalizable Robotic Rewards via Failure Prompts"
     released: "2024-07-22"
     venue_or_preprint: "ECCV 2024"
-    primary_semantics: "hybrid_verifier"
+    primary_semantics: "absolute_progress"
     secondary_tags: ["failure_prompt", "vlm_reward"]
     training_data: ["robot_success", "failure_prompts"]
     inference_inputs: ["video", "instruction"]
@@ -352,7 +352,7 @@ entries:
     title: "TimeRewarder: Learning Dense Reward from Passive Videos via Frame-wise Temporal Distance"
     released: "2025-09"
     venue_or_preprint: "preprint"
-    primary_semantics: "absolute_progress"
+    primary_semantics: "relative_preference"
     secondary_tags: ["temporal_distance", "human_video"]
     training_data: ["human_video", "robot_video"]
     inference_inputs: ["frame_pair", "instruction"]
@@ -373,7 +373,7 @@ entries:
     title: "A Vision-Language-Action-Critic Model for Robotic Real-World Reinforcement Learning"
     released: "2025-09"
     venue_or_preprint: "preprint"
-    primary_semantics: "relative_preference"
+    primary_semantics: "hybrid_verifier"
     secondary_tags: ["critic", "action_conditioned"]
     model_coupling: "shared_backbone_multi_interface"
     value_availability: "inference_queryable"
@@ -496,7 +496,7 @@ entries:
     title: "Robometer: Scaling General-Purpose Robotic Reward Models via Trajectory Comparisons"
     released: "2026-03"
     venue_or_preprint: "RSS 2026"
-    primary_semantics: "relative_preference"
+    primary_semantics: "hybrid_verifier"
     secondary_tags: ["absolute_progress", "outcome", "trajectory_comparison", "mixed_expertise", "failure_data"]
     training_data: ["oxe_mix", "agibot_world", "galaxea_open_world", "roboreward", "molmoact", "humanoid_everyday", "libero", "metaworld", "motif", "rh20t", "ph2d", "h2r", "roboarena", "soar", "failsafe", "racer", "autoeval", "libero_noise_failures", "fino_net", "epic_kitchens"]
     corpus_scale: {trajectories: 1059370, robot_embodiments: 21, processed_size_tb_approx: 5.87}
@@ -540,7 +540,7 @@ entries:
     title: "PRM-as-a-Judge: A Dense Evaluation Paradigm for Fine-Grained Robotic Auditing"
     released: "2026-03-23"
     venue_or_preprint: "preprint"
-    primary_semantics: "temporal_value"
+    primary_semantics: "hybrid_verifier"
     secondary_tags: ["benchmark", "process_audit", "micro_progress", "outcome_process_diagnosis"]
     training_data: ["none_for_framework", "RoboPulse_for_evaluation"]
     inference_inputs: ["trajectory_video", "task_instruction", "progress_reward_model"]
@@ -713,7 +713,7 @@ entries:
     title: "ARM: Advantage Reward Modeling for Long-Horizon Manipulation"
     released: "2026-04-03"
     venue_or_preprint: "preprint"
-    primary_semantics: "relative_preference"
+    primary_semantics: "hybrid_verifier"
     secondary_tags: ["temporal_value", "tri_state_advantage", "recovery"]
     training_data: ["robot_demonstrations", "dagger_fragments", "human_segment_labels"]
     inference_inputs: ["temporal_segment"]
@@ -843,7 +843,7 @@ entries:
     title: "Beyond Monotonic Progress: Retry-Supervised Value Learning for Robot Imitation"
     released: "2026-06-23"
     venue_or_preprint: "preprint"
-    primary_semantics: "temporal_value"
+    primary_semantics: "absolute_progress"
     secondary_tags: ["retry_supervision", "relative_preference", "recovery"]
     training_data: ["mixed_quality_robot_demonstrations", "retry_keypoints"]
     inference_inputs: ["trajectory_context"]
@@ -864,7 +864,7 @@ entries:
     title: "WVM"
     released: "2026-06"
     venue_or_preprint: "preprint"
-    primary_semantics: "temporal_value"
+    primary_semantics: "absolute_progress"
     secondary_tags: ["suboptimal_trajectory", "retry_benchmark"]
     training_data: ["robot_trajectory", "human_annotations"]
     inference_inputs: ["trajectory_video", "instruction"]
@@ -910,7 +910,7 @@ entries:
     title: "WARP-RM: A Warp-Augmented Relative Progress Reward Model for Data Curation"
     released: "2026-06-26"
     venue_or_preprint: "preprint"
-    primary_semantics: "relative_preference"
+    primary_semantics: "absolute_progress"
     secondary_tags: ["signed_progress_velocity", "self_supervised", "recovery"]
     training_data: ["successful_teleoperated_demonstrations", "time_warp_augmentation"]
     inference_inputs: ["video_window"]
@@ -952,7 +952,7 @@ entries:
     title: "DenseReward: Dense Reward Learning via Failure Synthesis for Robotic Manipulation"
     released: "2026-07-14"
     venue_or_preprint: "preprint"
-    primary_semantics: "hybrid_verifier"
+    primary_semantics: "absolute_progress"
     secondary_tags: ["absolute_progress", "failure_synthesis", "recovery"]
     training_data: ["simulation_success", "simulation_failure", "recovery", "phase_aware_labels"]
     corpus_scale: {episodes: 26579, frame_samples: 7560942, objects: ">60"}
@@ -1066,7 +1066,7 @@ entries:
     title: "PALM: Progress-Aware Policy Learning via Affordance Reasoning for Long-Horizon Robotic Manipulation"
     released: "2026-01-11"
     venue_or_preprint: "CVPR 2026"
-    primary_semantics: "absolute_progress"
+    primary_semantics: "temporal_value"
     secondary_tags: ["within_subtask_progress", "affordance_reasoning", "long_horizon"]
     model_coupling: "policy_internal"
     value_availability: "inference_queryable"
@@ -1158,7 +1158,7 @@ entries:
     title: "MV-WAM: Manifold-Aware World Action Model with Value Augmentation"
     released: "2026-06-19"
     venue_or_preprint: "preprint"
-    primary_semantics: "absolute_progress"
+    primary_semantics: "temporal_value"
     secondary_tags: ["future_video", "deviation_detection", "value_guided_rollback", "recovery"]
     model_coupling: "joint_world_action_value"
     value_availability: "internal_control_only"
@@ -1181,7 +1181,7 @@ entries:
     title: "ACE-Brain-0.5: A Unified Embodied Foundational Model for Physical Agentic AI"
     released: "2026-07-05"
     venue_or_preprint: "preprint"
-    primary_semantics: "absolute_progress"
+    primary_semantics: "hybrid_verifier"
     secondary_tags: ["execution_monitoring", "verification", "recovery", "unified_embodied_model"]
     model_coupling: "shared_backbone_multi_interface"
     value_availability: "inference_queryable"
@@ -1674,7 +1674,7 @@ entries:
     title: "I-FailSense: Towards General Robotic Failure Detection with Vision-Language Models"
     released: "2025-09-19"
     venue_or_preprint: "ICRA 2026"
-    primary_semantics: "hybrid_verifier"
+    primary_semantics: "outcome"
     secondary_tags: ["failure_detection", "semantic_misalignment", "grounded_arbitration", "internal_classification_heads"]
     model_coupling: "standalone_evaluator"
     value_availability: "inference_queryable"

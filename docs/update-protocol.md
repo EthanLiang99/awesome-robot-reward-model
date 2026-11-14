@@ -20,11 +20,13 @@ Record an explicit search date and query window. Use arXiv, OpenReview, official
 
 ## Primary semantics
 
-- `outcome`: task success, completion, or discrete outcome.
-- `absolute_progress`: current task progress or completion state.
-- `relative_preference`: pairwise ordering, progress delta, preference, or advantage.
-- `temporal_value`: trajectory-contextual, stage-aware, or future-conditioned value.
-- `hybrid_verifier`: multiple reward heads or explicit process/outcome/verifier decomposition.
+The five families follow the survey, which assigns a method by the question its native output answers. Where a record and Table S1 of the paper disagree, the paper decides.
+
+- `outcome` (Outcome: is the task done, or will it fail?): whether a declared event has occurred or will occur, such as terminal success, an end-of-episode grade, or a failure forecast.
+- `absolute_progress` (Absolute Progress: how far along is it?): advancement on a whole-task scale, anchored by a goal, a reference, a learned scale, or the task procedure.
+- `relative_preference` (Relative: which is better?): quantities defined by ordering, from a direct comparison of two states, executions, or actions to a utility learned from preferences.
+- `temporal_value` (Temporal Value: which stage, and how well is it going?): targets measured against a reference the execution itself sets, such as the stage reached, the time to go, or the return expected under the continuing policy.
+- `hybrid_verifier` (Hybrid: what happened, and on what evidence?): several judgments composed, from different families or as the fields of a structured verification judgment.
 - `data_resource`: failure/recovery supervision or benchmark without a central reward model.
 - `adjacent_interface`: system use of evaluator-like signals, retained as boundary context.
 
