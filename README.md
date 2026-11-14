@@ -72,8 +72,8 @@ This repository accompanies our survey **Robotic Reward Models in the Foundation
 - [B. Robotic Reward Models](#-b-robotic-reward-models)
   - [Outcome](#outcome) · [Absolute Progress](#absolute-progress) · [Relative](#relative) · [Temporal Value](#temporal-value) · [Hybrid](#hybrid)
 - [C. Benchmarks](#-c-benchmarks)
-- [D. Data](#-d-data)
-- [Contributing](#-contributing) · [Acknowledgements](#-acknowledgements) · [Citation](#-citation)
+- [D. Data](#%EF%B8%8F-d-data)
+- [Contributing](#-contributing) · [Acknowledgements](#-acknowledgements) · [License](#%EF%B8%8F-license) · [Citation](#-citation)
 
 ---
 
@@ -553,6 +553,10 @@ Contributions are very welcome: new papers, corrections, better categorization, 
 ## 🙏 Acknowledgements
 
 We thank the researchers who make their papers, code, models, and datasets publicly available, and the maintainers of the related collections that help the community navigate this fast-moving field.
+
+## ⚖️ License
+
+The list is released under [CC0-1.0](./LICENSE). The listed papers remain under their own licenses and copyright. On the project page, the fonts keep their SIL Open Font License, and the robot videos, which record RoboChallenge executions, keep their own terms.
 
 ## 📝 Citation
 
