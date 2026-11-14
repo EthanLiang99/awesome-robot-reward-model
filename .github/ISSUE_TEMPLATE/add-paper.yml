@@ -1,90 +1,41 @@
-name: Add a paper or dataset
-description: Propose a robot reward-model, verifier, or failure/recovery data entry.
+name: Add a paper
+description: Propose a robotic reward model, benchmark, or dataset for the list.
 title: "[Add] "
 labels: [literature]
 body:
   - type: input
     id: title
     attributes:
-      label: Work title
+      label: Paper title
     validations:
       required: true
   - type: input
     id: paper
     attributes:
-      label: Original paper or official proceedings URL
+      label: Paper URL
     validations:
       required: true
   - type: dropdown
-    id: semantics
+    id: family
     attributes:
-      label: Primary semantics
+      label: Section
       options:
-        - outcome
-        - absolute_progress
-        - relative_preference
-        - temporal_value
-        - hybrid_verifier
-        - data_resource
-        - adjacent_interface
-    validations:
-      required: true
-  - type: textarea
-    id: evidence
-    attributes:
-      label: Evidence note
-      description: Explain inputs, output semantics, supervision/data, downstream role, and why it is in scope.
-    validations:
-      required: true
-  - type: dropdown
-    id: coupling
-    attributes:
-      label: Model coupling (if applicable)
-      description: Choose not_applicable unless value/progress is explicitly coupled to a policy or world model.
-      options:
-        - not_applicable
-        - policy_internal
-        - joint_world_action_value
-        - compositional_world_value
-        - shared_backbone_multi_interface
-        - value_world_model
-  - type: dropdown
-    id: value_availability
-    attributes:
-      label: Value availability (if applicable)
-      options:
-        - not_applicable
-        - inference_queryable
-        - training_only
-        - internal_control_only
-        - unknown
-  - type: dropdown
-    id: benchmark_type
-    attributes:
-      label: Benchmark type (if applicable)
-      description: Choose not_applicable unless the work contributes an evaluation dataset, suite, or policy-evaluation source.
-      options:
-        - not_applicable
-        - direct_reward
-        - diagnostic
-        - model_native
-        - downstream_source
-  - type: textarea
-    id: benchmark_protocol
-    attributes:
-      label: Benchmark protocol (if applicable)
-      description: Give the evaluation unit, scale, embodiments, labels, metrics, split/leakage policy, failure/recovery coverage, and main limitation.
-  - type: textarea
-    id: artifacts
-    attributes:
-      label: Official artifacts
-      description: List code, weights, data, benchmark, and license URLs separately. Write unknown when not verified.
+        - Outcome
+        - Absolute Progress
+        - Relative
+        - Temporal Value
+        - Hybrid
+        - Benchmark
+        - Data
+        - Not sure
     validations:
       required: true
   - type: input
-    id: checked
+    id: output
     attributes:
-      label: Verification date
-      placeholder: YYYY-MM-DD
-    validations:
-      required: true
+      label: Native output
+      description: What the model returns before any downstream transformation, in a few words.
+  - type: input
+    id: links
+    attributes:
+      label: Code, weights, or data links

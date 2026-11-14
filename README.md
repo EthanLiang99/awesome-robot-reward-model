@@ -1,346 +1,570 @@
-# Awesome Robot Reward Models
+<div align="center">
+<br>
 
-A curated, evidence-tracked list of **robotic reward models (RRMs)**, process/value models, verifiers, and failure/recovery data relevant to evaluating robot behavior.
+# Awesome Robot Reward Models:<br>A Survey and Capability Benchmark
 
-This repository accompanies the survey *Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark* ([project page](https://ethanliang99.github.io/awesome-robot-reward-model/)). It is a discovery and collaboration resource, not a claim that every listed method is directly comparable or reproducible.
+<a href="https://ethanliang99.github.io/">Guoqiang Liang</a><sup>&ast;</sup> &middot;
+<a href="https://linyq17.github.io/">Yiqi Lin</a><sup>&ast;</sup> &middot;
+<a href="https://shangchenzhou.com/">Shangchen Zhou</a> &middot;
+<a href="https://wenzhengzeng.github.io/">Wenzheng Zeng</a> &middot;
+<a href="https://chenanno.github.io/">Yanzhe Chen</a> &middot;
+<a href="https://www.baizechen.site/">Zechen Bai</a> &middot;
+<a href="https://sites.google.com/view/showlab/home">Mike Zheng Shou</a><sup>&dagger;</sup>
 
-- **Last literature check:** 2026-09-28
-- **Living registry:** [`registry/papers.yaml`](registry/papers.yaml)
-- **Robot/data registry:** [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml) · [human-readable matrix](docs/robot-data-matrix.md)
-- **Benchmark registry:** [`registry/benchmarks.yaml`](registry/benchmarks.yaml) · [landscape and RRM-Bench-1K](docs/reward-model-benchmarks.md)
-- **Latest audit:** [`docs/updates/2026-09-28.md`](docs/updates/2026-09-28.md)
-- **Targeted addition:** [`docs/updates/2026-11-10.md`](docs/updates/2026-11-10.md) (three evaluators benchmarked in the survey)
-- **Family alignment:** [`docs/updates/2026-11-14.md`](docs/updates/2026-11-14.md) (Sections 1–5 follow the families of the survey)
-- **Project page:** [`project-page/`](project-page/), published to GitHub Pages by [`.github/workflows/project-page.yml`](.github/workflows/project-page.yml)
+<a href="https://sites.google.com/view/showlab/home">Show Lab @ National University of Singapore</a> &middot; Nanyang Technological University<br>
+<sub><sup>&ast;</sup>Equal contribution &nbsp; <sup>&dagger;</sup>Corresponding author</sub>
 
-## Scope
+<p align="center">
+  📄 Paper (coming soon) &nbsp; | &nbsp;
+  <a href="https://ethanliang99.github.io/awesome-robot-reward-model/">🌐 Project Website</a> &nbsp; | &nbsp;
+  🧰 RewardBox (coming soon) &nbsp; | &nbsp;
+  🤗 RRM-Bench-1K (coming soon)
+</p>
 
-Included work must expose, learn, or directly study a task-conditioned signal that evaluates robot-relevant behavior: Outcome, Absolute Progress, Relative, Temporal Value, or Hybrid.
+</div>
 
-Failure and recovery work is included when it contributes evaluator supervision, a failure/recovery benchmark, or data that can test reward-model boundaries. Generic VLA, world-model, failure-management, and video-understanding work stays outside the core tables unless it has a direct evaluator interface.
+---
 
-Human and egocentric video are treated as possible reward/value supervision—not as direct human-to-robot action labels.
+This repository accompanies our survey **Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark**. A robotic reward model (RRM) is a task-conditioned evaluator that uses a foundation model to judge robot behavior against a task. The survey asks one question: ***under the one word "reward", what is each model actually answering?***
 
-## Reading the tables
+<p align="center">
+  <a href="./assets/readme/teaser.png">
+    <img src="./assets/readme/teaser.png" width="100%" alt="From per-task reward engineering to task-conditioned reward modeling">
+  </a>
+</p>
 
-| Mark | Meaning |
-|---|---|
-| `C` | code link verified |
-| `W` | model weights/checkpoint link verified |
-| `D` | data/benchmark link verified |
-| `—` | no public artifact link verified |
-| `?` | artifact or license status still needs audit |
+<p align="center"><sub>From per-task reward engineering (a) to one task-conditioned evaluator shared across tasks (b).</sub></p>
 
-Artifact availability and licensing are tracked separately. A GitHub repository does **not** imply released weights or reusable data, and a public file does not imply a compatible license.
+- 🔎 **One word, five questions.** We organize 114 methods into five semantic families by the question their native output answers: Outcome, Absolute Progress, Relative, Temporal Value, and Hybrid.
+- 🧪 **A benchmark of the hard cases.** RRM-Bench-1K holds 1,117 real-robot videos with task-state and camera-evidence labels, in four contrast suites that separate the credited condition from its usual cues.
+- 📉 **What one score hides.** Across 27 evaluators, the strongest final scores rank whole executions well, yet dense credit follows the progression of an execution more closely than its task state, and no evaluator signals when the decisive view is missing.
 
-## Taxonomy
+> [!IMPORTANT]
+> **This area is growing quickly, and so is this list.** If we missed a paper, or you have just published one of your own, please open an issue or send a pull request. We are always glad to add new work!
 
-1. [Outcome](#1-outcome)
-2. [Absolute Progress](#2-absolute-progress)
-3. [Relative](#3-relative)
-4. [Temporal Value](#4-temporal-value)
-5. [Hybrid](#5-hybrid)
-6. [Failure, retry, and recovery data](#6-failure-retry-and-recovery-data)
-7. [Training data and supervision resources](#7-training-data-and-supervision-resources)
-8. [Policy- and world-model-coupled value prediction](#8-policy--and-world-model-coupled-value-prediction)
-9. [Robot reward-model benchmarks](#9-robot-reward-model-benchmarks)
-10. [Adjacent system interfaces](#10-adjacent-system-interfaces)
-11. [Related surveys, perspectives, and community discovery resources](#11-related-surveys-perspectives-and-community-discovery-resources)
+## 🌳 Taxonomy
 
-Sections 1–5 follow the five semantic families of the survey, which assigns each method to the family whose question its native output answers. The list is broader than the survey's corpus: it also keeps evaluators without foundation models and adjacent work, and it does not yet hold every method of the corpus. The [project page](https://ethanliang99.github.io/awesome-robot-reward-model/#taxonomy) shows all of them by family and design route. Section 7 is a cross-cutting data index, Section 8 records where a value signal lives without treating architectural coupling as a new reward meaning, and Section 9 evaluates the evaluator itself. The registries preserve these dimensions through primary semantics, supervision provenance, `model_coupling`, and benchmark-capability metadata.
+<p align="center">
+  <a href="./assets/readme/taxonomy.png">
+    <img src="./assets/readme/taxonomy.png" width="100%" alt="Taxonomy of 114 robotic reward models by semantic family and design route">
+  </a>
+</p>
 
-## 1. Outcome
+<p align="center"><sub>114 methods by semantic family and design route. * evaluates generated behavior; ‡ is a protocol or harness.</sub></p>
 
-*Is the task done, or will it fail?*
-
-| Date | Work | Signal and role | Artifacts | Verified |
-|---|---|---|---|---|
-| 2026-06 | [Early Warning Signals for OpenVLA Failure](https://arxiv.org/abs/2606.29699) | Policy-internal linear probe predicts near-term execution failure from OpenVLA activations under visual distribution shift | — | 2026-08-13 |
-| 2026-02 | [World-VLA-Loop](https://arxiv.org/abs/2602.06508) | Video world model jointly predicts imagined future frames and binary reward; the reward drives VLA RL and policy failures are fed back to refine the world model | [project/repo; source code in preparation](https://github.com/showlab/World-VLA-Loop) | 2026-07-18 |
-| 2026-01 | [RoboReward](https://arxiv.org/abs/2601.00675) | General-purpose vision-language reward models; outcome/progress scoring with counterfactual negatives and near-misses | [W](https://huggingface.co/teetone/RoboReward-4B) | 2026-07-18 |
-| 2025-09 | [I-FailSense](https://arxiv.org/abs/2509.16072) | VLM with internal failure-sensing heads detects instruction–execution semantic misalignment and transfers to broader failures | [C](https://github.com/clemgris/I-FailSense) · [W](https://huggingface.co/collections/ACIDE/failsense-3b) · [D](https://clemgris.github.io/I-FailSense/); licenses ? | 2026-07-24 |
-| 2023-10 | [RoboCLIP](https://proceedings.neurips.cc/paper_files/paper/2023/hash/ae54ce310476218f26dd48c1626d5187-Abstract-Conference.html) | Video-language similarity reward from a single demonstration for robot policy learning | [C](https://github.com/sumedh7/RoboCLIP) · [upstream S3D W](https://www.robots.ox.ac.uk/~vgg/software/S3D/) | 2026-08-02 |
-
-## 2. Absolute Progress
-
-*How far along is it?*
-
-| Date | Work | Signal and role | Artifacts | Verified |
-|---|---|---|---|---|
-| 2026-09 | [HiRE](https://arxiv.org/abs/2609.27068) | Hindsight edits foundation-feature rewards using successful and failed rollouts to penalize deceptively high-scoring trap states for policy fine-tuning | [qualitative project](https://hire-project.github.io/); code/data not verified | 2026-09-28 |
-| 2026-09 | [AnyviewMeter](https://arxiv.org/abs/2609.20106) | Camera geometry and synchronized views adapt Robometer for task-specific scalar progress; real-robot reward evaluation is offline | Code/weights/data not verified; paper's release link unresolved | 2026-09-28 |
-| 2026-08 | [GORDON](https://arxiv.org/abs/2608.03753) | Object-centric scene-graph goal distance supplies dense progress reward and exposes stage transitions for automatic long-horizon decomposition | [project](https://andreaprotopapa.github.io/graph-reward-learning/); code/weights/data not verified | 2026-08-13 |
-| 2026-07 | [DenseReward](https://arxiv.org/abs/2607.13033) | Dense frame-level reward trained with phase-aware success, failure, and recovery synthesis | [W](https://huggingface.co/densereward/densereward-3frame-thinking) · [D](https://huggingface.co/datasets/densereward/DenseReward) (Apache-2.0 cards); [code repo empty](https://github.com/dense-reward/dense-reward) | 2026-09-28 |
-| 2026-06 | [NavWAM](https://arxiv.org/abs/2606.13494) | Joint future-view, action-chunk, and goal-progress prediction for closed-loop visual navigation | [project](https://dachii-azm.github.io/navwam/); code/weights links not verified | 2026-07-18 |
-| 2026-06 | [RARM](https://arxiv.org/abs/2606.22027) | Reference-anchored, confidence-gated dense progress reward from one successful demonstration | [project; code coming soon](https://rarm-robotics.github.io/) | 2026-07-18 |
-| 2026-06 | [ReTVL](https://arxiv.org/abs/2606.24633) | Retry-supervised value learning around local degradation and recovery events | — | 2026-07-18 |
-| 2026-06 | [WVM](https://arxiv.org/abs/2606.24742) | Temporally grounded value estimation with a human-labelled suboptimal/retry benchmark | [repo](https://github.com/255isWhite/WVM); release status ? | 2026-07-18 |
-| 2026-06 | [WARP-RM](https://arxiv.org/abs/2606.28320) | Dense signed relative-progress velocity learned self-supervised from time-warped successful demonstrations | [C, MIT](https://github.com/uynitsuj/WARP-RM) | 2026-07-18 |
-| 2026-05 | [ProcVLM](https://arxiv.org/abs/2605.08774) | Procedure-grounded progress with remaining-action reasoning over a recent frame window | [C](https://github.com/ProcVLM/ProcVLM) · [W](https://huggingface.co/ce-amtic/ProcVLM-2B) · [D](https://huggingface.co/datasets/ce-amtic/ProcCorpus-60M) | 2026-07-18 |
-| 2026-03 | [ProgressVLA](https://arxiv.org/abs/2603.27670) | Progress estimator scores action-conditioned future latents from an inverse-dynamics world model and differentiably guides the diffusion policy | — | 2026-07-24 |
-| 2026-03 | [SOLE-R1](https://arxiv.org/abs/2603.28730) | Per-timestep video-language reasoning and dense progress used as the sole online-RL reward | [C](https://github.com/rai-opensource/sole-r1) · [W/D collection](https://huggingface.co/collections/theaiinstitute/sole-r1) | 2026-07-18 |
-| 2026-03 | [ProgAgent](https://arxiv.org/abs/2603.07784) | Initial/current/goal progress potential for continual robot RL with OOD regularization | — | 2026-07-18 |
-| 2026-03 | [Rewarding DINO](https://arxiv.org/abs/2603.16978) | Language-conditioned dense visual reward distilled from analytical simulator rewards | — | 2026-07-18 |
-| 2026-02 | [TOPReward: Token Probabilities as Hidden Zero-Shot Rewards for Robotics](https://arxiv.org/abs/2602.19313) | Zero-shot reward extracted from VLM token probabilities; evaluated with ManiRewardBench | [C, MIT](https://github.com/TOPReward/TOPReward) | 2026-08-02 |
-| 2025-12 | [EVOLVE-VLA](https://arxiv.org/abs/2512.14666) | Learned visual progress estimator provides smoothed dense reward for test-time VLA adaptation, stopping, and horizon extension | [project/repo shell](https://github.com/showlab/EVOLVE-VLA); runnable release not verified | 2026-07-24 |
-| 2025-09 | [World-Env](https://arxiv.org/abs/2509.24948) | LLaVA-based instant reflector with a trained scalar head estimates task-completion probability over imagined video for VLA reward and early termination | [C, Apache-2.0](https://github.com/amap-cvlab/world-env) · [W](https://www.modelscope.cn/models/junjxiao/world-env) | 2026-07-18 |
-| 2025-05 | [ReWiND](https://proceedings.mlr.press/v305/zhang25a.html) | Language-conditioned progress reward learned from human/robot video for reward relabeling and policy learning | [C](https://github.com/rewind-reward/ReWiND) | 2026-08-02 |
-| 2024-11 | [Generative Value Learning (GVL)](https://openreview.net/forum?id=friHAl5ofG) | Generative completion-percentage prediction from shuffled trajectory frames for robot policy learning | [project](https://generative-value-learning.github.io/); code/weights not verified | 2026-08-02 |
-| 2024-07 | [Adapt2Reward](https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/07430.pdf) | Failure-prompt adaptation for generalizable robotic rewards | — | 2026-08-02 |
-| 2024-05 | [Video-Language Critic](https://openreview.net/forum?id=jJOVpnNrEp) | Video-language preference critic supplies temporal reward for robot policy learning | [C, MIT](https://github.com/minttusofia/video_language_critic) | 2026-08-02 |
-| 2023-10 | [VLM-RM](https://openreview.net/forum?id=N0I2RtD8je) | Zero-shot CLIP-family vision-language reward for language-conditioned robot reinforcement learning | [C, MIT](https://github.com/AlignmentResearch/vlmrm) | 2026-08-02 |
-| 2023-06 | [LIV](https://proceedings.mlr.press/v202/ma23b.html) | Language-image representations trained from video provide goal-conditioned visual reward for robotic manipulation | [C, MIT](https://github.com/penn-pal-lab/LIV) · [W](https://huggingface.co/jasonyma/LIV) | 2026-08-02 |
-| 2022-09 | [VIP](https://openreview.net/forum?id=0kR3wP6ZKq) | Pretrained visual value representation supplies dense distance-based reward from passive human video | [C](https://github.com/facebookresearch/vip) | 2026-08-02 |
-| earlier | [PROGRESSOR](https://github.com/ripl/progressor) | Perceptually guided progress estimator with online refinement | C | 2026-07-18 |
-
-## 3. Relative
-
-*Which is better?*
-
-| Date | Work | Signal and role | Artifacts | Verified |
-|---|---|---|---|---|
-| 2026-08 | [Dream2Reward](https://arxiv.org/abs/2608.18787) | Signed transition reward compares observed visual change with predicted successful latent change from positive demonstrations; tested as dense policy-learning feedback | — | 2026-09-28 |
-| 2026-06 | [Freeform Preference Learning](https://arxiv.org/abs/2606.32027) | Language-conditioned, axis-specific trajectory reward from freeform pairwise human preferences | [C](https://github.com/freeform-pl/fpl) · [real-world tools](https://github.com/freeform-pl/fpl_real); license ? | 2026-07-18 |
-| 2026-05 | [TapSampling](https://arxiv.org/abs/2605.25547) | Task-progress-outcome verifier ranks sampled candidate action chunks at inference time | [C](https://github.com/aipixel/TapSampling) · [W](https://huggingface.co/collections/SizheZhao/tapsampling) · [D](https://huggingface.co/datasets/SizheZhao/TapSampling-CALVIN-Part-Data); licenses ? | 2026-07-24 |
-| 2026-03 | [MVR](https://openreview.net/forum?id=7lw6s9ELfr) | Multi-view video-text state relevance with state-dependent shaping for locomotion and manipulation RL | [C, MIT](https://github.com/mvr-rl/mvr) · [upstream ViCLIP W](https://github.com/OpenGVLab/InternVideo/tree/main/InternVideo1/Downstream/Video-Text-Retrieval) | 2026-08-02 |
-| 2026-02 | [CoVer-VLA](https://arxiv.org/abs/2602.12281) | 1B contrastive verifier ranks rephrased instructions and action chunks by vision–language–action alignment | [C](https://github.com/cover-vla/cover-vla) · [W](https://huggingface.co/cover-vla); licenses ? | 2026-07-24 |
-| 2025-12 | [Robo-Dopamine](https://arxiv.org/abs/2512.23703) | Multi-view pairwise process reward for signed progress/regress between before/after observations | [C](https://github.com/FlagOpen/Robo-Dopamine) · [W](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-8B) · [gated D](https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset) | 2026-07-18 |
-| 2025-10 | [RoVer](https://arxiv.org/abs/2510.10975) | External PRM scores candidate actions and predicts a 6D refinement direction for test-time VLA scaling | — | 2026-07-24 |
-| 2025-09 | [TimeRewarder](https://arxiv.org/abs/2509.26627) | Frame-wise temporal distance from passive human and robot video as dense reward | [C](https://github.com/CowAndSheep/TimeRewarder) | 2026-07-18 |
-| 2025-06 | [RoboMonkey](https://proceedings.mlr.press/v305/kwok25a.html) | VLM verifier selects among policy samples and Gaussian action perturbations | [C, MIT](https://github.com/robomonkey-vla/RoboMonkey) · [W, MIT](https://huggingface.co/robomonkey-vla/monkey-verifier-7b) · [D; license ?](https://huggingface.co/datasets/robomonkey-vla/action_preference_bridge) | 2026-07-24 |
-| 2024-02 | [RL-VLM-F](https://proceedings.mlr.press/v235/wang24bn.html) | VLM-generated pairwise preferences converted into a learned reward for robot RL | [paper](https://arxiv.org/abs/2402.03681) | 2026-07-18 |
-
-RoboMonkey and RoVer construct preferences from proximity to demonstrated actions; CoVer learns instruction–action alignment; TapSampling predicts task-progress outcomes. These are useful test-time verifiers, but their scores are not interchangeable with calibrated task success or trajectory-level progress.
-
-## 4. Temporal Value
-
-*Which stage, and how well is it going?*
-
-| Date | Work | Signal and role | Artifacts | Verified |
-|---|---|---|---|---|
-| 2026-09 | [SeeQ](https://arxiv.org/abs/2609.22085) | PaliGemma-based subtask Q-function predicts the current subtask and ranks candidate action chunks for best-of-N steering; paper fine-tunes on target tasks | [W, pretrained only; Gemma terms](https://huggingface.co/CMU-AIRe/SeeQ-3B); method code not verified | 2026-09-28 |
-| 2026-08 | [RynnValue](https://arxiv.org/abs/2608.09853) | Language-conditioned absolute and relative temporal distance (physical-seconds cost-to-go) used as a value interface and potential-based dense reward | [C, Apache-2.0](https://github.com/alibaba-damo-academy/RynnValue) · [W 4B](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B) · [W 8B](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-8B) (model cards Apache-2.0; GitHub release note stale) | 2026-09-28 |
-| 2026-07 | [WCM](https://arxiv.org/abs/2607.29613) | History-aware critic jointly learns future latent prediction and task value for VLA reinforcement learning under partial observability | [C, MIT](https://github.com/sylvestf/WCM) · [example W/D](https://huggingface.co/collections/Sylvest/wcm) | 2026-08-13 |
-| 2026-07 | [Robo-ValueRL](https://arxiv.org/abs/2607.09866) | History-conditioned three-view value estimator trained on normalized remaining time with a failure penalty; value differences label action quality for quality-conditioned policy pretraining and online adaptation | [C, license not stated](https://github.com/Open-X-Humanoid/Robo-ValueRL) · [W, MIT card](https://huggingface.co/X-Humanoid/Robo-ValueRL) · [D, license not stated](https://huggingface.co/datasets/X-Humanoid/Robo-ValueRL) | 2026-11-10 |
-| 2026-06 | [SARM2](https://arxiv.org/abs/2606.10305) | Multi-task action-primitive stage estimator plus MoE value head for dense progress | [C](https://github.com/xdofai/opensarm) · [SPIRAL](https://github.com/Qianzhong-Chen/openspiral); weights — | 2026-07-18 |
-| 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint visual/action/value generation with task-completion estimation, action–frame misalignment detection, and value-guided rollback | — | 2026-07-18 |
-| 2026-05 | [ProgVLA](https://arxiv.org/abs/2605.28231) | Policy-internal V/Q-style progress critics over normalized remaining horizon, used for advantage- and success-weighted imitation | code/checkpoints/data promised upon publication | 2026-07-18 |
-| 2026-04 | [ViVa](https://arxiv.org/abs/2604.08168) | Video-generative scalar value coupled to predicted future proprioception | [C](https://github.com/GigaAI-research/ViVa); license/weights ? | 2026-07-18 |
-| 2026-02 | [RISE](https://arxiv.org/abs/2602.11075) | Progress value evaluates action-conditioned imagined futures and supplies advantages for policy improvement | [C](https://github.com/OpenDriveLab/RISE) · [W: dynamics only](https://github.com/OpenDriveLab/RISE); code Apache-2.0, released data/checkpoints CC BY-NC-SA 4.0 | 2026-07-18 |
-| 2026-02 | [MARVL](https://arxiv.org/abs/2602.15872) | Multi-stage VLM guidance with spatial/semantic consistency and task-direction projection for robot manipulation | — | 2026-08-02 |
-| 2026-01 | [Cosmos Policy](https://arxiv.org/abs/2601.16163) | Joint action, future-state, and expected rewards-to-go prediction for direct control and best-of-N planning | [C, Apache-2.0](https://github.com/NVlabs/cosmos-policy) · [W/D](https://huggingface.co/collections/nvidia/cosmos-policy); item licenses require review | 2026-07-18 |
-| 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Continuous within-subtask progress jointly decoded with actions to stabilize transitions in long-horizon manipulation | [C](https://github.com/PLAN-Lab/PALM) · [W](https://github.com/PLAN-Lab/PALM#-checkpoints); license ? | 2026-07-18 |
-| 2025-09 | [SARM](https://openreview.net/forum?id=aemqAxScl9) | Stage-aware video reward for long-horizon manipulation | [C](https://github.com/xdofai/opensarm) | 2026-08-02 |
-| 2025-05 | [Hume](https://arxiv.org/abs/2505.21432) | Policy-internal value-query head estimates state–action value for sampled action chunks and drives System-2 best-of-N selection | [C, MIT](https://github.com/hume-vla/hume) · [W, MIT](https://huggingface.co/Hume-vla/Hume-System2) | 2026-07-24 |
-| 2023-12 | [Diffusion Reward](https://arxiv.org/abs/2312.14134) | Negative conditional entropy from a video diffusion model provides history-conditioned reward for expert-like robot behavior | [C, MIT](https://github.com/TEA-Lab/diffusion_reward) · [W](https://huggingface.co/tauhuang/diffusion_reward) · [D](https://huggingface.co/datasets/tauhuang/diffusion_reward) | 2026-08-02 |
-
-## 5. Hybrid
-
-*What happened, and on what evidence?*
-
-| Date | Work | Signal and role | Artifacts | Verified |
-|---|---|---|---|---|
-| 2026-10 | [Flora-Rewarder](https://arxiv.org/abs/2610.31779) | One fine-tuned VLM returns an episode outcome score (1–5), dense action-quality scores per 0.5 s step, and rubric step scores for deployment monitoring, data filtering, and RL post-training | [C, NVIDIA License](https://github.com/NVlabs/Flora) · [W, non-commercial research only](https://huggingface.co/nvidia/Flora-Rewarder); training data not found | 2026-11-10 |
-| 2026-09 | [VLA-Corrector (Song et al.)](https://arxiv.org/abs/2609.06508) | Stage-aware learned verifier uses visual, proprioceptive, and action history to trigger prompt-based recovery of a frozen VLA; separate from the July VLA-Corrector | — | 2026-09-28 |
-| 2026-08 | [TrustRoboReward](https://arxiv.org/abs/2608.08491) | Four-interface pointwise/pairwise trajectory-progress and grounded-video-QA reward model with preference-ordered isotonic score editing | [partial C](https://github.com/TrustRoboreward/TrustRoboReward); weights/data/license not verified | 2026-08-13 |
-| 2026-08 | [Thea](https://arxiv.org/abs/2608.11246) | Independent post-condition evaluator maps current physical evidence to in-progress/success/failure exit codes for termination, retry, and recovery | [C, Apache-2.0](https://github.com/EIT-HAI/Thea); evaluator weights/data not released | 2026-08-13 |
-| 2026-07 | [VLAC-Cut (HELP)](https://arxiv.org/abs/2607.09776) | Rollout segmentation critic estimates signed, non-monotonic progress with a diagnosis of each change and cuts autonomous rollouts into progress-making, idle, failure-inducing, and recovery segments for post-training data curation | [C, MIT](https://github.com/InternRobotics/VLAC-cut) · [W](https://huggingface.co/InternRobotics/VLAC-Cut) · [D](https://huggingface.co/datasets/InternRobotics/VLAC-Cut-FullData) · [benchmark D](https://huggingface.co/datasets/InternRobotics/VLAC-Cut-Benchmark) (model and data cards: license "other") | 2026-11-10 |
-| 2026-07 | [CoRe](https://arxiv.org/abs/2607.01721) | Combines a VLM-optimized formal reward with a residual reward learned from VLM-labelled video preferences | [project](https://core-2026.github.io/); code/weights/data not verified | 2026-08-02 |
-| 2026-07 | [ACE-Brain-0.5](https://arxiv.org/abs/2607.04426) | Shared embodied backbone estimates execution progress for self-monitoring, verification, and recovery alongside planning and action generation | [W](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) · [project repo; runnable task code not verified](https://github.com/DAXIAORobotics/ACE-Brain-0.5) | 2026-07-18 |
-| 2026-06 | [Success Visitation Matching](https://arxiv.org/abs/2606.23640) | Discriminator turns successful-vs-unsuccessful state–action visitation into dense, outcome-preserving process reward for robot RL | [project; code coming soon](https://success-visitation-matching.github.io/) | 2026-07-24 |
-| 2026-06 | [Reward as An Agent](https://arxiv.org/abs/2606.19990) | Agentic evaluator judges physical plausibility and task completion in embodied world-model rollouts to provide robust reward signals | [C](https://github.com/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models); license ? | 2026-08-02 |
-| 2026-05 | [RoboAlign-R1](https://arxiv.org/abs/2605.03821) | Qwen3-VL-8B-Thinking teacher judge is distilled into a 98M six-dimensional reward model for GRPO post-training of robot video world models | [project](https://roboalign-r1.netlify.app/); public repo is currently a placeholder | 2026-07-18 |
-| 2026-04 | [ARM](https://arxiv.org/abs/2604.03037) | Tri-state progressive/regressive/stagnant advantage over temporal segments; global progress reconstruction | [project](https://aiming1998.github.io/ARM/); code not verified | 2026-07-18 |
-| 2026-03 | [Large Reward Models](https://arxiv.org/abs/2603.16065) | Multi-source VLM process, completion, and temporal-contrast reward generation for online refinement | [C](https://github.com/physical-superintelligence-lab/Large-Reward-Models) | 2026-07-18 |
-| 2026-03 | [PRIMO R1](https://arxiv.org/abs/2603.15600) | RL-induced process reasoning for progress estimation and zero-shot failure detection | — | 2026-07-18 |
-| 2026-03 | [PRM-as-a-Judge](https://arxiv.org/abs/2603.21669) | Dense robotic auditing with outcome/process/diagnosis metrics and progress-potential judges | [project](https://prm-as-a-judge.github.io/); artifact audit pending | 2026-07-18 |
-| 2026-03 | [Generalizable Dense Reward / VLLR](https://arxiv.org/abs/2604.00055) | VLM subtask progress plus policy self-certainty for long-horizon RL | [project](https://silongyong.github.io/vllr_project_page/); artifact audit pending | 2026-07-18 |
-| 2026-03 | [Robometer](https://arxiv.org/abs/2603.02115) | Trajectory-comparison reward with intra-trajectory progress and inter-trajectory preference supervision | [C](https://github.com/robometer/robometer) · [W](https://huggingface.co/robometer/Robometer-4B) · [processed D; canonical release caveat](https://huggingface.co/datasets/robometer/processed_datasets) | 2026-07-18 |
-| 2026-01 | [ReWorld](https://arxiv.org/abs/2601.12428) | Hierarchical four-dimensional reward model scores physical realism, task completion, embodiment plausibility, and visual quality for robot video-world-model alignment | — | 2026-07-24 |
-| 2025-12 | [Guardian / FailCoT](https://arxiv.org/abs/2512.01946) | Multi-view planning and execution verifier trained on synthesized cross-environment failures | [C, MIT](https://github.com/paulpacaud/Guardian-FailCot) · [W, Apache-2.0](https://huggingface.co/paulpacaud/guardian-thinking) · [D](https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian) | 2026-07-18 |
-| 2025-09 | [VLAC](https://arxiv.org/abs/2509.15937) | Vision-language-action critic with pairwise transition-level advancement signals | [C](https://github.com/InternRobotics/VLAC) | 2026-07-18 |
-
-## 6. Failure, retry, and recovery data
-
-These works are not automatically reward models. They are catalogued as supervision or benchmark candidates for failure onset, recoverability/PONR, recovery re-entry, and verifier evaluation.
-
-| Date | Work | Potential use in RRM research | Artifacts | Verified |
-|---|---|---|---|---|
-| 2026-07 | [EgoRecovery](https://arxiv.org/abs/2607.19745) | Human egocentric recovery clips plus small robot anchors provide recovery-needed labels, an explicit recovery/normal boundary, corrective magnitude, and success-trajectory re-entry supervision | paper-linked repo returned 404; data/weights not released | 2026-07-24 |
-| 2026-06 | [Robot Self-Improvement via Human-Video Dynamics Models](https://arxiv.org/abs/2606.21406) | Human-video value/dynamics priors adapted with robot failures; corrective-action ranking around recoverable states | [project; code coming soon](https://ethz-mrl.github.io/robot-self-improvement-website/) | 2026-07-18 |
-| 2026-06 | [SO-101 failure/recovery benchmark](https://arxiv.org/abs/2606.08881) | Low-cost real-robot failure/recovery evaluation candidate; data license pending | — | 2026-07-18 |
-| 2026-03 | [Dream2Fix](https://arxiv.org/abs/2603.13528) | Ctrl-World action perturbations turn successful real demonstrations into >120K paired failure videos with type/stage labels and deterministic trajectory corrections | [project; code coming soon](https://dream2fix.github.io/); dataset/weights not verified | 2026-07-19 |
-| 2025-12 | [FailCoT / Guardian](https://arxiv.org/abs/2512.01946) | Planning/execution failures, reasoning traces, and multi-view real-robot OOD evaluation | [C/W/D](https://github.com/paulpacaud/Guardian-FailCot) | 2026-07-18 |
-| 2025-12 | [ViFailback](https://arxiv.org/abs/2512.02787) | Real manipulation failures and correction supervision; onset/type/recovery-facing evaluation candidate | [C](https://github.com/x1nyuzhou/ViFailback); data license ? | 2026-07-18 |
-| 2025-10 | [FailSafe](https://arxiv.org/abs/2510.01642) | Failure/recovery action data and reasoning; release conditions pending | — | 2026-07-18 |
-| 2025-05 | [RoboFAC](https://arxiv.org/abs/2505.12224) | Error trajectories plus hierarchical QA/correction labels; failure taxonomy and verifier benchmark | [C](https://github.com/MINT-SJTU/RoboFAC) | 2026-07-18 |
-| 2024-12 | [RoboMIND](https://arxiv.org/abs/2412.13877) | Multi-embodiment robot data with reported failure coverage | [project](https://x-humanoid-robomind.github.io/); split/license audit required | 2026-07-18 |
-| 2024-10 | [AHA](https://arxiv.org/abs/2410.00371) | Failure reasoning/detection with synthetic perturbations; taxonomy baseline | [C](https://github.com/NVlabs/AHA) | 2026-07-18 |
-| 2023-06 | [REFLECT](https://arxiv.org/abs/2306.15724) | Historical failure explanation and replanning context; not itself a reward model | — | 2026-07-18 |
-
-### Counterfactual and generative failure synthesis
-
-This is an emerging data axis rather than a new reward semantics. See the [failure-synthesis pipeline audit](docs/failure-synthesis-pipelines.md) for the full comparison and safeguards.
-
-| Synthesis level | Representative pipeline | Negative signal | Reward/recovery use | Reality caveat |
-|---|---|---|---|---|
-| Temporal/semantic pseudo-negative | Robo-Dopamine; RoboReward; Guardian BridgeDataV2-Fail | Reverse order, task mismatch, relabel, or image substitution | Progress contrast and verifier training | No failed physical dynamics are produced |
-| Simulator intervention | DenseReward; FAILSafe; RACER | Perturb grasp, motion, action, or state and execute in simulation | Dense reward, failure onset/type, simulated recovery | Physical rollout exists only in simulation |
-| World-model counterfactual video | Dream2Fix | Perturb real-demo actions around a keyframe and generate the resulting video | Outcome/type/stage plus deterministic executable correction | Real source context, but generated failure is not real execution |
-| Real failure | RoboArena; REASSEMBLE; ViFailback | Natural policy, operator, object, or environment deviation | Ground-truth outcome/preference/recovery anchor | Highest fidelity, highest collection cost/risk |
-
-The likely scalable recipe is a **hybrid**: use generative pipelines for coverage, simulator interventions for dense physical labels, and a smaller set of real failures for calibration and held-out evaluation. `world_model_synth` must remain distinct from `real_executed`.
-
-## 7. Training data and supervision resources
-
-This is a cross-cutting index of data that can instantiate reward targets. It records **where the negative signal came from**: a real failure, an induced error, a mixed-expertise rollout, a corrective action, or a synthetic temporal reversal. Those sources should not be treated as interchangeable.
-
-### Model-associated reward corpora
-
-| Corpus | Scale and composition | Reward supervision recipe | Release status | Important caveat |
-|---|---|---|---|---|
-| [Robo-Dopamine GRM data](https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset) | 35M samples from ~3,400h, >100K trajectories, and >350 tasks; real robot, simulation, and human egocentric video | Human-annotated keyframes define step segments; ordered state pairs yield progress hops and reversed-order pairs yield regress hops | Gated dataset; Apache-2.0 card | Most negative supervision is constructed by reversing temporal order inside expert trajectories. It is not equivalent to observing a robot make and recover from a real mistake. |
-| [RBM-1M / Robometer](https://arxiv.org/abs/2603.02115) | 1,059,370 video–language annotations across 21 robot embodiments; expert, paired human–robot, mixed-expertise/failure, and human-only sources | Frame-level progress/success on expert trajectories plus trajectory preferences over expert, suboptimal, failed, rewound, and task-mismatched pairs | [Processed data repository](https://huggingface.co/datasets/robometer/processed_datasets) exists; official project still labels the canonical RBM-1M release “coming soon” | The aggregate count may include multiple views/annotations from one episode. Source licenses and failure provenance remain dataset-specific. |
-
-| [DenseReward corpus](https://huggingface.co/datasets/densereward/DenseReward) | Paper reports 26,579 episodes and 7.56M frame samples across DROID, Isaac Sim, RoboSuite, and LIBERO; released dataset card is Apache-2.0 | Phase-aware frame reward with synthesized physical failure modes and recovery cases | [D](https://huggingface.co/datasets/densereward/DenseReward) · [W](https://huggingface.co/densereward/densereward-3frame-thinking); [code repo empty](https://github.com/dense-reward/dense-reward) | Simulated failure synthesis is not real executed failure; model-native reward targets are not independent gold labels. |
-
-### Robot embodiment and failure provenance audit
-
-The [detailed robot/data matrix](docs/robot-data-matrix.md) records arm, gripper, sensing, task, count unit, label granularity, concrete failure modes, and reuse by Robometer/Robo-Dopamine. Its structured counterpart is [`registry/robot_datasets.yaml`](registry/robot_datasets.yaml).
-
-| Resource | Robot(s) | Reward-ready signal | Failure status |
+| Family | Question it answers | Typical native output | Methods |
 |---|---|---|---|
-| [RoboArena 2026-02-03 dump](https://huggingface.co/datasets/RoboArena/DataDump_02-03-2026/tree/main) | Real Franka Panda + Robotiq 2F-85 | 9,589 autonomous-policy episodes; preferences/ties, 0–100 progress, binary and partial success, free-form explanations | Real executed failure/partial progress; no fixed cause taxonomy |
-| [REASSEMBLE](https://researchdata.tuwien.ac.at/records/0ewrv-8cb44) | Real Franka Emika FR3 | 4,551 demonstrations; high-action and low-skill Boolean success; 4,035 success / 516 unsuccessful | Real misses, slips, alignment/orientation errors, jams, failed release, and placement obstruction |
-| [Guardian: RLBench-Fail](https://arxiv.org/html/2512.01946v3) | Simulated Franka Panda | Typed planning/execution errors plus reasoning | Simulated/injected and counterfactual |
-| [Guardian: BridgeDataV2-Fail](https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian) | Real-source WidowX 250 imagery | Typed errors plus reasoning | Counterfactual text/image failures; not physically executed failures |
-| [Guardian: UR5-Fail](https://arxiv.org/html/2512.01946v3) | Real UR5, three D435 cameras | Manual subtask success/failure plus reasoning | Real execution failures; generated planning failures |
-| [RH20T](https://rh20t.github.io/) | Flexiv, UR5, Franka Panda, KUKA LBR iiwa | `0=robot failure`, `1=task failure`, `2–9=completion quality` | Real but coarse; no published unified cause taxonomy |
-| [RoboChallenge Table30 V2](https://huggingface.co/datasets/RoboChallenge/Table30v2) | ARX5, UR5, ALOHA, DOS-W1 | 30-task multi-view demonstrations; `task_info.json` includes prompt, description, scoring criteria, and task tags; challenge rollouts receive stage progress and success scores | Human-defined process rubric plus real-robot evaluation outcomes; no fixed failure-cause taxonomy or demonstrated frame-level stage-boundary labels |
+| [Outcome](#outcome) | Is the task done, or will it fail? | success probability, 1–5 grade, failure score | 12 |
+| [Absolute Progress](#absolute-progress) | How far along is it? | progress in [0, 1], completion percentage | 29 |
+| [Relative](#relative) | Which is better? | pairwise preference, signed change between two states | 23 |
+| [Temporal Value](#temporal-value) | Which stage, and how well is it going? | stage progress, seconds to completion, V and Q values | 26 |
+| [Hybrid](#hybrid) | What happened, and on what evidence? | progress with success and preference, a verdict with its cause | 24 |
 
-Known parent-source overlap between Robometer and Robo-Dopamine is limited to **AgiBotWorld, DROID, and LIBERO** at the published metadata level. Exact episode overlap is unknown. Robo-Dopamine's reversed-order `REGRESS` pairs are constructed temporal supervision; Robometer additionally includes real, simulated, automatically labelled, and counterfactual failure sources. Do not pool these as one undifferentiated negative class.
+## 📢 News
 
-### Arena and challenge supervision
+- [x] `2026.11` First release: 114 methods in five families, with benchmarks and data resources.
+- [ ] Survey paper on arXiv, the RewardBox toolbox, and the RRM-Bench-1K data: coming soon.
 
-Arena/challenge platforms are a separate cross-cutting data source: they join expert demonstrations, a human-defined evaluation rubric, real policy rollouts, and comparable scores. They are especially useful for learning or testing value models across policies and partial completion—not only final success.
+## 📑 Contents
 
-| Platform | Training side | Evaluation side | Reward/value opportunity |
-|---|---|---|---|
-| [RoboChallenge Table30 / V2](https://robochallenge.ai/) | Up to 1,000 demonstrations per task in the original protocol; V2 releases multi-view demonstrations for four embodiments and embeds task-level scoring criteria/tags | A task is divided into scored stages; critical stages determine success, retries reduce progress, and public runs include score, success rate, video, and logs | Absolute stage value, critical-stage verifier, retry penalty, terminal success, multi-task and cross-machine calibration |
-| [RoboArena](https://arxiv.org/abs/2506.18123) | No fixed expert-training requirement; evaluates submitted policies on distributed real DROID setups | Human pairwise preference including ties, maximum progress, binary/partial success, and free-form explanation over autonomous rollouts | Pairwise reward, partial-completion value, explanation-grounded failure mining, policy ranking |
+- [Taxonomy](#-taxonomy) · [News](#-news)
+- [A. Related Surveys](#-a-related-surveys)
+- [B. Robotic Reward Models](#-b-robotic-reward-models)
+  - [Outcome](#outcome) · [Absolute Progress](#absolute-progress) · [Relative](#relative) · [Temporal Value](#temporal-value) · [Hybrid](#hybrid)
+- [C. Benchmarks](#-c-benchmarks)
+- [D. Data](#-d-data)
+- [Contributing](#-contributing) · [Acknowledgements](#-acknowledgements) · [Citation](#-citation)
 
-For Table30, the published `scoring` field is a **task/stage rubric**, not evidence of per-frame stage-boundary annotations in every demonstration. Keep `rubric`, `rollout score`, and `frame label` as three separate metadata fields.
+---
 
-### Egocentric, procedural-error, and cross-embodiment supervision
+## 📚 A. Related Surveys
 
-| Date | Dataset | Failure / correction evidence | Reward targets it can support | Data and license | Transfer caveat |
-|---|---|---|---|---|---|
-| 2026-07 | [EgoRecovery](https://arxiv.org/abs/2607.19745) | Per task, 300 human recovery clips plus 50 robot recovery and 50 normal robot demonstrations; recovery-state frames, recovery-to-normal boundary, corrective timing/magnitude, and final success | Recovery-needed probability; recovery boundary; corrective value; valid-trajectory re-entry | Paper only; linked code URL returned 404 and no data/weights release was verified | Human clips supervise corrective intent and timing, not robot action tokens; robot arm/gripper were not reported in accessible paper text. |
-| 2026-04 | [HRDexDB](https://snuvclab.github.io/HRDexDB/) | Paired human and dexterous-robot grasps with real robot success/failure labels, object 6D pose, ego/multi-view video, and tactile signals | Outcome reward; contact-aware value; human–robot outcome alignment | [D, CC BY-NC 4.0](https://huggingface.co/datasets/HRDexDB/HRDexDB) | Strongest robot-facing item here, but currently narrow to grasping and largely outcome-level labels. |
-| 2025-11 | [IndEgo](https://indego-dataset.github.io/) | 3,460 ego (~197h) + 1,092 exo (~97h); industrial keysteps, recording/mistake labels, mistake summaries, gaze, hand pose, and other signals | Error onset; stage-conditioned value; correct-vs-deviated preference; process verifier | [D, CC BY 4.0](https://huggingface.co/datasets/FraunhoferIPK/IndEgo) | Highly relevant domain, but the large Mistake Detection tree is still receiving files/annotations; pin a dataset revision before training. |
-| 2024-03 | [EgoPER](https://khoury.northeastern.edu/home/eelhami/egoper.htm) | 386 videos / 28h; 213 normal and 173 erroneous; frame-wise steps and five error types including slip and correction | Signed local reward (`slip < 0`, `correction > 0`); frame error probability; recovery re-entry | [D/code](https://github.com/robert80203/EgoPER_official); dataset license not verified | Fine-grained but only five cooking tasks; action appearance and embodiment differ from robots. |
-| 2023-12 | [CaptainCook4D](https://captaincook4d.github.io/captain-cook/) | 384 recordings / 94.5h with normal and induced-error executions; step/fine-action and error-type annotations | Controlled correct-vs-error preferences; step value; typed error verifier | [D, Apache-2.0](https://captaincook4d.github.io/captain-cook/) | Induced errors are useful counterfactuals, but their frequency and style are not natural robot-failure statistics. |
-| 2023-09 | [HoloAssist](https://holoassist.github.io/) | 166h from 350 instructor–performer pairs; fine actions marked correct/mistake plus intervention purpose and timing | Mistake onset; intervention need; pre/post-correction value; recovery intent | [D, CDLA v2](https://holoassist.github.io/data_links/README.html) | Assistance dialogue is an extra causal signal unavailable in ordinary autonomous robot rollouts. |
-| 2022-03 | [Assembly101](https://assembly-101.github.io/) | 4,321 procedures with 4 ego + 8 exo views; natural ordering variation, mistakes, propagated mistakes, and corrections | Order-aware value; mistake-chain penalty; correction/recovery reward; cross-view consistency | [D](https://huggingface.co/datasets/cvml-nus/assembly101) · [mistake annotations](https://github.com/assembly-101/assembly101-mistake-detection); CC BY-NC 4.0 | Natural errors are valuable, but the domain is toy assembly and the non-commercial license restricts reuse. |
+- **Progress Reward Modeling for Robotic Learning: A Comprehensive Survey**  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.21655)
 
-A safe first training recipe is to use expert robot data for calibrated progress, real/mixed robot failures for trajectory preference and success, ego mistakes for semantic error/correction auxiliaries, and paired human–robot data for cross-embodiment alignment. Human ego clips should supervise object/step semantics rather than robot action tokens.
+- **No Free Checker: A Survey of Verifiers for Robot Policies**  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.09250)
 
-## 8. Policy- and world-model-coupled value prediction
+- **Position: Good Embodied Reward Models Need Bad Behavior Data**  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.01036)
 
-This is a **cross-cutting integration axis**, not a sixth reward-semantics family. It includes a system only when a task-conditioned value/progress/critic signal is explicitly predicted and consumed by the policy, planner, recovery mechanism, or policy-learning objective. A VLA or world model that predicts only actions or future observations is out of scope.
+- **Intrinsic Robot Rewarding**  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.17115)
 
-| Date | Work | Coupling pattern | Predicted value and how it is used | Artifacts | Verified |
-|---|---|---|---|---|---|
-| 2026-09 | [SeeQ](https://arxiv.org/abs/2609.22085) | Separate subtask Q-function over a VLM backbone | Predicts the active subtask, then scores candidate action chunks for best-of-N steering after target-task fine-tuning | [W, pretrained only](https://huggingface.co/CMU-AIRe/SeeQ-3B); code not verified | 2026-09-28 |
-| 2026-09 | [VLA-Corrector (Song et al.)](https://arxiv.org/abs/2609.06508) | Separate execution verifier in a frozen-policy recovery loop | Stage/progress and binary risk trigger prompt recovery; not a scalar completion reward | — | 2026-09-28 |
-| 2026-07 | [WCM](https://arxiv.org/abs/2607.29613) | History-aware value/world critic | Task return from observation history and language; joint future-latent prediction shapes the representation used by on- or off-policy VLA RL | [C, MIT](https://github.com/sylvestf/WCM) · [example W/D](https://huggingface.co/collections/Sylvest/wcm) | 2026-08-13 |
-| 2026-07 | [ACE-Brain-0.5](https://arxiv.org/abs/2607.04426) | Shared embodied backbone | Execution progress; self-monitoring, verification, and recovery | [W](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) · [repo](https://github.com/DAXIAORobotics/ACE-Brain-0.5) | 2026-07-18 |
-| 2026-06 | [MV-WAM](https://arxiv.org/abs/2606.21088) | Joint world–action–value generator | Task completion/progress; misalignment detection and rollback | — | 2026-07-18 |
-| 2026-06 | [NavWAM](https://arxiv.org/abs/2606.13494) | Joint world–action–value generator | Goal-progress value; closed-loop navigation and optional best-of-N selection | [project](https://dachii-azm.github.io/navwam/) | 2026-07-18 |
-| 2026-06 | [Robot Self-Improvement via Human-Video Dynamics Models](https://arxiv.org/abs/2606.21406) | Compositional policy + dynamics + value | Progress-aligned value; ranks corrective actions after failures | [project; code coming soon](https://ethz-mrl.github.io/robot-self-improvement-website/) | 2026-07-18 |
-| 2026-05 | [RoboAlign-R1](https://arxiv.org/abs/2605.03821) | Standalone teacher→student evaluator inside a world-model loop | Six-dimensional semantic/physical reward; GRPO post-training of the robot video world model, not the VLA policy | [project](https://roboalign-r1.netlify.app/); releases claimed | 2026-07-18 |
-| 2026-05 | [ProgVLA](https://arxiv.org/abs/2605.28231) | Policy-internal auxiliary critics | Remaining-horizon V/Q and near-completion success; reweights imitation training | — | 2026-07-18 |
-| 2026-04 | [ViVa](https://arxiv.org/abs/2604.08168) | Value coupled to generative foresight | Scalar future-conditioned task value; robot RL | [C](https://github.com/GigaAI-research/ViVa) | 2026-07-18 |
-| 2026-03 | [ProgressVLA](https://arxiv.org/abs/2603.27670) | Compositional inverse-dynamics world model + progress estimator | Future-latent progress; differentiable action-token guidance and termination | — | 2026-07-24 |
-| 2026-02 | [RISE](https://arxiv.org/abs/2602.11075) | Compositional dynamics + progress value | Imagined-outcome value; advantage estimation for policy improvement | [C](https://github.com/OpenDriveLab/RISE) · [W: dynamics only](https://github.com/OpenDriveLab/RISE) | 2026-07-18 |
-| 2026-02 | [World-VLA-Loop](https://arxiv.org/abs/2602.06508) | Reward head integrated into the video world model | Binary imagined outcome reward; iterative VLA RL plus policy-failure feedback to the world model | [project/repo; code in preparation](https://github.com/showlab/World-VLA-Loop) | 2026-07-18 |
-| 2026-01 | [Cosmos Policy](https://arxiv.org/abs/2601.16163) | Joint world–action–value generator | Expected cumulative reward at predicted future state; planning and rollout refinement | [C](https://github.com/NVlabs/cosmos-policy) · [W/D](https://huggingface.co/collections/nvidia/cosmos-policy) | 2026-07-18 |
-| 2026-01 | [PALM](https://arxiv.org/abs/2601.07060) | Joint action–progress decoder | Continuous within-subtask progress; transition timing and long-horizon control | [C/W](https://github.com/PLAN-Lab/PALM) | 2026-07-18 |
-| 2025-12 | [EVOLVE-VLA](https://arxiv.org/abs/2512.14666) | Standalone learned progress estimator in a test-time policy loop | Smoothed visual progress; GRPO reward, stopping, and progressive horizon extension | [project/repo shell](https://github.com/showlab/EVOLVE-VLA) | 2026-07-24 |
-| 2025-09 | [VLAC](https://arxiv.org/abs/2509.15937) | Unified action/critic token model | Transition advancement critic; action generation and real-world RL | [C](https://github.com/InternRobotics/VLAC) | 2026-07-18 |
-| 2025-09 | [World-Env](https://arxiv.org/abs/2509.24948) | Compositional world simulator + VLM reward model | Continuous task-completion probability; imagined VLA RL and early termination | [C, Apache-2.0](https://github.com/amap-cvlab/world-env) · [W](https://www.modelscope.cn/models/junjxiao/world-env) | 2026-07-18 |
-| 2025-05 | [Hume](https://arxiv.org/abs/2505.21432) | Policy-internal value-query head | State–action value; low-frequency System-2 candidate selection before System-1 denoising | [C, MIT](https://github.com/hume-vla/hume) · [W, MIT](https://huggingface.co/Hume-vla/Hume-System2) | 2026-07-24 |
+Related lists: [Awesome Progress Reward Model](https://github.com/VanceChu/Awesome-Progress-Reward-Model) · [Awesome Robot Failure Management](https://robot-failures.github.io/awesome-robot-failure-management/datasets.html) · [RewardScope](https://github.com/philfung/reward-scope)
 
-The coupling patterns are deliberately separate from output meaning:
+## 🤖 B. Robotic Reward Models
 
-- `policy_internal`: auxiliary value/progress heads share the policy representation.
-- `joint_world_action_value`: one generative model predicts future state, action, and value.
-- `compositional_world_value`: dynamics and value remain distinct modules but jointly drive planning or policy improvement.
-- `shared_backbone_multi_interface`: one foundation backbone exposes separate action and monitoring interfaces.
-- `value_world_model`: reward/value is predicted by the generative world model, while actions come from a separate policy.
-- `standalone_evaluator`: a separate evaluator supplies reward to a policy- or world-model training loop.
+Methods are grouped by semantic family and design route, in order of first release. The native output is what a model returns before any downstream transformation. ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) marks the 14 methods that the survey benchmarks and the RewardBox toolbox runs. \* evaluates generated behavior; ‡ is a protocol or harness.
 
-For benchmark design, record whether the value is externally queryable at inference, used only as an auxiliary training target, calibrated across tasks, and evaluable independently from policy success.
+### Outcome
 
-## 9. Robot reward-model benchmarks
+[![Outcome](https://img.shields.io/badge/-Outcome-0072B2?style=flat-square)](#-taxonomy) ***Is the task done, or will it fail?*** Judges whether a declared event has occurred or will occur: terminal success, an end-of-episode grade, or a failure forecast.
 
-Benchmarking is a first-class category because a reward model can fit one output format while failing at a different requirement: calibration, fine progress, non-monotonic behavior, failure onset, or recovery. The [detailed benchmark landscape](docs/reward-model-benchmarks.md) separates direct reward tests, diagnostic prerequisites, model-native suites, and downstream policy sources; [`registry/benchmarks.yaml`](registry/benchmarks.yaml) is the machine-readable inventory.
+#### Episode-level outcome and ordinal judgments
 
-| Released | Benchmark | Primary target | Scale and metric | Main missing axis |
-|---|---|---|---|---|
-| 2026-11 | [RRM-Bench-1K](https://ethanliang99.github.io/awesome-robot-reward-model/#bench) | Whether credit follows the task state of a real execution: fulfillment, credit withdrawal, and camera evidence | 1,117 real-robot videos, 52 tasks, five embodiments; rising/falling direction F1, VOC, Kendall τ_a, paired sufficient and reduced views | One platform (RoboChallenge Table30 and Table30 V2); data release pending |
-| 2026-09 | [RoboRMBench](https://arxiv.org/abs/2609.05401) | Score stability under semantically equivalent task instructions on the same trajectory | 2,390 real-robot trajectories, 21,673 filtered paraphrases; SCR / flip rate / mean error | Derived from RoboRewardBench; benchmark files not verified as released; no temporal failure/recovery tests |
-| 2026-08 | [HumanTracker / HumanScore](https://arxiv.org/abs/2608.13555) | Human preference alignment for humanoid motion-tracking quality | [6,000 preference pairs and 2,500 motion references released](https://huggingface.co/datasets/GalaxyGeneralRobotics/HumanTracker); [C/W](https://github.com/GalaxyGeneralRobotics/HumanTracker) | Specialized motion-tracking metric, not task-completion reward; public release is a subset of the paper's full data |
-| 2026-08 | [TrustRoboReward benchmark](https://arxiv.org/abs/2608.08491) | Pointwise/pairwise trajectory progress and grounded-video-QA quality, plus cross-interface consistency | 7,030 human-annotated test items across four paradigms; MAE-style score metrics, pairwise accuracy, consistency | Paper-associated split is not a released independent gold test; no closed-loop physical-robot validation |
-| 2026-07 | [DenseReward evaluation suite](https://arxiv.org/html/2607.13033v1) | Dense failure-aware reward plus MPC/RL use | 26,579 episodes / 7.56M frames; reward MAE | Model-native rather than independent gold test |
-| 2026-06 | [Suboptimal-Value-Bench](https://zh1hao.wang/wvm/) | Hesitation and retry value | 800 trajectories, 15 tasks; Retry VOC / Hesitation RMSE | Data repository still empty on 2026-07-19; only two suboptimal modes |
-| 2026-06 | [RoboProcessBench](https://arxiv.org/html/2606.13040) | Process-aware VLM capability | ~58K QA, 260 tasks, 12 families; accuracy | Diagnostic QA, not direct reward calibration |
-| 2026-05 v2 | [RBM-EVAL-ID / OOD](https://arxiv.org/html/2603.02115v2) | Reward order and trajectory quality | ID 25,726; OOD 571; VOC / Kendall / preference accuracy | Limited typed onset, causal, and recovery annotations |
-| 2026-03 | [RoboPulse](https://huggingface.co/datasets/yuheng2000/RoboPulse) | Micro-scale relative progress | 1,800 pairs; Small/Medium/Large-hop accuracy | No natural failure onset or recovery re-entry |
-| 2026-03 | [FailCoT / UR5-Fail](https://arxiv.org/html/2512.01946v3) | Planning/execution failure verification | Real and generated held-out sets; classification accuracy | No dense value, PONR, or recovery metric |
-| 2026-01 | [RoboRewardBench](https://arxiv.org/abs/2601.00675) | Human-verified episode progress | 2,831 episodes, 14 embodiment types; 1–5 reward MAE | Episode-level, not dense temporal recovery evaluation |
+- **ZSRM**: Zero-Shot Reward Specification via Grounded Natural Language `2022.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://proceedings.mlr.press/v162/mahmoudieh22a.html) <sub>Native output: binary goal condition</sub>
 
-RRM-Bench-1K is the benchmark of the survey. Its videos keep closed-loop policy executions whole, with their failures, partial completions, retries, and recoveries. Task-state labels record which task conditions hold at each moment and withdraw credit when an achieved condition is lost, and each camera view is labeled by whether it shows enough to judge the task. Four contrast suites separate the credited condition from a cue that usually comes with it: (A) Action–Effect, (B) Semantic/Ordered Constraint, (C) Persistence/Reversal, and (D) Visibility. Results are reported per capability, not as one overall score ([project page](https://ethanliang99.github.io/awesome-robot-reward-model/#leaderboard)).
+- **SuccessVQA**: Vision-Language Models as Success Detectors `2023.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2303.07280) <sub>Native output: binary success answer</sub>
 
-## 10. Adjacent system interfaces
+- **RoboCLIP**: One Demonstration is Enough to Learn Robot Policies `2023.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://papers.nips.cc/paper_files/paper/2023/hash/ae54ce310476218f26dd48c1626d5187-Abstract-Conference.html) [![Code](https://img.shields.io/github/stars/sumedh7/RoboCLIP?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/sumedh7/RoboCLIP) <sub>Native output: episode compatibility</sub>
 
-These are useful boundary papers when the evaluator is consumed for policy selection, termination, recovery, or world-model policy evaluation. They should not displace the core reward-model taxonomy.
+- **RoboFuME**: Robot Fine-Tuning Made Easy: Pre-Training Rewards and Policies for Autonomous Real-World Reinforcement Learning `2023.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2310.15145) <sub>Native output: binary completion</sub>
 
-| Date | Work | Why it is adjacent |
+- **I-FailSense**: Towards General Robotic Failure Detection with Vision-Language Models `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.16072) [![Code](https://img.shields.io/github/stars/clemgris/I-FailSense?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/clemgris/I-FailSense) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/ACIDE/failsense-3b) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square)](https://clemgris.github.io/I-FailSense/) <sub>Native output: binary success/failure</sub>
+
+- **RoboReward**: General-Purpose Vision-Language Reward Models for Robotics `2026.01`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2601.00675) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/teetone/RoboReward-4B) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/teetone/RoboReward) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: end-episode progress (1–5)</sub>
+
+- **World-VLA-Loop**\*: Closed-Loop Learning of Video World Model and VLA Policy `2026.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2602.06508) <sub>Native output: success score</sub>
+
+#### Predictive and policy-internal failure monitors
+
+- **Sentinel**‡: Unpacking Failure Modes of Generative Policies: Runtime Monitoring of Consistency and Progress `2024.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2410.04640) <sub>Native output: failure forecast + rationale</sub>
+
+- **SAFE**: Multitask Failure Detection for Vision-Language-Action Models `2025.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2506.09937) <sub>Native output: running failure score</sub>
+
+- **VLAConf**: Calibrated Task-Success Confidence for Vision-Language-Action Models `2026.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.29605) <sub>Native output: calibrated success confidence</sub>
+
+- **OpenVLA warning probe**: Early Warning Signals for OpenVLA Failure under Visual Distribution Shift `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.29699) <sub>Native output: failure probability</sub>
+
+- **FAVOR**: Future Anchored Verification and Online Recovery for World Action Models `2026.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.06280) <sub>Native output: deviation-event probability</sub>
+
+### Absolute Progress
+
+[![Absolute Progress](https://img.shields.io/badge/-Absolute_Progress-E69F00?style=flat-square)](#-taxonomy) ***How far along is it?*** Estimates advancement on a whole-task scale, anchored by a goal, a reference, a learned scale, or the task procedure.
+
+#### Distances to goal or demonstration representations
+
+- **VIP**: Towards Universal Visual Reward and Representation via Value-Implicit Pre-Training `2022.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://openreview.net/forum?id=YJ7o2wetJ2) [![Code](https://img.shields.io/github/stars/facebookresearch/vip?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/facebookresearch/vip) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square)](https://github.com/facebookresearch/vip#vip-usage-examples) <sub>Native output: goal distance</sub>
+
+- **LIV**: Language-Image Representations and Rewards for Robotic Control `2023.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://proceedings.mlr.press/v202/ma23b.html) [![Code](https://img.shields.io/github/stars/penn-pal-lab/LIV?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/penn-pal-lab/LIV) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/jasonyma/LIV) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square)](https://github.com/penn-pal-lab/LIV/blob/main/liv/dataset/README.md) <sub>Native output: value</sub>
+
+- **VLM-RM**: Vision-Language Models are Zero-Shot Reward Models for Reinforcement Learning `2023.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://openreview.net/forum?id=N0I2RtD8je) [![Code](https://img.shields.io/github/stars/AlignmentResearch/vlmrm?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/AlignmentResearch/vlmrm) <sub>Native output: compatibility</sub>
+
+- **Adapt2Reward**: Adapting Video-Language Models to Generalizable Robotic Rewards via Failure Prompts `2024.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://doi.org/10.1007/978-3-031-72998-0_10) <sub>Native output: compatibility</sub>
+
+- **ReWiND**: Language-Guided Rewards Teach Robot Policies without New Demonstrations `2025.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2505.10911) [![Code](https://img.shields.io/github/stars/rewind-reward/ReWiND?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/rewind-reward/ReWiND) <sub>Native output: progress</sub>
+
+- **SPARTA-L**: Mash, Spread, Slice! Learning to Manipulate Object States via Visual Spatial Progress `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.24129) <sub>Native output: object-state progress</sub>
+
+- **Rewarding DINO**: Predicting Dense Rewards with Vision Foundation Models `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.16978) <sub>Native output: reward</sub>
+
+- **HiRE**: Hindsight Reward Editing for Policy Finetuning `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.27068) <sub>Native output: success/failure support potential</sub>
+
+#### Temporal supervision and progress proxies
+
+- **Video-Language Critic**: Transferable Reward Functions for Language-Conditioned Robotics `2024.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://openreview.net/forum?id=jJOVpnNrEp) [![Code](https://img.shields.io/github/stars/minttusofia/video_language_critic?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/minttusofia/video_language_critic) <sub>Native output: clip value</sub>
+
+- **GVL**: Vision Language Models are In-Context Value Learners `2024.11`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://openreview.net/forum?id=friHAl5ofG) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: completion %</sub>
+
+- **PROGRESSOR**: A Perceptually Guided Reward Estimator with Self-Supervised Online Refinement `2024.11`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://doi.org/10.1109/ICCV51701.2025.00959) <sub>Native output: progress distribution</sub>
+
+- **VITA**: Zero-Shot Value Functions via Test-Time Adaptation of Vision-Language Models `2025.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2506.10085) <sub>Native output: normalized progress</sub>
+
+- **RARM**: Confidence-Gated Progress Reward Modeling for RL in Manipulation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.22027) <sub>Native output: confidence-gated progress</sub>
+
+- **ReTVL**: Beyond Monotonic Progress: Retry-Supervised Value Learning for Robot Imitation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.24633) <sub>Native output: value</sub>
+
+- **WVM**: World Value Models for Robotic Manipulation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.24742) <sub>Native output: progress sequence</sub>
+
+- **WARP-RM**: A Warp-Augmented Relative Progress Reward Model for Data Curation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.28320) [![Code](https://img.shields.io/github/stars/uynitsuj/WARP-RM?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/uynitsuj/WARP-RM) <sub>Native output: progress (+ velocity)</sub>
+
+- **DenseReward**: Dense Reward Learning via Failure Synthesis for Robotic Manipulation `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.13033) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/densereward/densereward-3frame-thinking) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/densereward/DenseReward) <sub>Native output: progress</sub>
+
+- **AnyviewMeter**: Adapting Robotic Reward Models with Camera Geometry and Multi-View Attention `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.20106) <sub>Native output: task progress</sub>
+
+#### Prompted, token-level, and reasoning-based progress
+
+- **ProgressLM**: Towards Progress Reasoning in Vision-Language Models `2026.01`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2601.15224) <sub>Native output: progress / unanswerable</sub>
+
+- **TOPReward**: Token Probabilities as Hidden Zero-Shot Rewards for Robotics `2026.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2602.19313) [![Code](https://img.shields.io/github/stars/TOPReward/TOPReward?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/TOPReward/TOPReward) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: progress (log-prob)</sub>
+
+- **R²VLM**: Recurrent Reasoning with Vision-Language Models for Estimating Long-Horizon Embodied Task Progress `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.17312) <sub>Native output: completion % + rationale</sub>
+
+- **SOLE-R1**: Video-Language Reasoning as the Sole Reward for On-Robot Reinforcement Learning `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.28730) [![Code](https://img.shields.io/github/stars/rai-opensource/sole-r1?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/rai-opensource/sole-r1) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/theaiinstitute/sole-r1) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/theaiinstitute/sole-r1) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: progress + rationale</sub>
+
+- **ProcVLM**: Learning Procedure-Grounded Progress Rewards for Robotic Manipulation `2026.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.08774) [![Code](https://img.shields.io/github/stars/ProcVLM/ProcVLM?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/ProcVLM/ProcVLM) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/ce-amtic/ProcVLM-2B) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/ce-amtic/ProcCorpus-60M) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: progress + proc. rationale</sub>
+
+- **Feat2Go**: Visual Feature-Grounded Value Estimation for Embodied Reinforcement Learning `2026.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.30795) <sub>Native output: binned structural progress</sub>
+
+- **LLM-as-a-Verifier**‡: A General-Purpose Verification Framework `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.05391) <sub>Native output: progress (score-token expectation)</sub>
+
+- **ARS**‡: Agentic Reward System for Robot Learning `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.34484) <sub>Native output: per-frame progress</sub>
+
+#### Policy- and world-model-coupled progress
+
+- **World-Env**\*: RehearseVLA: Simulated Post-Training for VLAs with Physically-Consistent World Model `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.24948) [![Code](https://img.shields.io/github/stars/amap-cvlab/world-env?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/amap-cvlab/world-env) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square)](https://www.modelscope.cn/models/junjxiao/world-env) <sub>Native output: completion probability</sub>
+
+- **ProgressVLA**: Progress-Guided Diffusion Policy for Vision-Language Robotic Manipulation `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.27670) <sub>Native output: progress</sub>
+
+- **NavWAM**: A Navigation World Action Model for Goal-Conditioned Visual Navigation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.13494) <sub>Native output: progress value</sub>
+
+### Relative
+
+[![Relative](https://img.shields.io/badge/-Relative-009E73?style=flat-square)](#-taxonomy) ***Which is better?*** Orders executions, states, or actions, from a direct comparison of a pair to a utility learned from preferences.
+
+#### Direct pairwise and transition comparators
+
+- **DecisionNCE-T**: DecisionNCE: Embodied Multimodal Representations via Implicit Preference Learning `2024.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2402.18137) <sub>Native output: transition-direction score</sub>
+
+- **TimeRewarder**: Learning Dense Reward from Passive Videos via Frame-wise Temporal Distance `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.26627) [![Code](https://img.shields.io/github/stars/CowAndSheep/TimeRewarder?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/CowAndSheep/TimeRewarder) <sub>Native output: signed temporal distance</sub>
+
+- **Robo-Dopamine**: General Process Reward Modeling for Robotic Reinforcement Learning `2025.12`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2512.23703) [![Code](https://img.shields.io/github/stars/FlagOpen/Robo-Dopamine?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/FlagOpen/Robo-Dopamine) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/tanhuajie2001/Robo-Dopamine-GRM-8B) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: relative progress</sub>
+
+- **Small Stuff**: Robot Critics that Sweat the Small Stuff `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.21572) <sub>Native output: pairwise progress judgment</sub>
+
+- **Dream2Reward**: Transition-Alignment Reward Models from Positive Demonstrations for Robotic Manipulation `2026.08`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.18787) <sub>Native output: signed transition alignment</sub>
+
+#### Pointwise utilities learned from preferences
+
+- **RL-VLM-F**: Reinforcement Learning from Vision Language Foundation Model Feedback `2024.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://proceedings.mlr.press/v235/wang24bn.html) <sub>Native output: scalar task utility</sub>
+
+- **Rank2Reward**: Learning Shaped Reward Functions from Passive Video `2024.04`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2404.14735) <sub>Native output: temporal-order utility</sub>
+
+- **VLP**: Vision-Language Preference Learning for Embodied Manipulation `2025.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2502.11918) <sub>Native output: trajectory utility</sub>
+
+- **VARP**: Reinforcement Learning from Vision-Language Model Feedback with Agent Regularized Preferences `2025.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2503.13817) <sub>Native output: preference utility</sub>
+
+- **MVR**: Multi-view Video Reward Shaping for Reinforcement Learning `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.01694) [![Code](https://img.shields.io/github/stars/mvr-rl/mvr?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/mvr-rl/mvr) <sub>Native output: state relevance utility</sub>
+
+- **GIFT**: Generalizing Intent for Flexible Test-Time Rewards `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.22574) <sub>Native output: intent-conditioned utility</sub>
+
+- **FPL**: Freeform Preference Learning for Robotic Manipulation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.32027) [![Code](https://img.shields.io/github/stars/freeform-pl/fpl?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/freeform-pl/fpl) <sub>Native output: criterion-cond. utility</sub>
+
+- **VLM-AR3L**: Vision-Language Models for Absolute and Relative Rewards in Reinforcement Learning `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.00483) <sub>Native output: utility / pair preference</sub>
+
+- **Listwise VLM reward**: Beyond Pairwise Feedback: Listwise Vision-Language Supervision for Preference-Based Reward Learning `2026.08`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.25350) <sub>Native output: preference utility</sub>
+
+- **RAPID**: Scaling Vision-Language Reward Learning for Robot Manipulation in Parallel Simulation `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.21767) <sub>Native output: preference utility</sub>
+
+#### Candidate-action comparators
+
+- **RoboMonkey**: Scaling Test-Time Sampling and Verification for Vision-Language-Action Models `2025.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2506.17811) [![Code](https://img.shields.io/github/stars/robomonkey-vla/RoboMonkey?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/robomonkey-vla/RoboMonkey) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/robomonkey-vla/monkey-verifier-7b) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/robomonkey-vla/action_preference_bridge) <sub>Native output: rank</sub>
+
+- **RoVer**: Robot Reward Model as Test-Time Verifier for Vision-Language-Action Model `2025.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2510.10975) <sub>Native output: rank + direction</sub>
+
+- **EVE**‡: A Generator-Verifier System for Generative Policies `2025.12`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2512.21430) <sub>Native output: candidate selection</sub>
+
+- **CoVer**: Scaling Verification Can Be More Effective than Scaling Policy Learning for Vision-Language-Action Alignment `2026.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2602.12281) [![Code](https://img.shields.io/github/stars/cover-vla/cover-vla?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/cover-vla/cover-vla) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/cover-vla) <sub>Native output: alignment score</sub>
+
+- **TapSampling**: Inference-Time Sampling with a Task-Progress-Understanding Verifier for Robotic Manipulation `2026.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.25547) [![Code](https://img.shields.io/github/stars/aipixel/TapSampling?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/aipixel/TapSampling) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/SizheZhao/tapsampling) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/SizheZhao/TapSampling-CALVIN-Part-Data) <sub>Native output: progress delta</sub>
+
+- **PreferenceFlow**: Test-Time Guidance of Flow-Matching Robot Policies from Human Interventions `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.36872) <sub>Native output: action preference utility</sub>
+
+- **TeV**: Looking Back to Move Forward: Temporal Verification for Generative Robot Policies `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.39038) <sub>Native output: action energy</sub>
+
+- **DiVeR**: Decision-Critical Verifier Learning for VLA Test-Time Scaling `2026.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.04933) <sub>Native output: candidate utility</sub>
+
+### Temporal Value
+
+[![Temporal Value](https://img.shields.io/badge/-Temporal_Value-CC79A7?style=flat-square)](#-taxonomy) ***Which stage, and how well is it going?*** Measures against a reference the execution itself sets: the stage reached, the time to go, or the return expected under the policy that continues it.
+
+#### Stage-decomposed values
+
+- **CLIP-Motion**: Learning Reward Functions for Robotic Actions Using Consecutive Observations `2023.11`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2311.03485) <sub>Native output: motion stage / stage reward</sub>
+
+- **VICtoR**: Learning Hierarchical Vision-Instruction Correlation Rewards for Long-horizon Manipulation `2024.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2405.16545) <sub>Native output: stage-aware motion progress</sub>
+
+- **REDS**: Subtask-Aware Visual Reward Learning from Segmented Demonstrations `2025.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2502.20630) <sub>Native output: subtask-conditioned reward</sub>
+
+- **TeViR**: Text-to-Video Reward with Diffusion Models for Efficient Reinforcement Learning `2025.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2505.19769) <sub>Native output: reached-reference stage</sub>
+
+- **T2-VLM**‡: Training-free Generation of Temporally Consistent Rewards from VLMs `2025.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2507.04789) <sub>Native output: tracked subgoal reward</sub>
+
+- **SARM**: Stage-Aware Reward Modeling for Long Horizon Robot Manipulation `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.25358) [![Code](https://img.shields.io/github/stars/xdofai/opensarm?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/xdofai/opensarm) <sub>Native output: stage + progress</sub>
+
+- **PALM**: Progress-Aware Policy Learning via Affordance Reasoning for Long-Horizon Robotic Manipulation `2026.01`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2601.07060) [![Code](https://img.shields.io/github/stars/PLAN-Lab/PALM?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/PLAN-Lab/PALM) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square)](https://github.com/PLAN-Lab/PALM#-checkpoints) <sub>Native output: progress</sub>
+
+- **MARVL**: Multi-Stage Guidance for Robotic Manipulation via Vision-Language Models `2026.01`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2602.15872) <sub>Native output: staged similarity</sub>
+
+- **SARM2**: Multi-Task Stage Aware Reward Modeling for Self Improving Robotic Manipulation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.10305) [![Code](https://img.shields.io/github/stars/xdofai/opensarm?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/xdofai/opensarm) <sub>Native output: stage + value</sub>
+
+- **STDR**: Stage-Transition Dense Reward Modeling for Reinforcement Learning `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.31377) <sub>Native output: stage + within-stage progress</sub>
+
+#### Temporal distance values
+
+- **Self-Improving EFM**: Self-Improving Embodied Foundation Models `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.15155) <sub>Native output: steps-to-go distribution</sub>
+
+- **RynnValue**: Scaling Robotic Value Foundation Models with Temporal Distance `2026.08`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.09853) [![Code](https://img.shields.io/github/stars/alibaba-damo-academy/RynnValue?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/alibaba-damo-academy/RynnValue) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/Alibaba-DAMO-Academy/RynnValue-4B) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: temporal distance (absolute + signed)</sub>
+
+#### Policy-indexed and value-in-the-loop models
+
+- **V-PTR**: Robotic Offline RL from Internet Videos via Value-Function Learning `2023.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2309.13041) <sub>Native output: task Q-value</sub>
+
+- **Hume**: Introducing System-2 Thinking in Visual-Language-Action Model `2025.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2505.21432) [![Code](https://img.shields.io/github/stars/hume-vla/hume?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/hume-vla/hume) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/Hume-vla/Hume-System2) <sub>Native output: Q-value</sub>
+
+- **RECAP**: (^*_0.6): A VLA That Learns From Experience `2025.11`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2511.14759) <sub>Native output: return distribution (steps to success)</sub>
+
+- **Cosmos Policy**: Fine-Tuning Video Models for Visuomotor Control and Planning `2026.01`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2601.16163) [![Code](https://img.shields.io/github/stars/NVlabs/cosmos-policy?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/NVlabs/cosmos-policy) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/nvidia/cosmos-policy) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/nvidia/cosmos-policy) <sub>Native output: return value</sub>
+
+- **RISE**\*: Self-Improving Robot Policy with Compositional World Model `2026.02`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2602.11075) [![Code](https://img.shields.io/github/stars/OpenDriveLab/RISE?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/OpenDriveLab/RISE) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square)](https://github.com/OpenDriveLab/RISE) <sub>Native output: progress/TD value</sub>
+
+- **ViVa**: A Video-Generative Value Model for Robot Reinforcement Learning `2026.04`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.08168) [![Code](https://img.shields.io/github/stars/GigaAI-research/ViVa?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/GigaAI-research/ViVa) <sub>Native output: task value</sub>
+
+- **Frozen-VLA value probes**: What Frozen VLAs Already Know About Success: A Probing Study of Value-Like Structure in Foundation Robot Policies `2026.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.28527) <sub>Native output: discounted outcome</sub>
+
+- **MV-WAM**: Manifold-Aware World Action Model with Value Augmentation `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.21088) <sub>Native output: return value</sub>
+
+- **DGAC**: Robot Self-Improvement via Human-Video Dynamics Models `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.21406) <sub>Native output: value / candidate rank</sub>
+
+- **Robo-ValueRL**: Reliable Value Estimation for Offline-to-Online Reinforcement Learning `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.09866) [![Code](https://img.shields.io/github/stars/Open-X-Humanoid/Robo-ValueRL?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/Open-X-Humanoid/Robo-ValueRL) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/X-Humanoid/Robo-ValueRL) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/X-Humanoid/Robo-ValueRL) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: normalized time-to-go value</sub>
+
+- **WCM**: A World Critic Model for Vision-Language-Action Reinforcement Learning `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.29613) [![Code](https://img.shields.io/github/stars/sylvestf/WCM?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/sylvestf/WCM) <sub>Native output: history value</sub>
+
+- **SeeQ**: Training Generalist Value Functions for Long-Horizon Robotic Manipulation `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.22085) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/CMU-AIRe/SeeQ-3B) <sub>Native output: subtask Q-value</sub>
+
+- **eVTA**: Demonstration-Free Success-Probability Reward Learning for Generalist Robot Policies `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.33653) <sub>Native output: expected future success</sub>
+
+- **MetaWAM**: From Video Frames to Robot Meta-Frames: A Unified Latent Interface for World Action Models `2026.11`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2611.14365) <sub>Native output: return value</sub>
+
+### Hybrid
+
+[![Hybrid](https://img.shields.io/badge/-Hybrid-6E6E6E?style=flat-square)](#-taxonomy) ***What happened, and on what evidence?*** Composes several judgments, from different families or as the fields of a structured verification judgment.
+
+#### Composite rewards and multi-interface models
+
+- **GRAPE**: Generalizing Robot Policy via Preference Alignment `2024.11`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2411.19309) <sub>Native output: stage cost + self-likelihood + success</sub>
+
+- **VLAC**: A Vision-Language-Action-Critic Model for Robotic Real-World Reinforcement Learning `2025.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2509.15937) [![Code](https://img.shields.io/github/stars/InternRobotics/VLAC?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/InternRobotics/VLAC) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: relative progress + done</sub>
+
+- **Robometer**: Scaling General-Purpose Robotic Reward Models via Trajectory Comparisons `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.02115) [![Code](https://img.shields.io/github/stars/robometer/robometer?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/robometer/robometer) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/robometer/Robometer-4B) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: progress + success + pref.</sub>
+
+- **Large Reward Models**: Generalizable Online Robot Reward Generation with Vision-Language Models `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.16065) [![Code](https://img.shields.io/github/stars/physical-superintelligence-lab/Large-Reward-Models?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/physical-superintelligence-lab/Large-Reward-Models) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: multi-part reward</sub>
+
+- **VLLR**: Generalizable Dense Reward for Long-Horizon Robotic Tasks `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.00055) <sub>Native output: subgoal progress (critic init.) + self-certainty + outcome</sub>
+
+- **ARM**: Advantage Reward Modeling for Long-Horizon Manipulation `2026.04`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2604.03037) <sub>Native output: advantage + completion</sub>
+
+- **CoRe**: Combined Rewards with Vision-Language Model Feedback for Preference-Aligned Reinforcement Learning `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.01721) <sub>Native output: formal + residual reward</sub>
+
+- **ACE-Brain-0.5**: A Unified Embodied Foundational Model for Physical Agentic AI `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.04426) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/ACERobotics/ACE-Brain-0.5-8B) <sub>Native output: progress + preference</sub>
+
+- **TrustRoboReward**: Preference-Ordered Isotonic Score Editing for Multi-Paradigm Robot Reward Models `2026.08`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.08491) <sub>Native output: scores / comparisons + rationale</sub>
+
+- **FIERCE**: From Generalist Robot Policies to Fast Specialists via Progress-Failure Feedback `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.18651) <sub>Native output: progress + future failure risk</sub>
+
+- **Flora-Rewarder**: FLORA: An Open Model Suite for Scaling Robotics Data Engines `2026.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.31779) [![Code](https://img.shields.io/github/stars/NVlabs/Flora?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/NVlabs/Flora) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/nvidia/Flora-Rewarder) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: episode grade (1–5) + step action quality + rubric scores</sub>
+
+#### Structured process critics and failure diagnosis
+
+- **AHA**: A Vision-Language-Model for Detecting and Reasoning Over Failures in Robotic Manipulation `2024.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-7FAFD4?style=flat-square)](https://openreview.net/forum?id=JVkdSi7Ekg) <sub>Native output: sub-task verdict + failure explanation</sub>
+
+- **Guardian**: Detecting Robotic Planning and Execution Errors with Vision-Language Models `2025.12`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2512.01946) [![Code](https://img.shields.io/github/stars/paulpacaud/Guardian-FailCot?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/paulpacaud/Guardian-FailCot) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/paulpacaud/guardian-thinking) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian) <sub>Native output: verdict + reasoning trace</sub>
+
+- **PRIMO-R1**: From Passive Observer to Active Critic: Reinforcement Learning Elicits Process Reasoning for Robotic Manipulation `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.15600) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: progress + failure + CoT</sub>
+
+- **VLAC-Cut**: HELP: Human-Efficient Large-Scale Robot Post-Training with Rollout Segmentation `2026.07`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2607.09776) [![Code](https://img.shields.io/github/stars/InternRobotics/VLAC-cut?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/InternRobotics/VLAC-cut) [![Weights](https://img.shields.io/badge/-Weights-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/InternRobotics/VLAC-Cut) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/InternRobotics/VLAC-Cut-FullData) ![RewardBox](https://img.shields.io/badge/-RewardBox-3E5C76?style=flat-square) <sub>Native output: signed progress + diagnosis + cut points</sub>
+
+#### Judges for generated robot behavior
+
+- **ReWorld**\*: Multi-Dimensional Reward Modeling for Embodied World Models `2026.01`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2601.12428) <sub>Native output: hierarchical four aspects</sub>
+
+- **RoboAlign-R1**\*: Distilled Multimodal Reward Alignment for Robot Video World Models `2026.05`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2605.03821) <sub>Native output: six scores</sub>
+
+- **Reward as an Agent**\*: Reward as An Agent for Embodied World Models `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.19990) [![Code](https://img.shields.io/github/stars/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/SpursLipu/Reward-as-An-Agent-for-Embodied-World-Models) <sub>Native output: 4-aspect scores + rationale</sub>
+
+- **RoboGaze**\*‡: Evaluating Robot World Models via Structured Vision-Language Analysis `2026.06`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2606.28385) <sub>Native output: localized failure events + severity</sub>
+
+- **EVO-WAM**\*‡: Evolving World Action Models through Video-Action Verification `2026.09`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2609.38057) <sub>Native output: completion + action consistency</sub>
+
+- **RoboJudge-9B**\*: RoboJudge: Multimodal Language Models as Judges for Embodied Video Generation `2026.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.27782) <sub>Native output: physical adherence + instruction alignment + rationale</sub>
+
+#### Protocol judges and runtime verification
+
+- **PRM-as-a-Judge**‡: A Dense Evaluation Paradigm for Fine-Grained Robotic Auditing `2026.03`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2603.21669) [![Code](https://img.shields.io/github/stars/Yuheng2000/PRM-as-a-Judge?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/Yuheng2000/PRM-as-a-Judge) [![Data](https://img.shields.io/badge/-Data-FFD21E?style=flat-square&logo=huggingface&logoColor=black)](https://huggingface.co/datasets/yuheng2000/RoboPulse) <sub>Native output: outcome–process–diagnosis profile</sub>
+
+- **Thea**‡: Towards the Harness of Embodied Agents `2026.08`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2608.11246) [![Code](https://img.shields.io/github/stars/EIT-HAI/Thea?style=flat-square&logo=github&label=Code&color=B7CADB)](https://github.com/EIT-HAI/Thea) <sub>Native output: status + evidence + cause</sub>
+
+- **VeriFine-Judge**: VeriFine: Scaling Verification for Self-Improvement in Embodied Reasoning `2026.10`  
+  [![Paper](https://img.shields.io/badge/-Paper-E58A8F?style=flat-square&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.08761) <sub>Native output: rubric scores + diagnostics</sub>
+
+Related evaluators outside the survey's corpus: [GORDON](https://arxiv.org/abs/2608.03753) · [ProgAgent](https://arxiv.org/abs/2603.07784) · [EVOLVE-VLA](https://arxiv.org/abs/2512.14666) · [ProgVLA](https://arxiv.org/abs/2605.28231) · [Diffusion Reward](https://arxiv.org/abs/2312.14134) · [VLA-Corrector](https://arxiv.org/abs/2609.06508) · [Success Visitation Matching](https://arxiv.org/abs/2606.23640)
+
+## 🧪 C. Benchmarks
+
+**RRM-Bench-1K** (ours) tests whether a reward follows the task state of a real execution rather than motion, elapsed time, or what the camera happens to show. Its four contrast suites each separate the credited condition from a cue that usually comes with it.
+
+<p align="center">
+  <a href="./assets/readme/suites.jpg">
+    <img src="./assets/readme/suites.jpg" width="100%" alt="The four contrast suites of RRM-Bench-1K">
+  </a>
+</p>
+
+| Benchmark | Measures | Scale |
 |---|---|---|
-| 2026-09 | [RoboRecover](https://arxiv.org/abs/2609.28952) | Simulation policy-recovery scenarios from replayed deviation states; possible source for future reward-model probes, but its reported metric is policy recovery rather than evaluator quality |
-| 2026-08 | [Agentic Harnesses](https://arxiv.org/abs/2608.09857) | Pre-execution governance layer verifies natural-language robot plans for feasibility, safety, ethics, and security; useful verifier context, but it does not evaluate observed robot behavior or expose a trajectory reward/value interface |
-| 2026-07 | [EgoRecovery](https://arxiv.org/abs/2607.19745) | Learned recovery gate and human-to-robot corrective-intent transfer; directly useful for re-entry labels, but not a general reward model |
-| 2026-06 | [VERITAS](https://arxiv.org/abs/2606.18247) | Gradient-free visual-trace verifier ranks candidate actions and recycles verified rollouts; an evaluator interface rather than a learned standalone reward model |
-| 2026-04 | [dWorldEval](https://arxiv.org/abs/2604.22152) | World-model proxy for scalable policy evaluation rather than a standalone robot reward model |
-| 2025-05 | [WorldEval](https://arxiv.org/abs/2505.19017) | World-model policy ranking and safety checking; evaluator-system boundary |
-| 2026-06 | [Recover, Discover, Plan](https://arxiv.org/abs/2606.18328) | Failure-driven skill/concept learning and planning, without a separately benchmarked reward model |
+| [**RRM-Bench-1K**](https://ethanliang99.github.io/awesome-robot-reward-model/#bench) (ours) | Whether credit follows the task state: fulfillment, credit withdrawal, and camera evidence | 1,117 real-robot videos |
+| [ManiRewardBench](https://arxiv.org/abs/2602.19313) | Stage progress; success detection | 653 episodes; 130 tasks |
+| [RBM-EVAL](https://arxiv.org/abs/2603.02115) | Progress alignment; ranking | 571 OOD videos |
+| [PRIMO Bench](https://arxiv.org/abs/2603.15600) | Progress under task and scene shift | 18k samples; humanoid set |
+| [RoboRewardBench](https://arxiv.org/abs/2601.00675) | Episode-end progress grade (1–5) | 2,831 test items |
+| [RoboRMBench](https://arxiv.org/abs/2609.05401) | Paraphrase invariance of rewards | 2,390 trajectories |
+| [Progress-Bench](https://arxiv.org/abs/2601.15224) | Progress from a demo; answerability | > 3k instances |
+| [OpenGVL](https://arxiv.org/abs/2509.17321) | Temporal order of shuffled frames | 200 trajectories; 4 datasets |
+| [RoboPulse](https://arxiv.org/abs/2603.21669) | Pairwise progress discrimination | 1,800 pairs; 816 tasks |
+| [Suboptimal-Value-Bench](https://arxiv.org/abs/2606.24742) | Value under hesitation and retry | 800 trajectories; 15 tasks |
+| [RoboPulse++](https://arxiv.org/abs/2608.14284) | Interval-level progress direction | 2,244 intervals |
+| [FailBench](https://arxiv.org/abs/2609.03611) | Binary success detection | 2,197 attempts; 14 sources |
+| [RoboValue](https://arxiv.org/abs/2610.26663) | Grounding, progress, recovery, and subtask credit | 2,792 test trajectories; 15 sim + 20 real tasks |
 
-## 11. Related surveys, perspectives, and community discovery resources
+## 🗂️ D. Data
 
-- [No Free Checker: A Survey of Verifiers for Robot Policies](https://arxiv.org/abs/2609.09250) — September 2026 preprint with a broader policy-verification scope, including human and formal verifiers, availability/credibility, and reward-hacking validation; complements the semantics-first reward-model scope here.
-- [Intrinsic Robot Rewarding](https://arxiv.org/abs/2609.17115) — September 2026 position paper proposing to reuse a frozen VLA encoder and successful demonstration endpoints for outcome scoring; empirical policy-improvement validation remains future work.
-- [Progress Reward Modeling for Robotic Learning: A Comprehensive Survey](https://arxiv.org/abs/2607.21655) — 2026 arXiv preprint with a progress-centered organization of model interfaces, construction, supervision, and evaluation.
-- [Position: Good Embodied Reward Models Need Bad Behavior Data](https://arxiv.org/abs/2606.01036) — ICML 2026 Position Track spotlight arguing for evaluation and training on low-quality, unsafe, and superficially task-like behavior.
-- [Awesome Progress Reward Model](https://github.com/VanceChu/Awesome-Progress-Reward-Model)
-- [Awesome Robot Failure Management](https://robot-failures.github.io/awesome-robot-failure-management/datasets.html)
-- [RewardScope](https://github.com/philfung/reward-scope)
+**Reward corpora released with a model**
+- [RBM-1M](https://arxiv.org/abs/2603.02115) (Robometer): more than one million trajectories with progress, success, and preference labels.
+- [Robo-Dopamine GRM data](https://huggingface.co/datasets/tanhuajie2001/Robo-Dopamine-GRM-Dataset): multiview state pairs built from annotated keyframes.
+- [DenseReward corpus](https://huggingface.co/datasets/densereward/DenseReward): simulated episodes with failures and recoveries.
 
-Surveys, perspectives, and community lists are used for field framing and discovery. Claims in this repository must still be rechecked against original papers, author project pages, official repositories, or model/data cards.
+**Robot failure and recovery data**
+- [RoboMIND](https://arxiv.org/abs/2412.13877): real teleoperation failures annotated with their causes.
+- [RoboFAC](https://arxiv.org/abs/2505.12224), [FailSafe](https://arxiv.org/abs/2510.01642), [AHA](https://arxiv.org/abs/2410.00371): failures generated in simulation, with failure reasoning or corrections.
+- [Guardian / FailCoT](https://arxiv.org/abs/2512.01946): planning and execution failures with reasoning traces, in simulation and on a real UR5.
+- [ViFailback](https://arxiv.org/abs/2512.02787): real manipulation failures with correction guidance.
+- [Dream2Fix](https://arxiv.org/abs/2603.13528): failures generated by a world model from real demonstrations.
+- [SO-101 deployment study](https://arxiv.org/abs/2606.08881): naturally occurring failures on a low-cost arm.
+- [EgoRecovery](https://arxiv.org/abs/2607.19745): human recovery behavior from an egocentric view.
 
-## Contribution and update policy
+**Real-robot evaluation platforms**
+- [RoboChallenge Table30 and Table30 V2](https://robochallenge.ai/): learned policies scored by a rubric on standardized tasks; the source of RRM-Bench-1K.
+- [RoboArena](https://arxiv.org/abs/2506.18123): double-blind pairwise comparisons of policies on the DROID setup.
+- [REASSEMBLE](https://researchdata.tuwien.ac.at/records/0ewrv-8cb44), [RH20T](https://rh20t.github.io/): real demonstrations with success or quality labels.
 
-- Add papers through the [paper issue template](.github/ISSUE_TEMPLATE/add-paper.yml) or a pull request.
-- Add benchmark metadata to [`registry/benchmarks.yaml`](registry/benchmarks.yaml), including evaluation unit, provenance, split, metrics, release state, and limitations.
-- Supply an original-paper URL and a verification date.
-- Report paper, code, weights, data, benchmark, and license status separately.
-- Use a primary semantics category plus secondary tags; do not force false exclusivity.
-- Label preprints and author-reported claims.
-- Do not convert “repository exists” into “open and reproducible.”
-- Keep reward-model quality evaluation separate from downstream policy-improvement results.
+**Human and egocentric video with error or outcome labels**
+- [HRDexDB](https://snuvclab.github.io/HRDexDB/) · [IndEgo](https://indego-dataset.github.io/) · [EgoPER](https://khoury.northeastern.edu/home/eelhami/egoper.htm) · [CaptainCook4D](https://captaincook4d.github.io/captain-cook/) · [HoloAssist](https://holoassist.github.io/) · [Assembly101](https://assembly-101.github.io/)
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`docs/update-protocol.md`](docs/update-protocol.md) for the full checklist.
+## 🤝 Contributing
 
-## Citation note
+Contributions are very welcome: new papers, corrections, better categorization, or dead-link fixes.
 
-Always cite the original paper when discussing or using a listed model. This repository is a living discovery registry and should not replace original attribution.
+1. Read [CONTRIBUTING.md](./CONTRIBUTING.md) for the entry format and placement rules.
+2. Edit this README and submit a pull request against `main`. Include the first public release date, the native output, and your family choice when adding a paper.
+
+## 🙏 Acknowledgements
+
+We thank the researchers who make their papers, code, models, and datasets publicly available, and the maintainers of the related collections that help the community navigate this fast-moving field.
+
+## 📝 Citation
+
+If you find our repository useful, please cite:
+
+```bibtex
+@article{liang2026rrm,
+  title   = {Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark},
+  author  = {Liang, Guoqiang and Lin, Yiqi and Zhou, Shangchen and Zeng, Wenzheng and Chen, Yanzhe and Bai, Zechen and Shou, Mike Zheng},
+  year    = {2026},
+  note    = {Project page: https://ethanliang99.github.io/awesome-robot-reward-model}
+}
+```
+
+If you like the repository, please give us a star ⭐
