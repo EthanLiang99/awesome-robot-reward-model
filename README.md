@@ -3,8 +3,8 @@
 
 # Awesome Robot Reward Models:<br>A Survey and Capability Benchmark
 
-<a href="https://ethanliang99.github.io/">Guoqiang Liang</a><sup>*</sup> &middot;
-<a href="https://linyq17.github.io/">Yiqi Lin</a><sup>*</sup> &middot;
+<a href="https://ethanliang99.github.io/">Guoqiang Liang</a><sup>&ast;</sup> &middot;
+<a href="https://linyq17.github.io/">Yiqi Lin</a><sup>&ast;</sup> &middot;
 <a href="https://shangchenzhou.com/">Shangchen Zhou</a> &middot;
 <a href="https://wenzhengzeng.github.io/">Wenzheng Zeng</a> &middot;
 <a href="https://chenanno.github.io/">Yanzhe Chen</a> &middot;
@@ -12,7 +12,7 @@
 <a href="https://sites.google.com/view/showlab/home">Mike Zheng Shou</a><sup>&dagger;</sup>
 
 <a href="https://sites.google.com/view/showlab/home">Show Lab @ National University of Singapore</a> &middot; Nanyang Technological University<br>
-<sub><sup>*</sup>Equal contribution &nbsp; <sup>&dagger;</sup>Corresponding author</sub>
+<sub><sup>&ast;</sup>Equal contribution &nbsp; <sup>&dagger;</sup>Corresponding author</sub>
 
 <p align="center">
   📄 Paper (coming soon) &nbsp; | &nbsp;
