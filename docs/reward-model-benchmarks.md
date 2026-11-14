@@ -1,7 +1,7 @@
 # Robot Reward-Model Benchmarks
 
 **Verified:** 2026-09-28
-**Purpose:** map the existing evaluation landscape and define the requirements for a unified robot reward-model benchmark.
+**Purpose:** map the existing evaluation landscape and place RRM-Bench-1K in it.
 
 A reward-model benchmark is not the same thing as a policy benchmark or a training corpus. The evaluator itself must be scored against independent human, physical, or simulator ground truth before its downstream policy gains are considered. The current landscape is fragmented: each benchmark tests a useful slice, but none covers outcome, process, failure onset, recoverability, recovery re-entry, robustness, and policy usefulness together.
 
@@ -36,95 +36,25 @@ The machine-readable version is [`registry/benchmarks.yaml`](../registry/benchma
 | Policy usefulness | Paper-specific RL/MPC studies; arenas | A fixed evaluator-to-policy protocol that separates reward quality from policy and optimizer effects |
 | Reward hacking | Scattered task-mismatch or rewind tests | A dedicated adversarial suite targeting shortcuts, terminal-frame bias, looping, and rubric gaming |
 
-## Proposed RRM-Bench design
+## RRM-Bench-1K
 
-The benchmark should have two tracks rather than mixing fully open public data with a private real-robot gold test.
+RRM-Bench-1K is the benchmark of the survey *Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark* ([project page](https://ethanliang99.github.io/awesome-robot-reward-model/#bench)). It tests whether a reward follows the task state of a real execution rather than motion, elapsed time, or what the camera happens to show.
 
-### Track A — Open and reproducible
+- **Data.** 1,117 real-robot videos of closed-loop policy executions on RoboChallenge Table30 and Table30 V2: 52 tasks on five embodiments, up to three cameras per execution. Each execution is kept whole, with its failures, partial completions, retries, and recoveries.
+- **Task-state labels.** They record which task conditions hold at each moment and withdraw credit when an achieved condition is lost. The final task state grades every video as zero, partial, or full fulfillment.
+- **Camera-evidence labels.** Each view is labeled as giving sufficient (V), partial (P), or insufficient (X) evidence for judging the task.
+- **Four contrast suites.** Each separates the credited condition from a cue that usually comes with it:
 
-- Use redistributable public episodes with fixed preprocessing, prompts, frame sampling, camera selection, and reference-image policy.
-- Publish simple baselines: constant/time-only, vision-only, language-only, terminal-frame-only, CLIP similarity, and an oracle using privileged state where available.
-- Group every derived item by `source_episode_id`; counterfactual pairs and multi-view copies must never cross train/test boundaries.
-- Freeze model revision, prompt version, parser, calibration method, seeds, and raw outputs.
-
-### Track B — Private real-robot gold test
-
-- Collect real executed success, partial success, hard success-like failure, recoverable failure, false recovery, and irreversible failure.
-- Cover multiple institutions, sites, camera layouts, objects, task families, and at least four robot embodiments, including one bimanual platform.
-- Use two independent annotators plus adjudication; report inter-annotator agreement and confidence.
-- Keep the final test episodes and exact rubrics private while publishing a development set with the same schema.
-
-### Evaluation profile
-
-Do not collapse the benchmark into a single RRM score. Report a profile and category rankings.
-
-| Axis | Required label | Primary metrics |
+| Suite | Separates | Validity |
 |---|---|---|
-| Outcome calibration | success, partial completion, ordinal score, annotator distribution | AUROC, AUPRC, Brier score, ECE, ordinal correlation |
-| Relative ordering | better / worse / tie for same task | Pairwise accuracy with ties, Kendall tau, Spearman correlation |
-| Cross-interface consistency | matched pointwise scores and pairwise preferences for the same cases | Score-pair reversal rate, order-constraint violations, calibration change before/after editing |
-| Candidate-action verification | fixed candidate action chunks with execution or simulator outcome | Top-1 regret, NDCG, pairwise accuracy, success@selected, oracle-gap closure |
-| Process consistency | dense or stage-conditioned progress | VOC plus monotonicity/consistency only on intervals where monotonic progress is valid |
-| Failure localization | onset interval, type, severity, confidence | Temporal AP, onset-tolerance F1, time-to-detection, false alarms per nominal episode |
-| Recoverability | recoverable flag, point of no return | AUROC/F1, PONR localization tolerance |
-| Recovery re-entry | recovery start and valid-trajectory re-entry interval | Interval IoU, boundary tolerance, pre/post score reversal |
-| Robustness | paired controlled perturbations | Absolute and relative performance degradation by perturbation family |
-| Operational usability | latency, memory, cost, invalid output | p50/p95 latency, throughput, invalid rate, hardware-normalized cost |
-| Policy usefulness | fixed policy + fixed optimizer protocol | Success/sample-efficiency delta; always reported separately from evaluator quality |
+| (A) Action–Effect | task-like motion from its effect | proxy |
+| (B) Semantic/Ordered Constraint | a successful manipulation from a correct one | proxy |
+| (C) Persistence/Reversal | an achieved condition from one that still holds | temporal |
+| (D) Visibility | what happened from what a camera shows | evidence |
 
-### Required annotation schema
+- **Metrics.** Progress direction on 1 FPS transitions (rising and falling precision, recall, and F1, with Macro-F1), VOC, and Kendall's τ_a, read beside two controls that need no model: an always-rising predictor and normalized elapsed time. Sufficient and reduced views of the same execution are scored on the same transitions.
 
-Each gold episode should retain:
-
-```yaml
-episode_id: ...
-task_id: ...
-robot: {arm: ..., gripper: ..., site: ...}
-views: [...]
-outcome: {success: false, ordinal_progress: 3, confidence: 0.9}
-stages:
-  - {name: grasp, start: ..., end: ..., completed: true}
-failure:
-  onset_interval: [...]
-  type: object_slip
-  severity: recoverable
-  point_of_no_return: null
-recovery:
-  attempted: true
-  successful: true
-  reentry_interval: [...]
-provenance: real_executed
-annotators: [anon_a, anon_b]
-adjudicated: true
-```
-
-The ontology must allow `unknown`, multi-label causes, and uncertain temporal intervals. A forced single cause is often false precision.
-
-### Split and leakage rules
-
-1. Publish in-domain, cross-task, cross-object, cross-scene, cross-site, cross-view, and cross-embodiment results separately.
-2. Hold out source episodes before generating clips, pairs, questions, rewinds, or world-model counterfactuals.
-3. Report parent-dataset, episode, view, task-text, and generator-version overlap independently.
-4. Keep synthetic and real failures in separate strata; never let a generator signature become the hidden test label.
-5. Freeze exact timestamps, temporal windows, camera policy, prompt, parser, and calibration data for each benchmark version.
-6. Keep chain-of-thought optional and unscored by default; score the structured answer and preserve raw generations for audit.
-
-### Reward-hacking and shortcut suite
-
-At minimum, include controlled pairs for:
-
-- correct final pose reached through an unsafe or invalid process;
-- attractive terminal frame after an earlier irreversible failure;
-- repeated oscillation, hesitation, retry loops, and redundant motion;
-- correct action video paired with a wrong instruction or wrong object/target;
-- one fixed trajectory under verified equivalent instruction paraphrases, preserving episode-grouped splits;
-- static success-looking frames inserted into an unsuccessful trajectory;
-- time reversal, frame duplication, temporal clipping, and camera-view removal;
-- background, operator, robot, or site cues correlated with outcome;
-- partial completion that visually resembles success from one view;
-- generator artifacts versus real failures;
-- high predicted reward that fails to improve a fixed downstream policy.
-- near-identical candidate action sets where expert-action distance, language alignment, short-term progress, and final task outcome disagree.
+Results are reported per capability, not as one overall score. The benchmark covers one platform, and its data release is pending.
 
 ## Design principle
 
