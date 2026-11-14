@@ -72,7 +72,7 @@ This repository accompanies our survey **Robotic Reward Models in the Foundation
 - [B. Robotic Reward Models](#-b-robotic-reward-models)
   - [Outcome](#outcome) · [Absolute Progress](#absolute-progress) · [Relative](#relative) · [Temporal Value](#temporal-value) · [Hybrid](#hybrid)
 - [C. Benchmarks](#-c-benchmarks)
-- [D. Data](#-d-data)
+- [D. Data](#%EF%B8%8F-d-data)
 - [Contributing](#-contributing) · [Acknowledgements](#-acknowledgements) · [License](#%EF%B8%8F-license) · [Citation](#-citation)
 
 ---
