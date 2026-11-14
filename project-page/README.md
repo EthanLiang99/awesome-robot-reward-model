@@ -11,7 +11,7 @@ assets/fonts/           Inter, Instrument Serif, JetBrains Mono (SIL OFL 1.1, se
 assets/js/main.js       hero stage, taxonomy, findings charts, leaderboard, hub, citation
 assets/js/lab.js        Reward Lab: a clip played against the task-state label and nine evaluators
 assets/data/cases.js    11 benchmark clips: labels, events, evaluator outputs (window.RRM_CASES)
-assets/data/site.js     113 surveyed methods by family, 26-evaluator leaderboard (window.RRM_SITE)
+assets/data/site.js     114 surveyed methods by family, 26-evaluator leaderboard (window.RRM_SITE)
 assets/video/           web encodes of the clips and the 24-clip wall (about 11 MB)
 assets/img/             posters, favicon, og.jpg (social card)
 _tools/                 preview server, data rebuild, social card; not deployed

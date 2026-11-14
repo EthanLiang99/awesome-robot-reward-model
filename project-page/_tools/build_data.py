@@ -291,7 +291,9 @@ def parse_taxonomy(path):
             route["methods"] = [n for n in names if n]
     for f in fams:
         assert sum(len(r["methods"]) for r in f["routes"]) == f["count"], f["name"]
-    assert sum(f["count"] for f in fams) == 113
+    # The root node of the tree states the corpus size, e.g. "(114 entries)".
+    total = int(re.search(r"\((\d+) entries\)", open(path, encoding="utf-8").read()).group(1))
+    assert sum(f["count"] for f in fams) == total, (sum(f["count"] for f in fams), total)
     return fams
 
 
