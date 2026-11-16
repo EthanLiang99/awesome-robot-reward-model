@@ -17,8 +17,8 @@
 <p align="center">
   📄 Paper (coming soon) &nbsp; | &nbsp;
   <a href="https://ethanliang99.github.io/awesome-robot-reward-model/">🌐 Project Website</a> &nbsp; | &nbsp;
-  🧰 RewardBox (coming soon) &nbsp; | &nbsp;
-  🤗 RRM-Bench-1K (coming soon)
+  <a href="https://github.com/showlab/RewardBox">🧰 RewardBox</a> &nbsp; | &nbsp;
+  <a href="https://huggingface.co/datasets/Ethanliang99/RRM-Bench-1K">🤗 RRM-Bench-1K</a>
 </p>
 
 </div>
@@ -63,7 +63,8 @@ This repository accompanies our survey **Robotic Reward Models in the Foundation
 ## 📢 News
 
 - [x] `2026.11` First release: 114 methods in five families, with benchmarks and data resources.
-- [ ] Survey paper on arXiv, the RewardBox toolbox, and the RRM-Bench-1K data: coming soon.
+- [x] `2026.11` [RewardBox](https://github.com/showlab/RewardBox) toolbox (RRM-Hub) and [RRM-Bench-1K](https://huggingface.co/datasets/Ethanliang99/RRM-Bench-1K) data released.
+- [ ] Survey paper on arXiv: coming soon.
 
 ## 📑 Contents
 
