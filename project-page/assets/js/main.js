@@ -96,7 +96,7 @@
     else window.addEventListener('resize', go);
   }
 
-  /* ------------------------------------------------------------ tooltip + toast */
+  /* ------------------------------------------------------------ tooltip */
   const tipEl = $('#tip');
   const tip = {
     on: false,
@@ -132,17 +132,8 @@
     if (!e.target.closest('.dot-b, .chart, .lab-chart')) tip.hide();
   });
 
-  let toastEl = null, toastTimer = 0;
-  function toast(msg) {
-    if (!toastEl) { toastEl = h('div', { class: 'toast', role: 'status' }); document.body.append(toastEl); }
-    toastEl.textContent = msg;
-    toastEl.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1900);
-  }
-
   // Shared with lab.js
-  window.RRM = { $, $$, h, svgEl, svgText, fmt, clamp, interp, linePath, areaPath, icon, mediaIcon, tip, tipRow, toast, reduced, watch, onResize };
+  window.RRM = { $, $$, h, svgEl, svgText, fmt, clamp, interp, linePath, areaPath, icon, mediaIcon, tip, tipRow, reduced, watch, onResize };
 
   /* ------------------------------------------------------------ nav */
   function nav() {
@@ -763,7 +754,7 @@
     }, { once: true });
   }
 
-  /* ------------------------------------------------------------ citation + placeholder links */
+  /* ------------------------------------------------------------ citation */
   function cite() {
     const btn = $('#copy-bib'), pre = $('#bibtex');
     if (!btn || !pre) return;
@@ -785,14 +776,6 @@
     });
   }
 
-  function soonLinks() {
-    $$('a[data-soon]').forEach((a) => {
-      a.setAttribute('aria-disabled', 'true');
-      a.title = 'Coming soon';
-      a.addEventListener('click', (e) => { e.preventDefault(); toast(a.textContent.trim() + ': link coming soon'); });
-    });
-  }
-
   /* ------------------------------------------------------------ boot */
   const run = (name, fn) => { try { fn(); } catch (err) { console.error('[rrm] ' + name, err); } };
   run('nav', nav);
@@ -807,6 +790,5 @@
   run('leaderboard', board);
   run('hub', hub);
   run('cite', cite);
-  run('links', soonLinks);
   run('reveal', reveals);
 })();

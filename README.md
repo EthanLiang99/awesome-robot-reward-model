@@ -15,7 +15,7 @@
 <sub><sup>&ast;</sup>Equal contribution &nbsp; <sup>&dagger;</sup>Corresponding author</sub>
 
 <p align="center">
-  📄 Paper (coming soon) &nbsp; | &nbsp;
+  <a href="https://arxiv.org/abs/2611.20741">📄 Paper</a> &nbsp; | &nbsp;
   <a href="https://ethanliang99.github.io/awesome-robot-reward-model/">🌐 Project Website</a> &nbsp; | &nbsp;
   <a href="https://github.com/showlab/RewardBox">🧰 RewardBox</a> &nbsp; | &nbsp;
   <a href="https://huggingface.co/datasets/Ethanliang99/RRM-Bench-1K">🤗 RRM-Bench-1K</a>
@@ -25,7 +25,7 @@
 
 ---
 
-This repository accompanies our survey **Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark**. A robotic reward model (RRM) is a task-conditioned evaluator that uses a foundation model to judge robot behavior against a task. The survey asks one question: ***under the one word "reward", what is each model actually answering?***
+This repository accompanies our survey [**Robotic Reward Models in the Foundation-Model Era**](https://arxiv.org/abs/2611.20741). A robotic reward model (RRM) is a task-conditioned evaluator that uses a foundation model to judge robot behavior against a task. The survey asks one question: ***under the one word "reward", what is each model actually answering?***
 
 <p align="center">
   <a href="./assets/readme/teaser.png">
@@ -64,7 +64,7 @@ This repository accompanies our survey **Robotic Reward Models in the Foundation
 
 - [x] `2026.11` First release: 114 methods in five families, with benchmarks and data resources.
 - [x] `2026.11` [RewardBox](https://github.com/showlab/RewardBox) toolbox (RRM-Hub) and [RRM-Bench-1K](https://huggingface.co/datasets/Ethanliang99/RRM-Bench-1K) data released.
-- [ ] Survey paper on arXiv: coming soon.
+- [x] `2026.11` Survey paper released on [arXiv:2611.20741](https://arxiv.org/abs/2611.20741).
 
 ## 📑 Contents
 
@@ -565,10 +565,13 @@ If you find our repository useful, please cite:
 
 ```bibtex
 @article{liang2026rrm,
-  title   = {Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark},
-  author  = {Liang, Guoqiang and Lin, Yiqi and Zhou, Shangchen and Zeng, Wenzheng and Chen, Yanzhe and Bai, Zechen and Shou, Mike Zheng},
+  title   = {Robotic Reward Models in the Foundation-Model Era},
+  author  = {Liang, Guoqiang and Lin, Yiqi and Zhou, Shangchen and
+             Zeng, Wenzheng and Chen, Yanzhe and Bai, Zechen and
+             Shou, Mike Zheng},
+  journal = {arXiv preprint arXiv:2611.20741},
   year    = {2026},
-  note    = {Project page: https://ethanliang99.github.io/awesome-robot-reward-model}
+  url     = {https://arxiv.org/abs/2611.20741}
 }
 ```
 

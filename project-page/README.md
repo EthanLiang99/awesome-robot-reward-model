@@ -1,6 +1,6 @@
 # Robotic Reward Models — project page
 
-Static page for *Robotic Reward Models in the Foundation-Model Era: A Survey and Capability Benchmark*.
+Static page for [*Robotic Reward Models in the Foundation-Model Era*](https://arxiv.org/abs/2611.20741).
 Plain HTML, CSS and JavaScript with no build step. Everything the page shows is in this folder, and it makes no requests outside it.
 
 ```
@@ -35,7 +35,7 @@ Then open http://127.0.0.1:8765. `python -m http.server` also works, but it igno
 
 Links and media:
 
-1. The Code and Data buttons point to https://github.com/showlab/RewardBox and https://huggingface.co/datasets/Ethanliang99/RRM-Bench-1K. The Paper and arXiv buttons still have `href="#"` and `data-soon`, which shows "link coming soon"; when the paper is out, put its URL in their `href` and delete `data-soon`.
+1. The Paper button opens the [PDF](https://arxiv.org/pdf/2611.20741) and the arXiv button opens the [abstract](https://arxiv.org/abs/2611.20741). The Code and Data buttons point to [RewardBox](https://github.com/showlab/RewardBox) and [RRM-Bench-1K](https://huggingface.co/datasets/Ethanliang99/RRM-Bench-1K).
 2. The clips are RoboChallenge Table30 and Table30 V2 executions from RRM-Bench-1K, published on Hugging Face under CC BY-NC-SA 4.0 with RoboChallenge credited as the source.
 3. If the site moves, for example to a custom domain, update `og:url`, `og:image` and `twitter:image` in `index.html`.
 
